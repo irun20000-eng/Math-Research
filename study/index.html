@@ -2,109 +2,161 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Serif:wght@700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* 배치: 왼쪽에 따라오는 목차와 진도, 오른쪽에 읽기 폭(약 68자)의 본문. 그림과 실습은 본문보다 넓게 쓴다. */
+/* 배치: 위에 아홉 단계 버튼 줄, 아래에 한 번에 한 단계만 보이는 넓은 판. 글은 카드와 상자로 쪼개고, 판 아래의 큰 버튼 하나로 다음 단계로 넘어간다. */
 :root {
   color-scheme: dark;
   --bg: #0A0B0A; --panel: #121413; --raised: #181B19; --line: #2A2E2B; --line-soft: #1F2321; --ink: #070807;
   --fg: #F2F3EF; --muted: #A3A9A1; --faint: #737A72;
   --act: #D6FF3F; --act-ink: #0A0B0A;
   --c-y: #46E8FF; --c-v: #FFD93D; --c-a: #FF8A5C; --c-j: #B98BFF; --bad: #FF6B6B; --ok: #39FF7A;
+  --t-y: rgba(70,232,255,.09); --t-v: rgba(255,217,61,.09); --t-a: rgba(255,138,92,.10); --t-j: rgba(185,139,255,.10); --t-ok: rgba(57,255,122,.08);
   --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --serif: "IBM Plex Serif", Georgia, serif;
   --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 }
 * { box-sizing: border-box; }
 html, body { background: var(--bg); color: var(--fg); }
-body { font-family: var(--sans); font-size: 16px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--sans); font-size: 15.5px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; }
 a { color: var(--c-y); text-underline-offset: 3px; }
+p { margin: 0; }
 :focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
-.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+svg.ico { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line-soft); }
-header.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-block: 10px; }
-.sig { font-weight: 700; font-size: 22px; letter-spacing: -0.02em; white-space: nowrap; line-height: 1; }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line-soft); }
+header.top .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding-block: 9px; }
+.sig { font-weight: 700; font-size: 21px; letter-spacing: -0.02em; white-space: nowrap; line-height: 1; }
 .sig .af { font-weight: 500; color: var(--muted); } .sig .mm { font-family: var(--serif); color: var(--act); }
 .sig .q { display: inline-block; width: .32em; height: .44em; background: var(--act); margin-left: .14em; border-radius: 1px; }
 .top .tag { font-size: 13px; color: var(--muted); } .top .sp { flex: 1; }
-.top a.out { font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 8px; border-radius: 8px; }
+.top .pg { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.top .pg .track { width: 90px; height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.top .pg .track i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+.top a.out { font-size: 13px; color: var(--muted); text-decoration: none; padding: 5px 8px; border-radius: 8px; }
 .top a.out:hover { color: var(--fg); background: var(--raised); }
+.steps { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 9px; scrollbar-width: none; }
+.steps::-webkit-scrollbar { display: none; }
+.steps button { flex: none; display: flex; align-items: center; gap: 7px; border: 1px solid var(--line-soft); background: var(--panel); border-radius: 999px; padding: 6px 12px 6px 9px; font-size: 13px; color: var(--muted); }
+.steps button:hover { color: var(--fg); border-color: var(--faint); }
+.steps button[aria-current="step"] { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 600; }
+.steps button.done:not([aria-current="step"]) { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); }
 
-.courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 20px 0 28px; }
-.course { border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; background: var(--panel); display: grid; gap: 2px; }
-.course.now { border-color: var(--faint); }
-.course .k { font-size: 12px; color: var(--faint); } .course b { font-size: 15px; } .course .s { font-size: 13px; color: var(--muted); }
+main { padding-block: 18px 56px; }
+.courses { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.course { border: 1px solid var(--line-soft); border-radius: 999px; padding: 4px 12px; font-size: 12.5px; color: var(--faint); }
+.course.now { color: var(--fg); border-color: var(--faint); background: var(--panel); }
+#sysnote { font-size: 13px; color: var(--muted); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; }
 
-.lesson { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 36px; align-items: start; }
-@media (max-width: 880px) { .lesson { grid-template-columns: minmax(0, 1fr); gap: 16px; } }
-nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 64px); display: grid; gap: 2px; font-size: 14px; }
-@media (max-width: 880px) { nav.toc { position: static; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
-nav.toc button { text-align: left; background: none; border: 0; padding: 5px 8px; border-radius: 6px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
-nav.toc button:hover { color: var(--fg); background: var(--raised); }
-nav.toc .dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--faint); flex: none; }
-nav.toc button.done .dot { background: var(--ok); border-color: var(--ok); }
-.prog { margin: 0 8px 10px; font-size: 12px; color: var(--faint); }
-.prog .bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-.prog .bar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
-#sysnote { font-size: 12.5px; color: var(--muted); margin: 0 8px 10px; }
+section.sec { border: 1px solid var(--line); border-radius: 18px; background: var(--panel); overflow: hidden; }
+.sec-head { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line-soft); background: var(--raised); }
+.sec-head .num { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: var(--ink); border: 1px solid var(--line); color: var(--act); }
+.sec-head .num svg.ico { width: 22px; height: 22px; }
+.sec-head .k { font-size: 12px; color: var(--faint); letter-spacing: .05em; font-weight: 600; }
+.sec-head h2 { margin: 0; font-size: 21px; line-height: 1.35; letter-spacing: -0.01em; text-wrap: balance; }
+.sec-head .goal { color: var(--muted); font-size: 14px; }
+.sec-body { padding: 20px 22px; display: grid; gap: 16px; }
+.sec-foot { margin-top: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 0; }
+@media (max-width: 560px) { .sec-head, .sec-body, .sec-foot { padding-left: 14px; padding-right: 14px; } .sec-head h2 { font-size: 18px; } }
 
-article { min-width: 0; padding-bottom: 80px; }
-article h1 { font-size: 30px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.015em; text-wrap: balance; }
-article .sub { color: var(--muted); margin: 0 0 28px; max-width: 62ch; }
-section.sec { padding: 26px 0; border-top: 1px solid var(--line-soft); scroll-margin-top: 80px; }
-section.sec > h2 { font-size: 21px; margin: 0 0 12px; text-wrap: balance; }
-section.sec > .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--faint); font-weight: 600; margin-bottom: 4px; }
-.prose { max-width: 68ch; } .prose p { margin: 0 0 14px; } .prose ul, .prose ol { margin: 0 0 14px; padding-left: 1.3em; } .prose li { margin: 4px 0; }
-.M { overflow-x: auto; padding: 8px 0 12px; } math { font-size: 1.08em; }
-.key { border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 14px 18px; max-width: 68ch; }
-.key ol { margin: 0; padding-left: 1.3em; } .key li { margin: 6px 0; }
-.aside { border-left: 2px solid var(--line); padding: 2px 0 2px 14px; color: var(--muted); font-size: 14.5px; max-width: 66ch; margin: 0 0 14px; }
-.small { font-size: 13.5px; color: var(--muted); }
-table { border-collapse: collapse; font-size: 14.5px; } th, td { border-bottom: 1px solid var(--line-soft); padding: 7px 12px; text-align: left; vertical-align: top; }
-th { color: var(--faint); font-weight: 600; font-size: 12.5px; } td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tablewrap { overflow-x: auto; margin: 0 0 14px; }
-
-.btn { border: 1px solid var(--line); background: var(--raised); border-radius: 8px; padding: 7px 12px; font-size: 13.5px; font-weight: 500; }
+.btn { border: 1px solid var(--line); background: var(--raised); border-radius: 9px; padding: 7px 13px; font-size: 13.5px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
 .btn:hover { border-color: var(--faint); }
 .btn.primary { background: var(--act); color: var(--act-ink); border-color: var(--act); font-weight: 700; }
-.btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 600; }
+.btn.big { padding: 10px 18px; font-size: 14.5px; }
+.btn[aria-pressed="true"], .btn[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 600; }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.mark { margin-top: 16px; }
+.small { font-size: 13.5px; color: var(--muted); }
+.M { overflow-x: auto; padding: 4px 0; } math { font-size: 1.08em; }
+.lede { max-width: 66ch; color: var(--muted); }
 
-.stage { border: 1px solid var(--line); border-radius: 12px; background: var(--ink); overflow: hidden; }
-.stage canvas { display: block; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; }
-.stage .cap { padding: 12px 16px; border-top: 1px solid var(--line-soft); min-height: 5.6em; font-size: 15px; }
-.stage .cap b { color: var(--muted); font-size: 12.5px; display: block; letter-spacing: .04em; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.tile { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--ink); padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.tile .h { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14.5px; }
+.tile .badge { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-family: var(--mono); font-size: 12.5px; font-weight: 700; background: var(--raised); border: 1px solid var(--line); flex: none; }
+.tile p { color: var(--muted); font-size: 14.5px; }
+.tile.y { background: var(--t-y); } .tile.v { background: var(--t-v); } .tile.a { background: var(--t-a); } .tile.j { background: var(--t-j); }
+.tile.y .h { color: var(--c-y); } .tile.v .h { color: var(--c-v); } .tile.a .h { color: var(--c-a); } .tile.j .h { color: var(--c-j); }
+.tile .M { text-align: center; } .stat { text-align: left; } .stat .big { font-family: var(--mono); font-size: 26px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.stat .u { font-size: 13px; color: var(--muted); } .stat .w { font-size: 12.5px; color: var(--faint); }
+
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.flow .node { border-radius: 12px; padding: 8px 14px; font-weight: 700; display: grid; gap: 0; line-height: 1.35; }
+.flow .node small { font-weight: 500; font-size: 12px; color: var(--muted); }
+.flow .arrow { color: var(--faint); font-size: 12.5px; display: grid; justify-items: center; line-height: 1.2; }
+.flow .arrow::after { content: "→"; font-size: 18px; color: var(--muted); }
+
+.callout { border-radius: 14px; padding: 13px 16px; display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; border: 1px solid var(--line-soft); }
+.callout .lab { font-size: 12px; font-weight: 700; letter-spacing: .04em; margin-bottom: 2px; }
+.callout.tip { background: var(--t-ok); } .callout.tip svg, .callout.tip .lab { color: var(--ok); }
+.callout.warn { background: var(--t-a); } .callout.warn svg, .callout.warn .lab { color: var(--c-a); }
+.callout.note { background: var(--t-y); } .callout.note svg, .callout.note .lab { color: var(--c-y); }
+.callout.beyond { background: var(--t-j); } .callout.beyond svg, .callout.beyond .lab { color: var(--c-j); }
+.formula { border: 1px solid var(--line); border-radius: 14px; background: var(--ink); padding: 14px 16px; text-align: center; overflow-x: auto; }
+.formula .cap { font-size: 12.5px; color: var(--faint); text-align: left; margin-bottom: 4px; }
+
+.stage { border: 1px solid var(--line); border-radius: 14px; background: var(--ink); overflow: hidden; }
+.stage canvas { display: block; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; max-height: 460px; }
+.stage .cap { padding: 12px 16px; border-top: 1px solid var(--line-soft); min-height: 5.4em; }
+.stage .cap b { color: var(--act); font-size: 12.5px; display: block; letter-spacing: .04em; }
 .stage .ctl { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--line-soft); }
 .stage .scenes { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 12px; }
+.stage .scenes .btn { font-size: 12.5px; padding: 5px 10px; }
 input[type=range] { width: 100%; accent-color: var(--fg); }
 
-.lab { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; }
+.stepper { border: 1px solid var(--line-soft); border-radius: 14px; overflow: hidden; }
+.stepper .tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; background: var(--raised); border-bottom: 1px solid var(--line-soft); }
+.stepper .pane { padding: 16px 18px; display: grid; gap: 10px; background: var(--ink); min-height: 190px; align-content: start; }
+.stepper .pane h3 { margin: 0; font-size: 16px; }
+.stepper .nav { display: flex; justify-content: space-between; padding: 10px 12px; border-top: 1px solid var(--line-soft); background: var(--raised); }
+
+.lab { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; }
 @media (max-width: 760px) { .lab { grid-template-columns: minmax(0, 1fr); } }
-.lab .plots { border: 1px solid var(--line); border-radius: 12px; background: var(--ink); overflow: hidden; }
-.lab .plots canvas { display: block; width: 100%; height: 440px; }
-.lab .side { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.lab .plots { border: 1px solid var(--line); border-radius: 14px; background: var(--ink); overflow: hidden; }
+.lab .plots canvas { display: block; width: 100%; height: 430px; }
+.lab .side { display: grid; gap: 11px; align-content: start; min-width: 0; }
 .ctlrow { display: grid; gap: 2px; font-size: 13.5px; } .ctlrow .l { display: flex; justify-content: space-between; color: var(--muted); } .ctlrow .l b { font-family: var(--mono); color: var(--fg); font-weight: 600; }
-.reads { border: 1px solid var(--line-soft); border-radius: 10px; background: var(--panel); padding: 10px 12px; display: grid; gap: 4px; font-size: 13.5px; }
+.reads { border: 1px solid var(--line-soft); border-radius: 12px; background: var(--ink); padding: 10px 12px; display: grid; gap: 4px; font-size: 13.5px; }
 .reads div { display: flex; justify-content: space-between; gap: 10px; } .reads span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 .reads .verdict { font-weight: 700; padding-top: 6px; border-top: 1px solid var(--line-soft); margin-top: 4px; }
 .reads .verdict.over span:last-child { color: var(--bad); } .reads .verdict.fine span:last-child { color: var(--ok); }
-#fc { display: block; width: 100%; height: 170px; border: 1px solid var(--line-soft); border-radius: 10px; background: var(--ink); }
+#fc { display: block; width: 100%; height: 160px; border: 1px solid var(--line-soft); border-radius: 12px; background: var(--ink); }
+.try { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.try button { text-align: left; border: 1px dashed var(--line); background: transparent; border-radius: 12px; padding: 10px 13px; display: grid; gap: 2px; }
+.try button:hover { border-color: var(--faint); background: var(--raised); }
+.try b { font-size: 14px; } .try span { font-size: 13px; color: var(--muted); }
 
-details.step, details.qa, details.sol { border: 1px solid var(--line-soft); border-radius: 10px; background: var(--panel); padding: 10px 14px; margin: 0 0 8px; max-width: 72ch; }
-details summary { cursor: pointer; font-weight: 600; }
-details .in { padding-top: 10px; } details .in p { margin: 0 0 10px; }
-pre { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 0 0 8px; }
-.ex { border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; margin: 0 0 12px; max-width: 76ch; }
-.ex h3 { margin: 0 0 8px; font-size: 15.5px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
-.quiz { border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; margin: 0 0 12px; max-width: 72ch; }
-.quiz .opts { display: grid; gap: 6px; margin: 10px 0 0; }
-.quiz .opts button { text-align: left; border: 1px solid var(--line); background: var(--raised); border-radius: 8px; padding: 8px 12px; }
-.quiz .opts button.right { border-color: var(--ok); } .quiz .opts button.wrong { border-color: var(--bad); }
-.quiz .why { margin-top: 10px; color: var(--muted); font-size: 14.5px; }
-.rel a { display: block; padding: 5px 0; }
+details.qa { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--ink); }
+details.qa summary { cursor: pointer; list-style: none; padding: 13px 16px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; font-weight: 600; }
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa .qm { width: 26px; height: 26px; border-radius: 8px; background: var(--t-v); color: var(--c-v); display: grid; place-items: center; font-weight: 700; font-family: var(--mono); }
+details.qa summary::after { content: "+"; color: var(--faint); font-size: 20px; } details.qa[open] summary::after { content: "−"; }
+details.qa .in { padding: 0 16px 14px 54px; color: var(--muted); display: grid; gap: 8px; }
+@media (max-width: 560px) { details.qa .in { padding-left: 16px; } }
+
+.cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.cases a { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--ink); padding: 12px 14px; text-decoration: none; color: var(--fg); display: grid; gap: 4px; }
+.cases a:hover { border-color: var(--faint); }
+.cases .d { font-family: var(--mono); font-size: 12px; color: var(--faint); } .cases .t { font-weight: 600; line-height: 1.45; } .cases .n { font-size: 13px; color: var(--muted); }
+
+.tabset > .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.pcard { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--ink); padding: 14px 16px; display: grid; gap: 10px; }
+.pcard .hd { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; }
+.lv { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+.lv.l1 { background: var(--t-y); color: var(--c-y); } .lv.l2 { background: var(--t-v); color: var(--c-v); } .lv.l3 { background: var(--t-a); color: var(--c-a); } .lv.l4 { background: var(--t-j); color: var(--c-j); }
+.sol { border-top: 1px dashed var(--line); padding-top: 10px; color: var(--muted); }
+.plist { display: grid; gap: 12px; }
+pre { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 0; }
+.quote { font-size: 17px; line-height: 1.7; border-radius: 14px; background: var(--t-v); padding: 16px 18px; }
+
+.quizgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.quiz { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--ink); padding: 14px 16px; display: grid; gap: 10px; align-content: start; }
+.quiz .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.quiz .opts button { text-align: center; border: 1px solid var(--line); background: var(--raised); border-radius: 9px; padding: 8px 10px; font-size: 14px; }
+.quiz .opts button.right { border-color: var(--ok); background: var(--t-ok); color: var(--ok); font-weight: 700; } .quiz .opts button.wrong { border-color: var(--bad); color: var(--bad); }
+.quiz .why { color: var(--muted); font-size: 14px; }
+.score { font-family: var(--mono); font-weight: 600; }
 #toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 999px; z-index: 50; pointer-events: none; opacity: 0; transition: opacity .2s; }
 #toast.on { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -112,201 +164,208 @@ pre { background: var(--ink); border: 1px solid var(--line-soft); border-radius:
 
 <header class="top">
   <div class="wrap">
-    <span class="sig"><span class="af">after</span><span class="mm">math</span><span class="q"></span></span>
-    <span class="tag">교사 연수</span><span class="sp"></span>
-    <a class="out" href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn" target="_blank" rel="noopener">리서치 갤러리 ↗</a>
+    <div class="bar">
+      <span class="sig"><span class="af">after</span><span class="mm">math</span><span class="q"></span></span>
+      <span class="tag">교사 연수 · 1강 5차 다항 궤적과 저크</span><span class="sp"></span>
+      <span class="pg"><span id="prog-text">0 / 9</span><span class="track"><i id="prog-bar"></i></span></span>
+      <a class="out" href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn" target="_blank" rel="noopener">갤러리 ↗</a>
+    </div>
+    <nav class="steps" id="steps" aria-label="강좌 단계"></nav>
   </div>
 </header>
 
 <main class="wrap">
   <div class="courses" aria-label="강좌 목록">
-    <div class="course now"><span class="k">1강 · 수학Ⅱ 미분</span><b>5차 다항 궤적과 저크</b><span class="s">지금 보고 있는 강좌</span></div>
-    <div class="course"><span class="k">2강 · 수학Ⅰ 지수·로그</span><b>지수 모델의 로그 선형화</b><span class="s">준비 중</span></div>
-    <div class="course"><span class="k">3강 · 수학Ⅰ 삼각함수</span><b>삼각함수 합성과 상쇄</b><span class="s">준비 중</span></div>
+    <span class="course now">1강 · 5차 다항 궤적과 저크</span>
+    <span class="course">2강 · 지수 모델의 로그 선형화 (준비 중)</span>
+    <span class="course">3강 · 삼각함수 합성과 상쇄 (준비 중)</span>
   </div>
+  <div id="sysnote" hidden></div>
 
-  <div class="lesson">
-    <nav class="toc" aria-label="강좌 목차">
-      <div class="prog"><span id="prog-text">진도 0 / 9</span><div class="bar"><i id="prog-bar"></i></div></div>
-      <div id="sysnote" hidden></div>
-    </nav>
+  <section class="sec" id="s1" data-title="요약" data-ico="list">
+    <div class="sec-head"><div class="num"></div><div><div class="k">1단계 · 핵심 요약</div><h2>세 문장으로 보는 5차 다항 궤적</h2><div class="goal">자율주행 차선 변경, eVTOL 이착륙, 로봇 팔 이동에 같은 식이 반복해서 나옵니다.</div></div></div>
+    <div class="sec-body">
+      <div class="tiles">
+        <div class="tile y"><div class="h"><span class="badge">1</span>조건 여섯 개</div><p>정지에서 출발해 정지로 끝나는 이동에서 처음과 끝의 <b>위치·속도·가속도</b>를 정하면 5차 다항식이 단 하나로 정해집니다.</p></div>
+        <div class="tile v"><div class="h"><span class="badge">2</span>식 하나</div><div class="M">y=W\,(10\tau^3-15\tau^4+6\tau^5)</div><p><span class="m">\tau=t/T</span>. 거리 <span class="m">W</span> 와 시간 <span class="m">T</span> 만 바꾸면 모든 경우에 쓰입니다.</p></div>
+        <div class="tile j"><div class="h"><span class="badge">3</span>가장 부드러운 길</div><p>같은 조건을 만족하는 모든 움직임 가운데 이 식이 <b>저크 제곱의 합</b>을 가장 작게 만듭니다.</p></div>
+      </div>
+      <div class="tiles">
+        <div class="tile stat"><div class="w">최대 속도</div><div class="big" style="color:var(--c-v)">1.875</div><div class="u">× W/T · 한가운데에서</div></div>
+        <div class="tile stat"><div class="w">최대 가속도</div><div class="big" style="color:var(--c-a)">5.774</div><div class="u">× W/T² · 21%와 79% 지점</div></div>
+        <div class="tile stat"><div class="w">최대 저크</div><div class="big" style="color:var(--c-j)">60</div><div class="u">× W/T³ · 양 끝에서</div></div>
+        <div class="tile stat"><div class="w">저크 제곱의 합</div><div class="big">720</div><div class="u">× W²/T⁵ · 최솟값</div></div>
+      </div>
+      <div class="callout note"><svg class="ico" data-i="flag"></svg><div><div class="lab">이 강좌를 마치면</div>원본 문서의 <span class="m">y=c_5t^5+c_4t^4+c_3t^3</span> 에서 계수가 왜 10, −15, 6 인지 직접 유도하고, 최소 회피 시간을 계산하고, 왜 3차나 7차가 아니라 5차인지 설명할 수 있습니다.</div></div>
+    </div>
+  </section>
 
-    <article>
-      <h1>5차 다항 궤적과 저크</h1>
-      <p class="sub">자율주행 차선 변경, eVTOL 이착륙, 로봇 팔 이동에 같은 식이 반복해서 나옵니다. 그 식이 어디서 나오고 왜 하필 5차인지를 조건에서부터 따라가 봅니다.</p>
-
-      <section class="sec" id="s1">
-        <div class="eyebrow">1 · 핵심 요약</div>
-        <h2>세 문장으로</h2>
-        <div class="key"><ol>
-          <li>정지 상태에서 출발해 정지 상태로 끝나는 이동에서, 처음과 끝의 <b>위치·속도·가속도</b> 여섯 값을 정하면 5차 다항식이 단 하나로 정해집니다.</li>
-          <li>그 식은 <span class="m">y(t)=W\,(10\tau^3-15\tau^4+6\tau^5),\ \tau=t/T</span> 이고, 최대 속도는 <span class="m">\tfrac{15}{8}\tfrac{W}{T}</span>, 최대 가속도는 <span class="m">\tfrac{10}{\sqrt3}\tfrac{W}{T^2}</span> 입니다.</li>
-          <li>같은 조건을 만족하는 모든 매끄러운 움직임 가운데 이 5차식이 <b>저크(가속도의 변화율) 제곱의 합</b>을 가장 작게 만듭니다.</li>
-        </ol></div>
-        <div class="mark"><button class="btn done-btn" data-s="s1" type="button">읽었음으로 표시</button></div>
-      </section>
-
-      <section class="sec" id="s2">
-        <div class="eyebrow">2 · 쉬운 설명</div>
-        <h2>그림으로 따라가기</h2>
-        <div class="prose"><p>재생을 누르면 여섯 장면이 차례로 그려지고 아래에 해설이 나옵니다. 장면 버튼으로 건너뛸 수 있습니다.</p></div>
-        <div class="stage">
-          <canvas id="film" aria-label="해설 애니메이션"></canvas>
-          <div class="ctl">
-            <button class="btn primary" id="play" type="button">재생</button>
-            <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="재생 위치">
-            <button class="btn" id="voice" type="button" aria-pressed="false" hidden>음성 해설</button>
-          </div>
-          <div class="scenes" id="scenes"></div>
-          <div class="cap"><b id="cap-title"></b><span id="cap-text"></span></div>
+  <section class="sec" id="s2" data-title="그림 설명" data-ico="play" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">2단계 · 쉬운 설명</div><h2>그림으로 따라가기</h2><div class="goal">재생을 누르면 여섯 장면이 차례로 그려지고 해설이 나옵니다. 약 1분입니다.</div></div></div>
+    <div class="sec-body">
+      <div class="stage">
+        <canvas id="film" aria-label="해설 애니메이션"></canvas>
+        <div class="ctl">
+          <button class="btn primary" id="play" type="button">재생</button>
+          <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="재생 위치">
+          <button class="btn" id="voice" type="button" aria-pressed="false" hidden>음성 해설</button>
         </div>
-        <div class="prose" style="margin-top:18px">
-          <p><b>버스에 서 있을 때를 떠올리면 됩니다.</b> 일정한 속도로 달릴 때는 손잡이를 잡지 않아도 서 있을 수 있습니다. 일정하게 가속할 때도 몸을 조금 기울이면 버팁니다. 휘청하는 순간은 가속이 <i>바뀔 때</i>, 곧 기사가 브레이크를 밟거나 떼는 순간입니다. 이 "가속도의 변화율"을 저크라고 부릅니다.</p>
-          <p>위치를 한 번 미분하면 속도, 두 번 미분하면 가속도, 세 번 미분하면 저크입니다. 가속도는 힘에 비례하므로, 저크가 크다는 것은 몸이나 타이어에 걸리는 힘이 급하게 바뀐다는 뜻입니다.</p>
-        </div>
-        <div class="mark"><button class="btn done-btn" data-s="s2" type="button">읽었음으로 표시</button></div>
-      </section>
+        <div class="scenes" id="scenes"></div>
+        <div class="cap"><b id="cap-title"></b><span id="cap-text"></span></div>
+      </div>
+      <div class="lede"><b style="color:var(--fg)">버스에 서 있을 때를 떠올리면 됩니다.</b> 언제 휘청할까요?</div>
+      <div class="tiles">
+        <div class="tile"><div class="h"><svg class="ico" data-i="flat"></svg>일정한 속도</div><p>손잡이를 안 잡아도 서 있을 수 있습니다. 몸에 걸리는 힘이 없습니다.</p></div>
+        <div class="tile"><div class="h"><svg class="ico" data-i="ramp"></svg>일정한 가속</div><p>몸을 조금 기울이면 버팁니다. 힘은 있지만 변하지 않습니다.</p></div>
+        <div class="tile a"><div class="h"><svg class="ico" data-i="zig"></svg>가속이 바뀔 때</div><p>브레이크를 밟거나 떼는 순간 휘청합니다. 이 <b>가속도의 변화율</b>이 저크입니다.</p></div>
+      </div>
+      <div class="flow" aria-label="미분 관계">
+        <div class="node tile y">위치<small>y</small></div><div class="arrow">미분</div>
+        <div class="node tile v">속도<small>y′</small></div><div class="arrow">미분</div>
+        <div class="node tile a">가속도<small>y″ · 힘에 비례</small></div><div class="arrow">미분</div>
+        <div class="node tile j">저크<small>y‴ · 힘이 바뀌는 빠르기</small></div>
+      </div>
+    </div>
+  </section>
 
-      <section class="sec" id="s3">
-        <div class="eyebrow">3 · 수식 세우기</div>
-        <h2>조건 여섯 개에서 식까지</h2>
-        <div class="prose"><p>한 단계씩 펼쳐 보세요. 수학Ⅱ의 다항함수 미분과 연립방정식만 씁니다.</p></div>
-        <details class="step" open><summary>1단계. 조건을 적는다</summary><div class="in">
-          <p>시간 <span class="m">0\le t\le T</span> 동안 옆으로 <span class="m">W</span> 만큼 옮깁니다. 처음과 끝에서 옆 방향으로 멈춰 있고 힘도 걸리지 않게 합니다.</p>
-          <div class="M">y(0)=0,\quad y'(0)=0,\quad y''(0)=0,\qquad y(T)=W,\quad y'(T)=0,\quad y''(T)=0</div>
+  <section class="sec" id="s3" data-title="수식 세우기" data-ico="sigma" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">3단계 · 수식 세우기</div><h2>조건 여섯 개에서 식까지</h2><div class="goal">수학Ⅱ의 다항함수 미분과 연립방정식만 씁니다. 다섯 걸음입니다.</div></div></div>
+    <div class="sec-body">
+      <div class="stepper" id="derive">
+        <div class="tabs" role="tablist"></div>
+        <div class="pane" data-t="조건 적기"><h3>조건을 적는다</h3>
+          <p>시간 <span class="m">0\le t\le T</span> 동안 옆으로 <span class="m">W</span> 만큼 옮깁니다. 처음과 끝에서 멈춰 있고 힘도 걸리지 않게 합니다.</p>
+          <div class="formula"><div class="M">y(0)=0,\ \ y'(0)=0,\ \ y''(0)=0,\qquad y(T)=W,\ \ y'(T)=0,\ \ y''(T)=0</div></div>
           <p>조건이 여섯 개이므로 계수가 여섯 개인 5차 다항식으로 놓습니다.</p>
-          <div class="M">y(t)=a_0+a_1t+a_2t^2+a_3t^3+a_4t^4+a_5t^5</div>
-        </div></details>
-        <details class="step"><summary>2단계. 출발 조건으로 계수 세 개를 지운다</summary><div class="in">
-          <p><span class="m">y(0)=a_0,\ y'(0)=a_1,\ y''(0)=2a_2</span> 이므로 출발 조건 세 개에서 <span class="m">a_0=a_1=a_2=0</span> 입니다. 남는 것은</p>
-          <div class="M">y(t)=a_3t^3+a_4t^4+a_5t^5</div>
-          <p>원본 주차 문서에 나오는 <span class="m">y(t)=c_5t^5+c_4t^4+c_3t^3</span> 이 바로 이 꼴입니다.</p>
-        </div></details>
-        <details class="step"><summary>3단계. 도착 조건으로 연립방정식을 세운다</summary><div class="in">
-          <p>계산을 간단히 하려고 <span class="m">b_3=a_3T^3,\ b_4=a_4T^4,\ b_5=a_5T^5</span> 로 둡니다. 도착 조건 세 개는</p>
-          <div class="M">\begin{aligned} b_3+b_4+b_5&amp;=W\\ 3b_3+4b_4+5b_5&amp;=0\\ 6b_3+12b_4+20b_5&amp;=0 \end{aligned}</div>
-        </div></details>
-        <details class="step"><summary>4단계. 푼다</summary><div class="in">
-          <p>셋째 식을 2로 나누면 <span class="m">3b_3+6b_4+10b_5=0</span>. 여기서 둘째 식을 빼면 <span class="m">2b_4+5b_5=0</span>, 곧 <span class="m">b_4=-\tfrac52b_5</span>.</p>
-          <p>둘째 식에 넣으면 <span class="m">3b_3-10b_5+5b_5=0</span>, 곧 <span class="m">b_3=\tfrac53b_5</span>.</p>
-          <p>첫째 식에 넣으면 <span class="m">\left(\tfrac53-\tfrac52+1\right)b_5=\tfrac16b_5=W</span>. 따라서</p>
-          <div class="M">b_5=6W,\qquad b_4=-15W,\qquad b_3=10W</div>
-        </div></details>
-        <details class="step"><summary>5단계. 정리하고 미분한다</summary><div class="in">
-          <p><span class="m">\tau=t/T</span> 로 쓰면 모양을 정하는 함수 <span class="m">s(\tau)</span> 하나로 정리됩니다.</p>
-          <div class="M">y(t)=W\,s(\tau),\qquad s(\tau)=10\tau^3-15\tau^4+6\tau^5</div>
-          <div class="M">\begin{aligned} s'(\tau)&amp;=30\tau^2(1-\tau)^2\\ s''(\tau)&amp;=60\tau(1-\tau)(1-2\tau)\\ s'''(\tau)&amp;=60\,(1-6\tau+6\tau^2) \end{aligned}</div>
-          <p><span class="m">t</span> 로 미분할 때마다 <span class="m">1/T</span> 이 하나씩 붙습니다. 그래서 속도는 <span class="m">W/T</span>, 가속도는 <span class="m">W/T^2</span>, 저크는 <span class="m">W/T^3</span> 에 비례합니다.</p>
-        </div></details>
-        <div class="tablewrap" style="margin-top:14px"><table>
-          <tr><th>양</th><th>가장 클 때</th><th>최댓값</th><th>구하는 법</th></tr>
-          <tr><td>속도 <span class="m">y'</span></td><td><span class="m">\tau=\tfrac12</span></td><td class="n">15/8 · W/T = 1.875 W/T</td><td><span class="m">s''=0</span> 의 가운데 근</td></tr>
-          <tr><td>가속도 <span class="m">y''</span></td><td><span class="m">\tau=\tfrac{3\mp\sqrt3}{6}\approx0.211,\ 0.789</span></td><td class="n">10/√3 · W/T² ≈ 5.774 W/T²</td><td><span class="m">s'''=0</span> 의 두 근</td></tr>
-          <tr><td>저크 <span class="m">y'''</span></td><td><span class="m">\tau=0,\ 1</span> (양 끝)</td><td class="n">60 W/T³</td><td>이차함수의 구간 끝값</td></tr>
-        </table></div>
-        <div class="aside">가속도의 극값을 찾으려면 가속도를 한 번 더 미분한 저크가 0이 되는 곳을 찾습니다. "도함수가 0인 곳이 극값 후보"라는 수학Ⅱ 내용을 한 단계 위 도함수에 그대로 쓰는 셈입니다.</div>
-        <div class="mark"><button class="btn done-btn" data-s="s3" type="button">읽었음으로 표시</button></div>
-      </section>
-
-      <section class="sec" id="s4">
-        <div class="eyebrow">4 · 만져 보기</div>
-        <h2>시간, 거리, 노면을 바꿔 보기</h2>
-        <div class="prose"><p>곡선 종류를 바꿔 네 그래프(위치, 속도, 가속도, 저크)가 어떻게 달라지는지 보세요. 아래 판정은 최대 옆 방향 가속도가 타이어 한계 안에 들어오는지를 알려 줍니다.</p></div>
-        <div class="lab">
-          <div class="plots"><canvas id="plots" aria-label="위치, 속도, 가속도, 저크 그래프"></canvas></div>
-          <div class="side">
-            <div class="row" id="curves" role="group" aria-label="곡선 종류"></div>
-            <div class="ctlrow"><div class="l"><label for="in-T">이동 시간 T</label><b id="o-T"></b></div><input id="in-T" type="range" min="1" max="5" step="0.05" value="2.5"></div>
-            <div class="ctlrow"><div class="l"><label for="in-W">옆으로 옮기는 거리 W</label><b id="o-W"></b></div><input id="in-W" type="range" min="1.5" max="5.5" step="0.1" value="3.5"></div>
-            <div class="ctlrow"><div class="l"><label for="in-mu">노면 마찰계수 μ</label><b id="o-mu"></b></div><input id="in-mu" type="range" min="0.2" max="1" step="0.05" value="0.8"></div>
-            <div class="ctlrow"><div class="l"><label for="in-ax">동시에 거는 제동 감속도</label><b id="o-ax"></b></div><input id="in-ax" type="range" min="0" max="7" step="0.25" value="0"></div>
-            <canvas id="fc" aria-label="마찰원"></canvas>
-            <div class="reads" id="reads"></div>
+          <div class="formula"><div class="M">y(t)=a_0+a_1t+a_2t^2+a_3t^3+a_4t^4+a_5t^5</div></div></div>
+        <div class="pane" data-t="출발 조건" hidden><h3>출발 조건으로 계수 세 개를 지운다</h3>
+          <p><span class="m">y(0)=a_0,\ \ y'(0)=a_1,\ \ y''(0)=2a_2</span> 이므로 <span class="m">a_0=a_1=a_2=0</span> 입니다.</p>
+          <div class="formula"><div class="M">y(t)=a_3t^3+a_4t^4+a_5t^5</div></div>
+          <div class="callout note"><svg class="ico" data-i="flag"></svg><div><div class="lab">원본 문서와 연결</div>주차 문서의 <span class="m">y(t)=c_5t^5+c_4t^4+c_3t^3</span> 이 바로 이 꼴입니다.</div></div></div>
+        <div class="pane" data-t="연립방정식" hidden><h3>도착 조건으로 연립방정식을 세운다</h3>
+          <p>계산을 간단히 하려고 <span class="m">b_3=a_3T^3,\ b_4=a_4T^4,\ b_5=a_5T^5</span> 로 둡니다.</p>
+          <div class="formula"><div class="M">\begin{aligned} b_3+b_4+b_5&amp;=W &amp;&amp;\text{(위치)}\\ 3b_3+4b_4+5b_5&amp;=0 &amp;&amp;\text{(속도)}\\ 6b_3+12b_4+20b_5&amp;=0 &amp;&amp;\text{(가속도)} \end{aligned}</div></div></div>
+        <div class="pane" data-t="풀기" hidden><h3>푼다</h3>
+          <div class="tiles">
+            <div class="tile"><div class="h"><span class="badge">가</span>셋째 ÷ 2 − 둘째</div><div class="M">2b_4+5b_5=0</div><p><span class="m">b_4=-\tfrac52b_5</span></p></div>
+            <div class="tile"><div class="h"><span class="badge">나</span>둘째에 대입</div><div class="M">3b_3-5b_5=0</div><p><span class="m">b_3=\tfrac53b_5</span></p></div>
+            <div class="tile"><div class="h"><span class="badge">다</span>첫째에 대입</div><div class="M">\left(\tfrac53-\tfrac52+1\right)b_5=W</div><p><span class="m">\tfrac16b_5=W</span></p></div>
           </div>
-        </div>
-        <div class="prose" style="margin-top:16px">
-          <p><b>마찰원</b>은 타이어가 낼 수 있는 힘의 한계를 원으로 나타낸 것입니다. 앞뒤 방향 가속도 <span class="m">a_x</span> 와 옆 방향 가속도 <span class="m">a_y</span> 를 합친 크기가 <span class="m">\mu g</span> 를 넘으면 미끄러집니다.</p>
-          <div class="M">a_x^2+a_y^2\le(\mu g)^2\quad\Longrightarrow\quad \frac{10}{\sqrt3}\frac{W}{T^2}\le\sqrt{(\mu g)^2-a_x^2}\quad\Longrightarrow\quad T\ge\sqrt{\frac{10\,W}{\sqrt3\,\sqrt{(\mu g)^2-a_x^2}}}</div>
-          <p>원본 문서의 식 <span class="m">\left(\tfrac{F_x}{\mu F_z}\right)^2+\left(\tfrac{m a_y}{\mu F_z}\right)^2\le1</span> 에 <span class="m">F_x=ma_x,\ F_z=mg</span> 를 넣으면 위와 같은 식입니다.</p>
-          <p class="aside">이 모델의 가정: 차를 한 점으로 보고, 앞으로 가는 속도는 일정하며, 차의 방향이 진행 방향에서 조금만 벗어난다고 봅니다. 실제 차량은 하중 이동, 조향 지연, 타이어 특성이 더해지므로 여기서 구한 시간은 "이보다 빨리는 안 된다"는 아래쪽 한계로 읽어야 합니다.</p>
-        </div>
-        <div class="mark"><button class="btn done-btn" data-s="s4" type="button">읽었음으로 표시</button></div>
-      </section>
+          <div class="formula"><div class="M">b_5=6W,\qquad b_4=-15W,\qquad b_3=10W</div></div></div>
+        <div class="pane" data-t="정리와 미분" hidden><h3>정리하고 미분한다</h3>
+          <div class="formula"><div class="cap">τ = t/T 로 쓰면 모양 함수 s 하나로 정리됩니다</div><div class="M">y(t)=W\,s(\tau),\qquad s(\tau)=10\tau^3-15\tau^4+6\tau^5</div></div>
+          <div class="tiles">
+            <div class="tile v"><div class="h">속도</div><div class="M">s'=30\tau^2(1-\tau)^2</div></div>
+            <div class="tile a"><div class="h">가속도</div><div class="M">s''=60\tau(1-\tau)(1-2\tau)</div></div>
+            <div class="tile j"><div class="h">저크</div><div class="M">s'''=60(1-6\tau+6\tau^2)</div></div>
+          </div>
+          <p class="small"><span class="m">t</span> 로 미분할 때마다 <span class="m">1/T</span> 이 하나씩 붙어, 속도는 <span class="m">W/T</span>, 가속도는 <span class="m">W/T^2</span>, 저크는 <span class="m">W/T^3</span> 에 비례합니다.</p></div>
+        <div class="nav"><button class="btn" type="button" data-d="-1">← 이전 걸음</button><button class="btn" type="button" data-d="1">다음 걸음 →</button></div>
+      </div>
+      <div class="tiles">
+        <div class="tile v"><div class="h">속도가 가장 클 때</div><div class="M">\tau=\frac12,\quad \frac{15}{8}\cdot\frac{W}{T}</div><p><span class="m">s''=0</span> 의 가운데 근</p></div>
+        <div class="tile a"><div class="h">가속도가 가장 클 때</div><div class="M">\tau=\frac{3\mp\sqrt3}{6},\quad \frac{10}{\sqrt3}\cdot\frac{W}{T^2}</div><p><span class="m">s'''=0</span> 의 두 근</p></div>
+        <div class="tile j"><div class="h">저크가 가장 클 때</div><div class="M">\tau=0,\ 1,\quad 60\cdot\frac{W}{T^3}</div><p>이차함수의 구간 끝값</p></div>
+      </div>
+      <div class="callout tip"><svg class="ico" data-i="bulb"></svg><div><div class="lab">수업 연결</div>가속도의 극값은 가속도를 한 번 더 미분한 저크가 0인 곳에서 찾습니다. "도함수가 0인 곳이 극값 후보"를 한 단계 위 도함수에 그대로 쓰는 셈입니다.</div></div>
+    </div>
+  </section>
 
-      <section class="sec" id="s5">
-        <div class="eyebrow">5 · 한 걸음 더 (교육과정 밖)</div>
-        <h2>왜 하필 5차인가</h2>
-        <div class="prose">
-          <p>조건 여섯 개를 맞추는 함수는 5차식 말고도 얼마든지 있습니다. 그런데 그 가운데 5차식이 특별한 이유가 있습니다. 이동 전체에 걸친 저크의 크기를 다음 양으로 잽니다.</p>
-          <div class="M">J[y]=\int_0^T\big(y'''(t)\big)^2\,dt</div>
-          <p><b>주장.</b> 여섯 조건을 만족하는 함수 가운데 <span class="m">J</span> 를 가장 작게 하는 것은 위에서 구한 5차식입니다.</p>
-          <p><b>이유.</b> 5차식을 <span class="m">y</span>, 같은 조건을 만족하는 다른 함수를 <span class="m">y+\eta</span> 라 합시다. 두 함수가 같은 조건을 만족하므로 차이 <span class="m">\eta</span> 는 양 끝에서 <span class="m">\eta=\eta'=\eta''=0</span> 입니다. 전개하면</p>
-          <div class="M">J[y+\eta]=J[y]+2\int_0^T y'''\eta'''\,dt+\int_0^T(\eta''')^2\,dt</div>
-          <p>가운데 항을 부분적분으로 세 번 옮깁니다. 그때마다 생기는 경계값은 <span class="m">\eta'',\ \eta',\ \eta</span> 가 양 끝에서 0이라 모두 사라집니다.</p>
-          <div class="M">\int_0^T y'''\eta'''\,dt=-\int_0^T y^{(4)}\eta''\,dt=\int_0^T y^{(5)}\eta'\,dt=-\int_0^T y^{(6)}\eta\,dt=0</div>
-          <p>마지막이 0인 까닭은 5차식을 여섯 번 미분하면 0이기 때문입니다. 따라서 <span class="m">J[y+\eta]=J[y]+\int(\eta''')^2\,dt\ge J[y]</span> 이고, 등호는 <span class="m">\eta</span> 가 0일 때뿐입니다.</p>
-          <p>최솟값도 직접 계산됩니다.</p>
-          <div class="M">J_{\min}=\frac{W^2}{T^5}\int_0^1 3600\,(1-6\tau+6\tau^2)^2\,d\tau=\frac{720\,W^2}{T^5}</div>
-          <p class="aside">함수 하나하나에 수를 대응시키고 그 수를 최소로 하는 함수를 찾는 이 방법을 변분법이라 합니다. 사람이 손을 뻗을 때의 궤적이 이 최소 저크 곡선과 잘 맞는다는 것을 보인 연구가 Flash와 Hogan(1985)이고, 로봇과 차량의 궤적 계획에서 5차식을 기본 도구로 쓰는 배경이 됩니다.</p>
+  <section class="sec" id="s4" data-title="만져 보기" data-ico="sliders" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">4단계 · 만져 보기</div><h2>시간, 거리, 노면을 바꿔 보기</h2><div class="goal">곡선 종류와 슬라이더를 바꿔 네 그래프와 한계 판정이 어떻게 달라지는지 봅니다.</div></div></div>
+    <div class="sec-body">
+      <div class="lab">
+        <div class="plots"><canvas id="plots" aria-label="위치, 속도, 가속도, 저크 그래프"></canvas></div>
+        <div class="side">
+          <div class="row" id="curves" role="group" aria-label="곡선 종류"></div>
+          <div class="ctlrow"><div class="l"><label for="in-T">이동 시간 T</label><b id="o-T"></b></div><input id="in-T" type="range" min="1" max="5" step="0.05" value="2.5"></div>
+          <div class="ctlrow"><div class="l"><label for="in-W">옆으로 옮기는 거리 W</label><b id="o-W"></b></div><input id="in-W" type="range" min="1.5" max="5.5" step="0.1" value="3.5"></div>
+          <div class="ctlrow"><div class="l"><label for="in-mu">노면 마찰계수 μ</label><b id="o-mu"></b></div><input id="in-mu" type="range" min="0.2" max="1" step="0.05" value="0.8"></div>
+          <div class="ctlrow"><div class="l"><label for="in-ax">동시에 거는 제동 감속도</label><b id="o-ax"></b></div><input id="in-ax" type="range" min="0" max="7" step="0.25" value="0"></div>
+          <canvas id="fc" aria-label="마찰원"></canvas>
+          <div class="reads" id="reads"></div>
         </div>
-        <div class="mark"><button class="btn done-btn" data-s="s5" type="button">읽었음으로 표시</button></div>
-      </section>
+      </div>
+      <div class="try" id="try">
+        <button type="button" data-set='{"k":"qui","T":1.5,"W":3.5,"mu":0.8,"ax":0}'><b>급하게 피하기</b><span>T를 1.5초로. 한계를 넘는지 보세요.</span></button>
+        <button type="button" data-set='{"k":"qui","T":2.5,"W":3.5,"mu":0.3,"ax":0}'><b>빗길</b><span>마찰계수 0.3. 최소 시간이 얼마나 늘어날까요?</span></button>
+        <button type="button" data-set='{"k":"qui","T":2,"W":3.5,"mu":0.8,"ax":6}'><b>브레이크와 함께</b><span>제동 6 m/s²를 걸면 옆으로 쓸 여유가 줄어듭니다.</span></button>
+        <button type="button" data-set='{"k":"cub","T":2.5,"W":3.5,"mu":0.8,"ax":0}'><b>3차식으로 바꾸기</b><span>가속도 그래프의 양 끝이 어떻게 되나요?</span></button>
+      </div>
+      <div class="callout note"><svg class="ico" data-i="ring"></svg><div><div class="lab">마찰원</div>타이어가 낼 수 있는 힘의 한계를 원으로 나타낸 것입니다. 앞뒤 가속도 <span class="m">a_x</span> 와 옆 가속도 <span class="m">a_y</span> 를 합친 크기가 <span class="m">\mu g</span> 를 넘으면 미끄러집니다.</div></div>
+      <div class="formula"><div class="cap">최소 회피 시간</div><div class="M">a_x^2+a_y^2\le(\mu g)^2\ \Longrightarrow\ \frac{10}{\sqrt3}\frac{W}{T^2}\le\sqrt{(\mu g)^2-a_x^2}\ \Longrightarrow\ T\ge\sqrt{\frac{10\,W}{\sqrt3\,\sqrt{(\mu g)^2-a_x^2}}}</div></div>
+      <div class="callout warn"><svg class="ico" data-i="alert"></svg><div><div class="lab">이 모델의 가정</div>차를 한 점으로 보고, 앞으로 가는 속도는 일정하며, 차의 방향이 진행 방향에서 조금만 벗어난다고 봅니다. 실제 차량은 하중 이동, 조향 지연, 타이어 특성이 더해지므로 여기서 구한 시간은 "이보다 빨리는 안 된다"는 아래쪽 한계입니다.</div></div>
+    </div>
+  </section>
 
-      <section class="sec" id="s6">
-        <div class="eyebrow">6 · 문답</div>
-        <h2>물을 만한 질문들</h2>
-        <details class="qa"><summary>가속도까지 0으로 맞출 필요가 있나요? 속도만 0이면 충분하지 않나요?</summary><div class="in">
-          <p>속도만 맞춘 3차식 <span class="m">s=3\tau^2-2\tau^3</span> 은 가속도가 <span class="m">s''=6-12\tau</span> 라서 출발 순간 0이 아니라 <span class="m">6W/T^2</span> 입니다. 출발 전에는 가속도가 0이었으므로 그 순간 가속도가 뛰고, 저크는 무한대가 됩니다. 실습 화면에서 3차를 골라 가속도 그래프의 양 끝을 보세요.</p>
-        </div></details>
-        <details class="qa"><summary>차수를 7차로 올리면 더 좋아지나요?</summary><div class="in">
-          <p>7차식 <span class="m">s=35\tau^4-84\tau^5+70\tau^6-20\tau^7</span> 은 저크까지 양 끝에서 0입니다. 대신 최대 가속도가 <span class="m">7.51\,W/T^2</span> 로 5차의 약 1.3배입니다. 끝을 더 부드럽게 만들수록 가운데에서 더 세게 움직여야 하므로, 타이어 한계가 문제인 상황에서는 오히려 불리합니다. 무엇을 줄이고 싶은지에 따라 고르는 것입니다.</p>
-        </div></details>
-        <details class="qa"><summary>실제 자율주행차가 정말 이 식으로 움직이나요?</summary><div class="in">
-          <p>5차 다항식은 궤적 계획에서 널리 쓰이는 기본 재료입니다. 다만 실제 시스템은 여러 후보 궤적을 만들어 장애물, 차량 한계, 승차감을 함께 따져 고르거나 수치 최적화를 씁니다. 특정 제조사가 어떤 식을 쓰는지는 이 강좌에서 확인하지 못했습니다(불확실).</p>
-        </div></details>
-        <details class="qa"><summary>학생에게 저크를 소개해도 교육과정에 맞나요?</summary><div class="in">
-          <p>수학Ⅱ는 위치를 미분해 속도, 속도를 미분해 가속도를 구하는 데까지 다룹니다. 저크는 용어만 새로울 뿐 "다항함수를 한 번 더 미분한다"는 계산이므로 탐구 주제로 무리가 없습니다. 변분법 증명(5번 절)은 교육과정 밖이므로 결과만 인용하게 하는 편이 맞습니다.</p>
-        </div></details>
-        <details class="qa"><summary>원본 문서의 수식은 믿어도 되나요?</summary><div class="in">
-          <p>이 주제에 한해서는 맞습니다. <span class="m">y=c_5t^5+c_4t^4+c_3t^3</span> 꼴, 가속도의 극값을 <span class="m">y'''=0</span> 으로 찾는다는 설명, 마찰원 조건 모두 위 유도와 일치합니다. 다만 문서에는 계수 값과 최댓값 수치가 빠져 있어 이 강좌에서 채웠습니다.</p>
-        </div></details>
-        <div class="mark"><button class="btn done-btn" data-s="s6" type="button">읽었음으로 표시</button></div>
-      </section>
+  <section class="sec" id="s5" data-title="왜 5차인가" data-ico="stairs" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">5단계 · 한 걸음 더</div><h2>왜 하필 5차인가</h2><div class="goal">조건 여섯 개를 맞추는 함수는 많습니다. 그 가운데 5차식이 특별한 이유입니다.</div></div></div>
+    <div class="sec-body">
+      <div class="callout beyond"><svg class="ico" data-i="stairs"></svg><div><div class="lab">교육과정 밖</div>부분적분만 알면 따라갈 수 있습니다. 학생에게는 결과만 인용하게 하는 편이 맞습니다.</div></div>
+      <div class="tiles">
+        <div class="tile"><div class="h"><span class="badge">1</span>무엇을 줄이나</div><p>이동 전체의 저크 크기를 이 값으로 잽니다.</p><div class="M">J[y]=\int_0^T (y''')^2\,dt</div></div>
+        <div class="tile"><div class="h"><span class="badge">2</span>다른 함수와 비교</div><p>5차식 <span class="m">y</span> 와 같은 조건의 다른 함수 <span class="m">y+\eta</span>. 차이 <span class="m">\eta</span> 는 양 끝에서 <span class="m">\eta=\eta'=\eta''=0</span>.</p></div>
+      </div>
+      <div class="formula"><div class="cap">3 · 전개하면 세 항이 나옵니다</div><div class="M">J[y+\eta]=J[y]+2\int_0^T y'''\eta'''\,dt+\int_0^T(\eta''')^2\,dt</div></div>
+      <div class="formula"><div class="cap">4 · 가운데 항을 부분적분으로 세 번 옮깁니다. 경계값은 모두 0이고, 5차식을 여섯 번 미분하면 0입니다</div><div class="M">\int_0^T y'''\eta'''\,dt=-\int_0^T y^{(4)}\eta''\,dt=\int_0^T y^{(5)}\eta'\,dt=-\int_0^T y^{(6)}\eta\,dt=0</div></div>
+      <div class="tiles">
+        <div class="tile j"><div class="h">결론</div><div class="M">J[y+\eta]=J[y]+\int(\eta''')^2dt\ \ge\ J[y]</div><p>어떤 다른 함수도 5차식보다 저크가 작을 수 없습니다.</p></div>
+        <div class="tile"><div class="h">최솟값</div><div class="M">J_{\min}=\frac{720\,W^2}{T^5}</div><p><span class="m">\int_0^1 3600(1-6\tau+6\tau^2)^2d\tau=720</span></p></div>
+      </div>
+      <div class="callout note"><svg class="ico" data-i="flag"></svg><div><div class="lab">배경</div>함수마다 수를 대응시키고 그 수를 최소로 하는 함수를 찾는 방법이 변분법입니다. 사람이 손을 뻗는 궤적이 이 최소 저크 곡선과 잘 맞는다는 것을 보인 연구가 Flash와 Hogan(1985)입니다.</div></div>
+    </div>
+  </section>
 
-      <section class="sec" id="s7">
-        <div class="eyebrow">7 · 사례 연결</div>
-        <h2>같은 구조가 나온 주차 사례</h2>
-        <div class="prose"><p>누르면 리서치 갤러리의 해당 사례가 열립니다.</p></div>
-        <div class="rel">
-          <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261111-math2-2" target="_blank" rel="noopener">11-11 · 자율주행 긴급 회피 조향과 타이어 마찰원 ↗</a>
-          <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261014-math2-2" target="_blank" rel="noopener">10-14 · 자율주행 차선 변경 최소 저크 궤적 ↗</a>
-          <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261007-math2-2" target="_blank" rel="noopener">10-07 · eVTOL 수직 이착륙 5차 다항 궤적 ↗</a>
-          <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20260923-math2-2" target="_blank" rel="noopener">09-23 · 협동 로봇과 엘리베이터의 S-curve 속도 제어 ↗</a>
-          <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20260819-math2-2" target="_blank" rel="noopener">08-19 · 로봇 관절 제어와 저크 최소화 ↗</a>
-          <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261111-math2-1" target="_blank" rel="noopener">11-11 · 고속철도 노즈 단면적의 3차 접합 (3차식이 쓰인 예) ↗</a>
-        </div>
-        <div class="prose" style="margin-top:12px"><p class="small">eVTOL 사례는 <span class="m">y</span> 를 고도 <span class="m">h</span>, <span class="m">W</span> 를 목표 고도 <span class="m">H</span> 로 바꾼 같은 식입니다. 고속철도 노즈 사례의 <span class="m">3x^2-2x^3</span> 은 문답에서 본 3차식입니다.</p></div>
-        <div class="mark"><button class="btn done-btn" data-s="s7" type="button">읽었음으로 표시</button></div>
-      </section>
+  <section class="sec" id="s6" data-title="문답" data-ico="chat" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">6단계 · 문답</div><h2>물을 만한 질문 다섯 개</h2><div class="goal">먼저 스스로 답해 보고 눌러서 확인하세요.</div></div></div>
+    <div class="sec-body">
+      <details class="qa"><summary><span class="qm">Q</span>가속도까지 0으로 맞출 필요가 있나요? 속도만 0이면 충분하지 않나요?</summary><div class="in"><p>속도만 맞춘 3차식 <span class="m">s=3\tau^2-2\tau^3</span> 은 가속도가 <span class="m">s''=6-12\tau</span> 라서 출발 순간 <span class="m">6W/T^2</span> 입니다. 출발 전에는 0이었으므로 가속도가 뛰고 저크는 무한대가 됩니다.</p><p>4단계에서 "3차식으로 바꾸기"를 눌러 가속도 그래프의 양 끝을 보세요.</p></div></details>
+      <details class="qa"><summary><span class="qm">Q</span>차수를 7차로 올리면 더 좋아지나요?</summary><div class="in"><p>7차식 <span class="m">s=35\tau^4-84\tau^5+70\tau^6-20\tau^7</span> 은 저크까지 양 끝에서 0입니다. 대신 최대 가속도가 <span class="m">7.51\,W/T^2</span> 로 5차의 약 1.3배입니다.</p><p>끝을 부드럽게 만들수록 가운데에서 더 세게 움직여야 합니다. 타이어 한계가 문제라면 오히려 불리합니다.</p></div></details>
+      <details class="qa"><summary><span class="qm">Q</span>실제 자율주행차가 정말 이 식으로 움직이나요?</summary><div class="in"><p>5차 다항식은 궤적 계획에서 널리 쓰이는 기본 재료입니다. 실제 시스템은 여러 후보 궤적을 만들어 장애물, 차량 한계, 승차감을 함께 따져 고르거나 수치 최적화를 씁니다.</p><p>특정 제조사가 어떤 식을 쓰는지는 이 강좌에서 확인하지 못했습니다(불확실).</p></div></details>
+      <details class="qa"><summary><span class="qm">Q</span>학생에게 저크를 소개해도 교육과정에 맞나요?</summary><div class="in"><p>수학Ⅱ는 위치 → 속도 → 가속도까지 다룹니다. 저크는 용어만 새로울 뿐 "다항함수를 한 번 더 미분한다"는 계산이라 탐구 주제로 무리가 없습니다.</p><p>5단계의 변분법 증명은 교육과정 밖이므로 결과만 인용하게 하세요.</p></div></details>
+      <details class="qa"><summary><span class="qm">Q</span>원본 문서의 수식은 믿어도 되나요?</summary><div class="in"><p>이 주제에 한해서는 맞습니다. 식의 꼴, 가속도 극값을 <span class="m">y'''=0</span> 으로 찾는다는 설명, 마찰원 조건 모두 이 강좌의 유도와 일치합니다.</p><p>문서에는 계수 값과 최댓값 수치가 빠져 있어 여기서 채웠습니다.</p></div></details>
+    </div>
+  </section>
 
-      <section class="sec" id="s8">
-        <div class="eyebrow">8 · 예시 자료</div>
-        <h2>수업에 바로 쓸 것들</h2>
-        <div class="ex"><h3>도입 발문 <button class="btn copy" data-copy="ex-intro" type="button">복사</button></h3>
-          <div id="ex-intro">엘리베이터가 출발할 때와 멈출 때, 몸이 "덜컥" 하는 느낌이 드는 순간은 정확히 언제일까요? 빠르게 움직일 때일까요, 속도가 바뀔 때일까요, 아니면 다른 무엇이 바뀔 때일까요?</div></div>
-        <div class="ex"><h3>문항 1 (교과서 수준) <button class="btn copy" data-copy="ex-p1" type="button">복사</button></h3>
-          <div id="ex-p1">함수 <span class="m">f(x)=10x^3-15x^4+6x^5\ (0\le x\le1)</span> 에 대하여 <span class="m">f'(x)</span> 의 최댓값과 그때의 <span class="m">x</span> 의 값을 구하시오.</div>
-          <details class="sol"><summary>풀이</summary><div class="in"><p><span class="m">f'(x)=30x^2(1-x)^2</span>. <span class="m">x(1-x)</span> 는 <span class="m">x=\tfrac12</span> 에서 최댓값 <span class="m">\tfrac14</span> 을 가지므로 <span class="m">f'(x)\le30\cdot\tfrac1{16}=\tfrac{15}{8}</span>. 답: <span class="m">x=\tfrac12</span> 에서 <span class="m">\tfrac{15}{8}</span>.</p></div></details></div>
-        <div class="ex"><h3>문항 2 (표준) <button class="btn copy" data-copy="ex-p2" type="button">복사</button></h3>
-          <div id="ex-p2">위 함수에 대하여 <span class="m">g(x)=f''(x)</span> 라 할 때, 구간 <span class="m">[0,1]</span> 에서 <span class="m">g(x)</span> 의 최댓값을 구하시오.</div>
-          <details class="sol"><summary>풀이</summary><div class="in"><p><span class="m">g(x)=60x-180x^2+120x^3</span>, <span class="m">g'(x)=60(1-6x+6x^2)=0</span> 에서 <span class="m">x=\tfrac{3\pm\sqrt3}{6}</span>. 작은 근에서 극대입니다. <span class="m">g(x)=60x(1-x)(1-2x)</span> 에 <span class="m">x(1-x)=\tfrac16,\ 1-2x=\tfrac{\sqrt3}{3}</span> 을 넣으면 <span class="m">g=60\cdot\tfrac16\cdot\tfrac{\sqrt3}{3}=\tfrac{10\sqrt3}{3}</span>. 구간 끝값은 0이므로 최댓값은 <span class="m">\tfrac{10\sqrt3}{3}</span>.</p></div></details></div>
-        <div class="ex"><h3>문항 3 (심화) <button class="btn copy" data-copy="ex-p3" type="button">복사</button></h3>
-          <div id="ex-p3">다항함수 <span class="m">f(x)=ax^5+bx^4+cx^3</span> 이 <span class="m">f(1)=1,\ f'(1)=0,\ f''(1)=0</span> 을 만족시킬 때, 상수 <span class="m">a,b,c</span> 의 값을 구하고, <span class="m">f'(x)\ge0</span> 임을 보이시오.</div>
-          <details class="sol"><summary>풀이</summary><div class="in"><p><span class="m">a+b+c=1,\ 5a+4b+3c=0,\ 20a+12b+6c=0</span>. 셋째에서 <span class="m">10a+6b+3c=0</span>, 둘째를 빼면 <span class="m">5a+2b=0</span>. 정리하면 <span class="m">a=6,\ b=-15,\ c=10</span>. <span class="m">f'(x)=30x^2(x-1)^2\ge0</span>.</p></div></details></div>
-        <div class="ex"><h3>문항 4 (실생활 적용) <button class="btn copy" data-copy="ex-p4" type="button">복사</button></h3>
-          <div id="ex-p4">자율주행차가 <span class="m">T</span> 초 동안 옆으로 3.5 m 옮기는 궤적을 <span class="m">y(t)=3.5\left(10\tau^3-15\tau^4+6\tau^5\right),\ \tau=t/T</span> 로 정했다. 옆 방향 가속도의 최댓값이 <span class="m">\tfrac{10}{\sqrt3}\cdot\tfrac{3.5}{T^2}</span> 일 때, 이 값이 <span class="m">7.84\ \mathrm{m/s^2}</span> (마찰계수 0.8인 노면의 한계) 이하가 되는 <span class="m">T</span> 의 최솟값을 소수 첫째 자리까지 구하시오.</div>
-          <details class="sol"><summary>풀이</summary><div class="in"><p><span class="m">T^2\ge\dfrac{10\times3.5}{\sqrt3\times7.84}\approx2.577</span> 이므로 <span class="m">T\ge1.605\ldots</span>. 답: 약 1.6초 (올림하면 1.7초부터 안전).</p></div></details></div>
-        <div class="ex"><h3>Python 코드 <button class="btn copy" data-copy="ex-py" type="button">복사</button></h3>
+  <section class="sec" id="s7" data-title="사례 연결" data-ico="link" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">7단계 · 사례 연결</div><h2>같은 구조가 나온 주차 사례</h2><div class="goal">누르면 리서치 갤러리의 해당 사례가 열립니다.</div></div></div>
+    <div class="sec-body">
+      <div class="cases">
+        <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261111-math2-2" target="_blank" rel="noopener"><span class="d">2026-11-11</span><span class="t">자율주행 긴급 회피 조향과 타이어 마찰원</span><span class="n">이 강좌의 출발점 ↗</span></a>
+        <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261014-math2-2" target="_blank" rel="noopener"><span class="d">2026-10-14</span><span class="t">자율주행 차선 변경 최소 저크 궤적</span><span class="n">같은 식, 승차감 관점 ↗</span></a>
+        <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261007-math2-2" target="_blank" rel="noopener"><span class="d">2026-10-07</span><span class="t">eVTOL 수직 이착륙 5차 다항 궤적</span><span class="n">y를 고도 h, W를 목표 고도 H로 ↗</span></a>
+        <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20260923-math2-2" target="_blank" rel="noopener"><span class="d">2026-09-23</span><span class="t">협동 로봇과 엘리베이터의 S-curve 속도 제어</span><span class="n">7차까지 올린 경우 ↗</span></a>
+        <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20260819-math2-2" target="_blank" rel="noopener"><span class="d">2026-08-19</span><span class="t">로봇 관절 제어와 저크 최소화</span><span class="n">관절 각도에 같은 식 ↗</span></a>
+        <a href="https://claude.ai/artifact/1rjAER4V2kaWB7wc1yXsRn#c20261111-math2-1" target="_blank" rel="noopener"><span class="d">2026-11-11</span><span class="t">고속철도 노즈 단면적의 3차 접합</span><span class="n">문답의 3차식 3x²−2x³ 이 쓰인 예 ↗</span></a>
+      </div>
+      <div class="callout tip"><svg class="ico" data-i="bulb"></svg><div><div class="lab">읽는 법</div>기술은 달라도 "처음과 끝의 값과 기울기를 맞춘 다항식"이라는 뼈대는 같습니다. 사례를 볼 때 조건이 몇 개인지부터 세어 보세요. 조건 4개면 3차, 6개면 5차, 8개면 7차입니다.</div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="s8" data-title="예시 자료" data-ico="box" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">8단계 · 예시 자료</div><h2>수업에 바로 쓸 것들</h2><div class="goal">탭을 골라 보고 복사하세요. 수식은 LaTeX로 복사됩니다.</div></div></div>
+    <div class="sec-body">
+      <div class="tabset" id="mats">
+        <div class="tabs" role="tablist"></div>
+        <div class="tp" data-t="도입 발문">
+          <div class="pcard"><div class="hd"><b>수업 첫 5분</b><button class="btn copy" data-copy="ex-intro" type="button">복사</button></div>
+            <div class="quote" id="ex-intro">엘리베이터가 출발할 때와 멈출 때, 몸이 "덜컥" 하는 순간은 정확히 언제일까요? 빠르게 움직일 때일까요, 속도가 바뀔 때일까요, 아니면 다른 무엇이 바뀔 때일까요?</div>
+            <p class="small">학생 답을 "속도", "가속도", "그 밖"으로 나눠 적은 뒤, 위치를 세 번 미분한 양을 소개합니다.</p></div></div>
+        <div class="tp" data-t="문항 4개" hidden><div class="plist">
+          <div class="pcard"><div class="hd"><span class="lv l1">교과서 수준</span><button class="btn copy" data-copy="ex-p1" type="button">복사</button></div>
+            <div id="ex-p1">함수 <span class="m">f(x)=10x^3-15x^4+6x^5\ (0\le x\le1)</span> 에 대하여 <span class="m">f'(x)</span> 의 최댓값과 그때의 <span class="m">x</span> 의 값을 구하시오.</div>
+            <button class="btn solbtn" type="button">풀이 보기</button><div class="sol" hidden><span class="m">f'(x)=30x^2(1-x)^2</span>. <span class="m">x(1-x)</span> 는 <span class="m">x=\tfrac12</span> 에서 최댓값 <span class="m">\tfrac14</span> 이므로 <span class="m">f'(x)\le\tfrac{30}{16}=\tfrac{15}{8}</span>. 답: <span class="m">x=\tfrac12</span> 에서 <span class="m">\tfrac{15}{8}</span>.</div></div>
+          <div class="pcard"><div class="hd"><span class="lv l2">표준</span><button class="btn copy" data-copy="ex-p2" type="button">복사</button></div>
+            <div id="ex-p2">위 함수에 대하여 <span class="m">g(x)=f''(x)</span> 라 할 때, 구간 <span class="m">[0,1]</span> 에서 <span class="m">g(x)</span> 의 최댓값을 구하시오.</div>
+            <button class="btn solbtn" type="button">풀이 보기</button><div class="sol" hidden><span class="m">g'(x)=60(1-6x+6x^2)=0</span> 에서 <span class="m">x=\tfrac{3\pm\sqrt3}{6}</span>. 작은 근에서 극대. <span class="m">g(x)=60x(1-x)(1-2x)</span> 에 <span class="m">x(1-x)=\tfrac16,\ 1-2x=\tfrac{\sqrt3}{3}</span> 을 넣으면 <span class="m">\tfrac{10\sqrt3}{3}</span>. 구간 끝값은 0이므로 최댓값은 <span class="m">\tfrac{10\sqrt3}{3}</span>.</div></div>
+          <div class="pcard"><div class="hd"><span class="lv l3">심화</span><button class="btn copy" data-copy="ex-p3" type="button">복사</button></div>
+            <div id="ex-p3">다항함수 <span class="m">f(x)=ax^5+bx^4+cx^3</span> 이 <span class="m">f(1)=1,\ f'(1)=0,\ f''(1)=0</span> 을 만족시킬 때, 상수 <span class="m">a,b,c</span> 의 값을 구하고 <span class="m">f'(x)\ge0</span> 임을 보이시오.</div>
+            <button class="btn solbtn" type="button">풀이 보기</button><div class="sol" hidden><span class="m">a+b+c=1,\ 5a+4b+3c=0,\ 20a+12b+6c=0</span>. 셋째에서 <span class="m">10a+6b+3c=0</span>, 둘째를 빼면 <span class="m">5a+2b=0</span>. 정리하면 <span class="m">a=6,\ b=-15,\ c=10</span>. <span class="m">f'(x)=30x^2(x-1)^2\ge0</span>.</div></div>
+          <div class="pcard"><div class="hd"><span class="lv l4">실생활 적용</span><button class="btn copy" data-copy="ex-p4" type="button">복사</button></div>
+            <div id="ex-p4">자율주행차가 <span class="m">T</span> 초 동안 옆으로 3.5 m 옮기는 궤적을 <span class="m">y(t)=3.5\left(10\tau^3-15\tau^4+6\tau^5\right),\ \tau=t/T</span> 로 정했다. 옆 방향 가속도의 최댓값이 <span class="m">\tfrac{10}{\sqrt3}\cdot\tfrac{3.5}{T^2}</span> 일 때, 이 값이 <span class="m">7.84\ \mathrm{m/s^2}</span> 이하가 되는 <span class="m">T</span> 의 최솟값을 소수 첫째 자리까지 구하시오.</div>
+            <button class="btn solbtn" type="button">풀이 보기</button><div class="sol" hidden><span class="m">T^2\ge\dfrac{10\times3.5}{\sqrt3\times7.84}\approx2.577</span> 이므로 <span class="m">T\ge1.605\ldots</span>. 답: 약 1.6초 (올림하면 1.7초부터 안전).</div></div>
+        </div></div>
+        <div class="tp" data-t="Python" hidden><div class="pcard"><div class="hd"><b>네 그래프와 검산</b><button class="btn copy" data-copy="ex-py" type="button">복사</button></div>
 <pre id="ex-py">import numpy as np
 import matplotlib.pyplot as plt
 
@@ -329,8 +388,8 @@ fig, ax = plt.subplots(4, 1, sharex=True, figsize=(6, 8))
 for k, (f, name) in enumerate([(y, "y (m)"), (v, "v (m/s)"), (a, "a (m/s²)"), (j, "jerk (m/s³)")]):
     ax[k].plot(t, f); ax[k].set_ylabel(name); ax[k].grid(alpha=.3)
 ax[2].axhline(mu*g, ls="--"); ax[2].axhline(-mu*g, ls="--")
-ax[3].set_xlabel("t (s)"); plt.tight_layout(); plt.show()</pre></div>
-        <div class="ex"><h3>GeoGebra 입력 순서 <button class="btn copy" data-copy="ex-gg" type="button">복사</button></h3>
+ax[3].set_xlabel("t (s)"); plt.tight_layout(); plt.show()</pre></div></div>
+        <div class="tp" data-t="GeoGebra" hidden><div class="pcard"><div class="hd"><b>입력창에 차례로 넣기</b><button class="btn copy" data-copy="ex-gg" type="button">복사</button></div>
 <pre id="ex-gg">W = Slider(1.5, 5.5, 0.1)
 T = Slider(1, 5, 0.05)
 s(x) = 10x^3 - 15x^4 + 6x^5
@@ -338,25 +397,26 @@ y(x) = If(0 &lt;= x &lt;= T, W s(x/T))
 v(x) = Derivative(y)
 a(x) = Derivative(v)
 j(x) = Derivative(a)
-Extremum(a, 0, T/2)</pre></div>
-        <div class="mark"><button class="btn done-btn" data-s="s8" type="button">읽었음으로 표시</button></div>
-      </section>
+Extremum(a, 0, T/2)</pre></div></div>
+      </div>
+    </div>
+  </section>
 
-      <section class="sec" id="s9">
-        <div class="eyebrow">9 · 이해 확인</div>
-        <h2>네 문제</h2>
-        <div id="quiz"></div>
-        <div class="prose" style="margin-top:22px">
-          <h2 style="font-size:17px;margin:0 0 8px">더 공부하기</h2>
-          <ul>
-            <li><b>구간별 함수의 매끄러운 접합</b>: 값만 이어진 것, 기울기까지 이어진 것, 곡률까지 이어진 것의 차이. 수학Ⅱ의 연속과 미분가능성이 설계 조건으로 쓰이는 대표 사례입니다.</li>
-            <li><b>변분법</b>: 5번 절의 논법을 일반화한 것. 최단 시간 곡선, 현수선 문제로 이어집니다.</li>
-            <li><b>원 논문</b>: Flash, T. &amp; Hogan, N. (1985). The coordination of arm movements: an experimentally confirmed mathematical model. <i>Journal of Neuroscience</i>, 5(7), 1688–1703. <a href="https://pubmed.ncbi.nlm.nih.gov/4020415/" target="_blank" rel="noopener">PubMed ↗</a> · <a href="https://www.jneurosci.org/content/jneuro/5/7/1688.full.pdf" target="_blank" rel="noopener">전문 PDF ↗</a></li>
-          </ul>
-        </div>
-        <div class="mark"><button class="btn done-btn" data-s="s9" type="button">읽었음으로 표시</button></div>
-      </section>
-    </article>
+  <section class="sec" id="s9" data-title="이해 확인" data-ico="check" hidden>
+    <div class="sec-head"><div class="num"></div><div><div class="k">9단계 · 이해 확인</div><h2>네 문제 <span class="score" id="score"></span></h2><div class="goal">답을 고르면 바로 해설이 나옵니다. 답은 저장됩니다.</div></div></div>
+    <div class="sec-body">
+      <div class="quizgrid" id="quiz"></div>
+      <div class="tiles">
+        <div class="tile"><div class="h"><svg class="ico" data-i="stairs"></svg>다음에 볼 것</div><p><b>구간별 함수의 매끄러운 접합.</b> 값만 이어진 것, 기울기까지, 곡률까지 이어진 것의 차이.</p></div>
+        <div class="tile"><div class="h"><svg class="ico" data-i="stairs"></svg>더 깊이</div><p><b>변분법.</b> 5단계 논법의 일반화. 최단 시간 곡선, 현수선 문제로 이어집니다.</p></div>
+        <div class="tile"><div class="h"><svg class="ico" data-i="link"></svg>원 논문</div><p>Flash &amp; Hogan (1985), <i>J. Neurosci.</i> 5(7), 1688–1703.<br><a href="https://pubmed.ncbi.nlm.nih.gov/4020415/" target="_blank" rel="noopener">PubMed ↗</a> · <a href="https://www.jneurosci.org/content/jneuro/5/7/1688.full.pdf" target="_blank" rel="noopener">전문 PDF ↗</a></p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-foot" id="foot">
+    <button class="btn big" id="prev" type="button">← 이전 단계</button>
+    <button class="btn big primary" id="next" type="button"></button>
   </div>
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -539,37 +599,85 @@ function drawLab() {
 }
 ['in-T', 'in-W', 'in-mu', 'in-ax'].forEach((id) => $('#' + id).addEventListener('input', drawLab));
 
+$$('#try button').forEach((b) => b.onclick = () => {
+  const s = JSON.parse(b.dataset.set); lab.curve = s.k; $('#in-T').value = s.T; $('#in-W').value = s.W; $('#in-mu').value = s.mu; $('#in-ax').value = s.ax; drawLab();
+  $('.lab').scrollIntoView({ block: 'nearest' });
+});
+
+/* ---------- 아이콘 ---------- */
+const ICO = {
+  list: 'M4 6h16M4 12h16M4 18h10', play: 'M8 5l11 7-11 7z', sigma: 'M17 5H7l6 7-6 7h10', sliders: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 4v6M8 14v6',
+  stairs: 'M4 20h5v-5h5v-5h5V5', chat: 'M4 5h16v11H9l-5 4z', link: 'M9 15l6-6M8 12l-2 2a3.5 3.5 0 005 5l2-2M16 12l2-2a3.5 3.5 0 00-5-5l-2 2',
+  box: 'M4 8l8-4 8 4v8l-8 4-8-4zM4 8l8 4 8-4M12 12v8', check: 'M5 12l5 5 9-10', flag: 'M6 21V4M6 5h11l-2 4 2 4H6', bulb: 'M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9V15h7v-1.1A6 6 0 0012 3z',
+  alert: 'M12 4l9 16H3zM12 10v5M12 18v.5', ring: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 12l5-3', flat: 'M3 12h18', ramp: 'M3 18L21 6', zig: 'M3 16h6l3-9 3 9h6',
+};
+const ico = (k) => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICO[k] || ICO.flag}"/></svg>`;
+$$('svg.ico[data-i]').forEach((n) => { n.outerHTML = ico(n.dataset.i); });
+
 /* ---------- 이해 확인 ---------- */
 const QUIZ = [
   { q: '5차 궤적에서 옆 방향 최대 속도는 평균 속도 W/T의 몇 배입니까?', o: ['1.5배', '1.875배', '2배', '5.77배'], a: 1, why: 's′(τ) = 30τ²(1−τ)² 는 τ = 1/2 에서 30/16 = 1.875 입니다.' },
-  { q: '옮기는 거리는 그대로 두고 이동 시간 T를 절반으로 줄이면 최대 가속도와 최대 저크는 각각 몇 배가 됩니까?', o: ['2배, 2배', '2배, 4배', '4배, 8배', '4배, 4배'], a: 2, why: '가속도는 W/T², 저크는 W/T³ 에 비례합니다. T가 절반이면 4배와 8배입니다.' },
+  { q: '거리는 그대로 두고 이동 시간 T를 절반으로 줄이면 최대 가속도와 최대 저크는 각각 몇 배가 됩니까?', o: ['2배, 2배', '2배, 4배', '4배, 8배', '4배, 4배'], a: 2, why: '가속도는 W/T², 저크는 W/T³ 에 비례합니다. T가 절반이면 4배와 8배입니다.' },
   { q: '3차식 s = 3τ² − 2τ³ 으로 옮기면 출발 순간 옆 방향 가속도는 얼마입니까?', o: ['0', '3W/T²', '6W/T²', '12W/T²'], a: 2, why: 's″ = 6 − 12τ 이므로 τ = 0 에서 6 입니다. 출발 전에는 0이었으므로 가속도가 뛰고 저크는 무한대가 됩니다.' },
   { q: 'W = 3.5 m, 마찰계수 0.8, 제동 없이 5차 궤적으로 피할 때 필요한 최소 시간에 가장 가까운 값은?', o: ['약 1.0초', '약 1.6초', '약 2.3초', '약 3.0초'], a: 1, why: 'T ≥ √(10·3.5 / (√3·0.8·9.8)) = √2.577 ≈ 1.61초입니다.' },
 ];
-const st = { done: {}, quiz: {}, db: null };
+const st = { done: {}, quiz: {}, db: null, cur: 0 };
 function renderQuiz() {
-  const host = $('#quiz'); host.textContent = '';
+  const host = $('#quiz'); host.textContent = ''; let right = 0, tried = 0;
   QUIZ.forEach((it, i) => {
     const box = document.createElement('div'); box.className = 'quiz'; const picked = st.quiz['q' + i];
+    if (picked != null) { tried++; if (picked === it.a) right++; }
     box.innerHTML = `<b>${i + 1}. ${it.q}</b><div class="opts"></div>` + (picked != null ? `<div class="why">${picked === it.a ? '맞습니다. ' : '다시 보세요. '}${it.why}</div>` : '');
     it.o.forEach((o, k) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = o;
       if (picked != null && k === it.a) b.className = 'right'; else if (picked === k) b.className = 'wrong';
       b.onclick = () => { st.quiz['q' + i] = k; save(); renderQuiz(); }; box.querySelector('.opts').append(b); });
     host.append(box);
   });
+  $('#score').textContent = tried ? `· ${right} / ${QUIZ.length}` : '';
 }
 
-/* ---------- 진도 ---------- */
-const SECS = $$('section.sec').map((s) => ({ id: s.id, title: s.querySelector('.eyebrow').textContent.split('·')[1].trim() }));
-SECS.forEach((s) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.s = s.id; b.innerHTML = '<span class="dot"></span>' + s.title;
-  b.onclick = () => $('#' + s.id).scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); $('nav.toc').append(b); });
-function renderProgress() {
-  const n = SECS.filter((s) => st.done[s.id]).length;
-  $('#prog-text').textContent = `진도 ${n} / ${SECS.length}`; $('#prog-bar').style.width = (n / SECS.length) * 100 + '%';
-  $$('nav.toc button').forEach((b) => b.classList.toggle('done', !!st.done[b.dataset.s]));
-  $$('.done-btn').forEach((b) => { const on = !!st.done[b.dataset.s]; b.textContent = on ? '읽었음 ✓ (누르면 취소)' : '읽었음으로 표시'; b.classList.toggle('primary', !on); });
+/* ---------- 걸음·탭 ---------- */
+function tabs(root, paneSel, onShow) {
+  const bar = root.querySelector('.tabs'), panes = $$(paneSel, root); let cur = 0;
+  const show = (i) => { cur = Math.max(0, Math.min(panes.length - 1, i)); panes.forEach((p, k) => { p.hidden = k !== cur; }); [...bar.children].forEach((b, k) => b.setAttribute('aria-selected', k === cur)); if (onShow) onShow(cur, panes.length); };
+  panes.forEach((p, i) => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.setAttribute('role', 'tab'); b.textContent = (root.classList.contains('stepper') ? (i + 1) + '. ' : '') + p.dataset.t; b.onclick = () => show(i); bar.append(b); });
+  show(0); return { show, step: (d) => show(cur + d) };
 }
-$$('.done-btn').forEach((b) => b.onclick = () => { st.done[b.dataset.s] = !st.done[b.dataset.s]; save(); renderProgress(); });
+const derive = tabs($('#derive'), '.pane', (i, n) => { const [p, q] = $$('#derive .nav .btn'); p.disabled = i === 0; q.disabled = i === n - 1; p.style.opacity = i === 0 ? .4 : 1; q.style.opacity = i === n - 1 ? .4 : 1; });
+$$('#derive .nav .btn').forEach((b) => b.onclick = () => derive.step(+b.dataset.d));
+tabs($('#mats'), '.tp');
+$$('.solbtn').forEach((b) => b.onclick = () => { const s = b.nextElementSibling; s.hidden = !s.hidden; b.textContent = s.hidden ? '풀이 보기' : '풀이 접기'; });
+
+/* ---------- 단계 이동과 진도 ---------- */
+const SECS = $$('section.sec');
+SECS.forEach((s, i) => {
+  s.querySelector('.num').innerHTML = ico(s.dataset.ico);
+  const b = document.createElement('button'); b.type = 'button'; b.innerHTML = ico(s.dataset.ico) + `<span>${i + 1}. ${s.dataset.title}</span>`; b.onclick = () => go(i); $('#steps').append(b);
+});
+function go(i, quiet) {
+  st.cur = Math.max(0, Math.min(SECS.length - 1, i));
+  SECS.forEach((s, k) => { s.hidden = k !== st.cur; });
+  if (film.playing && SECS[st.cur].id !== 's2') setPlaying(false);
+  if (SECS[st.cur].id === 's2') drawFilm(); if (SECS[st.cur].id === 's4') drawLab();
+  try { localStorage.setItem('am-study-step', String(st.cur)); } catch (e) {}
+  renderProgress();
+  if (!quiet) { window.scrollTo({ top: 0 }); const b = $('#steps').children[st.cur]; if (b.scrollIntoView) b.scrollIntoView({ block: 'nearest', inline: 'center' }); }
+}
+function renderProgress() {
+  const n = SECS.filter((s) => st.done[s.id]).length, last = st.cur === SECS.length - 1, id = SECS[st.cur].id;
+  $('#prog-text').textContent = `${n} / ${SECS.length}`; $('#prog-bar').style.width = (n / SECS.length) * 100 + '%';
+  [...$('#steps').children].forEach((b, k) => { b.classList.toggle('done', !!st.done[SECS[k].id]); k === st.cur ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'); });
+  $('#prev').style.visibility = st.cur ? 'visible' : 'hidden';
+  $('#next').textContent = st.done[id] ? (last ? '처음으로 돌아가기' : '다음 단계 →') : (last ? '강좌 마치기 ✓' : '이해했음, 다음 단계 →');
+}
+$('#prev').onclick = () => go(st.cur - 1);
+$('#next').onclick = () => {
+  const id = SECS[st.cur].id, last = st.cur === SECS.length - 1;
+  if (!st.done[id]) { st.done[id] = true; save(); if (last) toast('1강을 마쳤습니다'); }
+  go(last ? (SECS.every((s) => st.done[s.id]) ? 0 : st.cur) : st.cur + 1);
+};
+document.addEventListener('keydown', (e) => { if (/INPUT|TEXTAREA|BUTTON|SUMMARY/.test(document.activeElement.tagName)) return; if (e.key === 'ArrowRight') go(st.cur + 1); if (e.key === 'ArrowLeft') go(st.cur - 1); });
+
 let chain = Promise.resolve();
 function save() {
   const body = { done: { ...st.done }, quiz: { ...st.quiz }, at: Date.now() };
@@ -590,8 +698,9 @@ $$('.copy').forEach((b) => b.onclick = async () => {
 
 /* 시작 */
 async function boot() {
-  drawFilm(); drawLab(); renderQuiz(); renderProgress();
-  try { const loc = JSON.parse(localStorage.getItem('am-study-' + LESSON) || 'null'); if (loc) { st.done = loc.done || {}; st.quiz = loc.quiz || {}; renderQuiz(); renderProgress(); } } catch (e) {}
+  let start = 0;
+  try { const loc = JSON.parse(localStorage.getItem('am-study-' + LESSON) || 'null'); if (loc) { st.done = loc.done || {}; st.quiz = loc.quiz || {}; } start = +localStorage.getItem('am-study-step') || 0; } catch (e) {}
+  renderQuiz(); go(start, true);
   const use = window.claude && window.claude.use ? (n) => window.claude.use(n).catch(() => null) : async () => null;
   use('tts').then((t) => { if (t) { film.tts = t; $('#voice').hidden = false; } });
   const db = await use('db'); st.db = db;
@@ -599,7 +708,7 @@ async function boot() {
   try { const snap = await db.doc('progress/' + LESSON).get(); if (snap.exists) { const d = snap.data(); st.done = d.done || {}; st.quiz = d.quiz || {}; renderQuiz(); renderProgress(); } }
   catch (e) { note('저장된 진도를 불러오지 못했습니다.'); }
 }
-let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { drawFilm(); drawLab(); }, 120); });
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (SECS[st.cur].id === 's2') drawFilm(); if (SECS[st.cur].id === 's4') drawLab(); }, 120); });
 boot();
 })();
 </script>
