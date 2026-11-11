@@ -1,0 +1,694 @@
+<title>aftermath 수학 리서치</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Serif:wght@700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* 배치: 위에 고정된 얇은 머리줄(워드마크 + 네 화면 전환), 아래는 한 열 본문. 사례 상세는 본문 위에 뜨는 넓은 패널. */
+:root {
+  color-scheme: dark;
+  --bg: #0A0B0A; --panel: #121413; --raised: #181B19; --line: #2A2E2B; --line-soft: #1F2321;
+  --fg: #F2F3EF; --muted: #A3A9A1; --faint: #737A72;
+  --act: #D6FF3F; --act-ink: #0A0B0A;
+  --s-math1: #46E8FF; --s-math2: #FFD93D; --s-calc: #B98BFF; --s-aimath: #FF8A5C;
+  --ok: #39FF7A; --warn: #FFB454;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --serif: "IBM Plex Serif", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--fg); }
+body { font-family: var(--sans); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--s-math1); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line-soft); }
+header.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding-block: 10px; }
+.sig { font-weight: 700; font-size: 22px; letter-spacing: -0.02em; white-space: nowrap; line-height: 1; }
+.sig .af { font-weight: 500; color: var(--muted); }
+.sig .m { font-family: var(--serif); color: var(--act); }
+.sig .q { display: inline-block; width: .32em; height: .44em; background: var(--act); margin-left: .14em; border-radius: 1px; }
+nav.views { display: flex; gap: 2px; flex-wrap: wrap; }
+nav.views a { padding: 6px 12px; border-radius: 8px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; }
+nav.views a:hover { color: var(--fg); background: var(--raised); }
+nav.views a[aria-current="page"] { color: var(--fg); background: var(--raised); box-shadow: inset 0 -2px 0 var(--act); }
+nav.views .n { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-left: 4px; }
+.top .spacer { flex: 1; }
+.linkbtn { background: none; border: 0; color: var(--muted); padding: 6px 8px; border-radius: 8px; font-size: 13px; }
+.linkbtn:hover { color: var(--fg); background: var(--raised); }
+
+main { padding-block: 24px 64px; }
+h1 { font-size: 24px; line-height: 1.3; margin: 0 0 4px; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-size: 17px; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 0 0 20px; max-width: 65ch; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.note { color: var(--muted); font-size: 13px; }
+.banner { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 12px 14px; color: var(--muted); margin-bottom: 16px; }
+
+.btn { border: 1px solid var(--line); background: var(--raised); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-weight: 500; }
+.btn:hover { border-color: var(--faint); }
+.btn.primary { background: var(--act); color: var(--act-ink); border-color: var(--act); font-weight: 700; }
+.btn.primary:hover { filter: brightness(.94); }
+.btn.small { padding: 4px 9px; font-size: 12px; }
+
+.filters { display: grid; gap: 10px; margin-bottom: 14px; }
+.search { position: relative; }
+.search input { width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; font-size: 15px; }
+.search input::placeholder { color: var(--faint); }
+.chiprow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chiprow .lab { font-size: 12px; color: var(--faint); width: 3.2em; flex: none; }
+.chip { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 11px; font-size: 13px; color: var(--muted); }
+.chip:hover { color: var(--fg); border-color: var(--faint); }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 600; }
+.chip .n { font-family: var(--mono); font-size: 11px; opacity: .7; margin-left: 4px; }
+.resultbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; margin: 6px 0 12px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+.card { display: flex; flex-direction: column; text-align: left; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; overflow: hidden; padding: 0; min-width: 0; transition: border-color .15s, transform .15s; }
+.card:hover { border-color: var(--faint); transform: translateY(-2px); }
+.card canvas { display: block; width: 100%; height: 84px; background: #070807; border-bottom: 1px solid var(--line-soft); }
+.card .body { padding: 12px 14px 14px; display: grid; gap: 8px; min-width: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+.subj { font-weight: 700; font-size: 11px; padding: 1px 7px; border-radius: 4px; border: 1px solid currentColor; }
+.subj.math1 { color: var(--s-math1); } .subj.math2 { color: var(--s-math2); } .subj.calc { color: var(--s-calc); } .subj.aimath { color: var(--s-aimath); }
+.card .tech { font-weight: 600; font-size: 14.5px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card .fx { font-size: 13px; color: var(--muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-height: 1.6em; }
+.status { font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--raised); color: var(--muted); }
+.status.keep { color: var(--warn); } .status.deep { color: var(--s-math1); } .status.done { color: var(--ok); } .status.skip { color: var(--faint); text-decoration: line-through; }
+.empty { border: 1px dashed var(--line); border-radius: 12px; padding: 36px 20px; text-align: center; color: var(--muted); }
+
+.weekhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 26px 0 10px; }
+.weekhead:first-of-type { margin-top: 8px; }
+.tri { display: grid; gap: 10px; }
+.tri .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px 14px; }
+.tri .row .open { background: none; border: 0; padding: 0; text-align: left; min-width: 0; display: grid; gap: 4px; }
+.tri .row .open:hover .tech { text-decoration: underline; }
+.tri .tech { font-weight: 600; }
+.tri .fx { color: var(--muted); font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tri .acts { display: flex; gap: 6px; }
+@media (max-width: 560px) { .tri .row { grid-template-columns: 1fr; } }
+
+.topic, .week { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+.topic summary, .week summary { cursor: pointer; list-style: none; display: grid; gap: 4px; }
+.topic summary::-webkit-details-marker, .week summary::-webkit-details-marker { display: none; }
+.topic .t { font-weight: 600; }
+.topic .inner, .week .inner { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line-soft); display: grid; gap: 10px; max-width: 78ch; }
+.topic ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+.week ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.md p { margin: 0 0 8px; } .md h4 { margin: 14px 0 6px; font-size: 14.5px; } .md .li { position: relative; margin: 3px 0; }
+.md .li::before { content: "·"; position: absolute; left: -0.9em; color: var(--faint); }
+
+dialog#detail { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 14px; padding: 0; width: min(1080px, calc(100vw - 24px)); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); }
+dialog::backdrop { background: rgba(4,5,4,.78); }
+.d-head { position: sticky; top: 0; background: var(--panel); border-bottom: 1px solid var(--line); padding: 14px 18px; display: grid; grid-template-columns: 1fr auto; gap: 10px; z-index: 2; }
+.d-head h2 { font-size: 18px; line-height: 1.4; }
+.d-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 22px; padding: 18px; }
+@media (max-width: 860px) { .d-body { grid-template-columns: minmax(0, 1fr); } }
+.d-body section { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.d-body h3 { font-size: 12px; letter-spacing: .06em; color: var(--faint); margin: 8px 0 0; font-weight: 600; }
+.points { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 70ch; }
+.mathblock { overflow-x: auto; padding: 6px 0; }
+math { font-size: 1.05em; }
+.fig { border: 1px solid var(--line-soft); border-radius: 10px; background: #070807; overflow: hidden; }
+.fig canvas { display: block; width: 100%; height: 190px; }
+.fig .ctl { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 8px 12px; border-top: 1px solid var(--line-soft); font-size: 12.5px; color: var(--muted); }
+.fig input[type=range] { width: 100%; accent-color: var(--fg); }
+.fig .cap { padding: 0 12px 10px; font-size: 12.5px; color: var(--muted); }
+.tool { border: 1px solid var(--line-soft); border-radius: 10px; background: var(--panel); padding: 12px; display: grid; gap: 10px; }
+.tool .hd { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; }
+.tool .hd b { font-size: 14px; }
+.tool textarea { width: 100%; min-height: 150px; resize: vertical; background: #070807; border: 1px solid var(--line-soft); border-radius: 8px; padding: 10px; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; }
+.tool input[type=url], .tool input[type=text] { width: 100%; background: #070807; border: 1px solid var(--line-soft); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.rel { display: grid; gap: 6px; }
+.rel button { text-align: left; background: none; border: 0; padding: 4px 0; color: var(--fg); font-size: 13.5px; }
+.rel button:hover { text-decoration: underline; }
+.rel .w { color: var(--faint); font-family: var(--mono); font-size: 11.5px; margin-right: 6px; }
+#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 999px; z-index: 50; pointer-events: none; opacity: 0; transition: opacity .2s; }
+#toast.on { opacity: 1; }
+dialog#settings { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 14px; padding: 18px; width: min(620px, calc(100vw - 24px)); }
+dialog#settings textarea { width: 100%; min-height: 160px; background: #070807; border: 1px solid var(--line-soft); border-radius: 8px; padding: 10px; font-size: 13.5px; line-height: 1.6; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <span class="sig"><span class="af">after</span><span class="m">math</span><span class="q"></span></span>
+    <nav class="views" aria-label="화면">
+      <a href="#triage" data-view="triage">고르기<span class="n" id="n-triage"></span></a>
+      <a href="#cases" data-view="cases">사례<span class="n" id="n-cases"></span></a>
+      <a href="#topics" data-view="topics">세특 주제<span class="n" id="n-topics"></span></a>
+      <a href="#weeks" data-view="weeks">주차별<span class="n" id="n-weeks"></span></a>
+    </nav>
+    <span class="spacer"></span>
+    <button class="linkbtn" id="open-settings" type="button">프롬프트 고정 조건</button>
+    <a class="linkbtn" href="https://drive.google.com/drive/folders/12sIE0fL_yMVWLroq6d3NJNo2lV508wfj" target="_blank" rel="noopener">드라이브 폴더 ↗</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="sysnote" class="banner" hidden></div>
+
+  <section id="v-triage" hidden>
+    <h1>이번 주 불씨 고르기</h1>
+    <p class="lede">아직 분류하지 않은 사례입니다. 더 파 볼 만하면 남기고, 아니면 넘기세요. 넘긴 사례도 사례 화면에서 다시 찾을 수 있습니다.</p>
+    <div id="triage-list"></div>
+  </section>
+
+  <section id="v-cases" hidden>
+    <div class="filters">
+      <div class="search"><input id="q" type="search" placeholder="단원, 기술, 수식으로 찾기  ( / )" autocomplete="off" aria-label="사례 검색"></div>
+      <div class="chiprow" id="f-subject"><span class="lab">과목</span></div>
+      <div class="chiprow" id="f-theme"><span class="lab">분야</span></div>
+      <div class="chiprow" id="f-visual"><span class="lab">함수</span></div>
+      <div class="chiprow" id="f-status"><span class="lab">상태</span></div>
+    </div>
+    <div class="resultbar"><span id="case-count"></span><button class="linkbtn" id="reset-filters" type="button" hidden>조건 지우기</button></div>
+    <div class="grid" id="case-grid"></div>
+  </section>
+
+  <section id="v-topics" hidden>
+    <h1>세특 탐구 주제</h1>
+    <p class="lede">주차마다 네 개씩 정리된 탐구 주제입니다. 펼치면 목표와 활동 3단계가 나옵니다.</p>
+    <div class="filters"><div class="search"><input id="tq" type="search" placeholder="과목, 진로, 키워드로 찾기" autocomplete="off" aria-label="세특 주제 검색"></div></div>
+    <div class="resultbar"><span id="topic-count"></span></div>
+    <div id="topic-list"></div>
+  </section>
+
+  <section id="v-weeks" hidden>
+    <h1>주차별 문서</h1>
+    <p class="lede">원본 문서 순서대로 본 요약입니다. 출제 경향 분석과 참고 링크는 여기에 있습니다.</p>
+    <div id="week-list"></div>
+  </section>
+</main>
+
+<dialog id="detail" aria-labelledby="d-title">
+  <div class="d-head">
+    <div>
+      <div class="meta" id="d-meta"></div>
+      <h2 id="d-title"></h2>
+    </div>
+    <button class="btn" id="d-close" type="button">닫기</button>
+  </div>
+  <div class="d-body">
+    <section>
+      <h3>내용</h3>
+      <ul class="points md" id="d-points"></ul>
+      <h3>함수 모양 살펴보기</h3>
+      <div class="fig">
+        <canvas id="d-canvas"></canvas>
+        <div class="ctl"><label for="d-range" id="d-plabel"></label><input id="d-range" type="range" min="0" max="1" step="0.01"><span class="mono" id="d-read"></span></div>
+        <div class="cap" id="d-cap"></div>
+      </div>
+      <h3>같은 구조, 다른 기술</h3>
+      <div class="rel" id="d-related"></div>
+      <h3>같은 주차의 세특 주제</h3>
+      <div class="rel" id="d-topics"></div>
+    </section>
+    <section>
+      <h3>상태</h3>
+      <div class="seg" id="d-status"></div>
+      <h3>심화 조사</h3>
+      <div class="tool">
+        <div class="hd"><b>Claude에 붙여 넣을 프롬프트</b><button class="btn primary" id="copy-prompt" type="button">프롬프트 복사</button></div>
+        <div class="seg" id="d-purpose"></div>
+        <textarea id="d-prompt" spellcheck="false" aria-label="프롬프트 미리보기"></textarea>
+      </div>
+      <div class="tool">
+        <div class="hd"><b>NotebookLM 질문 목록</b><button class="btn" id="copy-nlm" type="button">질문 복사</button></div>
+        <div class="note">원본 주차 문서와 Claude가 찾아 준 출처를 소스로 넣은 뒤 이 질문을 순서대로 물어보세요.</div>
+        <div class="note"><a id="d-doc" target="_blank" rel="noopener">원본 주차 문서 열기 ↗</a></div>
+      </div>
+      <div class="tool">
+        <div class="hd"><b>결과 저장</b><button class="btn" id="copy-name" type="button">문서 제목 복사</button></div>
+        <div class="note mono" id="d-name"></div>
+        <label class="note" for="d-link">드라이브에 저장한 결과 문서 주소</label>
+        <input id="d-link" type="url" placeholder="https://docs.google.com/…">
+        <div class="note" id="d-linkopen"></div>
+      </div>
+      <div class="tool">
+        <div class="hd"><b>메모</b><span class="note" id="d-saved"></span></div>
+        <textarea id="d-memo" style="min-height:90px;font-family:var(--sans);font-size:14px" placeholder="떠오른 생각, 다음에 확인할 것"></textarea>
+      </div>
+    </section>
+  </div>
+</dialog>
+
+<dialog id="settings" aria-labelledby="s-title">
+  <h2 id="s-title">프롬프트 고정 조건</h2>
+  <p class="note">모든 Claude 프롬프트 맨 앞에 붙는 문장입니다. 한 번 고쳐 두면 모든 기기에서 같이 쓰입니다.</p>
+  <textarea id="s-context"></textarea>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+    <button class="btn" id="s-cancel" type="button">취소</button>
+    <button class="btn primary" id="s-save" type="button">저장</button>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v; else if (k === 'html') n.innerHTML = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) n.append(k);
+  return n;
+};
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const SUBJ = { math1: '수학Ⅰ', math2: '수학Ⅱ', calc: '미적분', aimath: '인공지능 수학' };
+const SUBJ_COLOR = { math1: '#46E8FF', math2: '#FFD93D', calc: '#B98BFF', aimath: '#FF8A5C' };
+const THEME = { ai: 'AI·반도체', mobility: '모빌리티·로봇', aerospace: '우주항공', energy: '에너지', quantum: '양자', bio: '의료·바이오', fin: '금융·보안' };
+const STATUS = { new: '불씨', keep: '관심', deep: '심화 중', done: '완료', skip: '넘김' };
+const DEFAULT_CONTEXT = '나는 고등학교 수학 교사다. 아래 사례를 수업과 세특 지도에 쓰기 전에 더 깊이 이해하려 한다.\n답은 한국어로 하고, 고교 교육과정(수학Ⅰ, 수학Ⅱ, 미적분, 인공지능 수학) 범위를 기준으로 설명해 줘. 범위를 넘는 부분은 따로 표시해 줘.\n확실하지 않은 내용은 "불확실"이라고 밝히고 추측하지 마.';
+
+/* ---------- 수식과 간단한 마크다운 ---------- */
+function tex(src, display) {
+  if (!window.katex) return '<code>' + esc(src) + '</code>';
+  try { return katex.renderToString(src, { output: 'mathml', throwOnError: false, displayMode: !!display }); }
+  catch (e) { return '<code>' + esc(src) + '</code>'; }
+}
+function inline(s) {
+  const out = []; let last = 0;
+  const re = /\$\$([^$]+)\$\$|\$([^$\n]+)\$/g; let m;
+  const plain = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  while ((m = re.exec(s))) {
+    out.push(plain(s.slice(last, m.index)));
+    out.push(m[1] ? '<div class="mathblock">' + tex(m[1], true) + '</div>' : tex(m[2], false));
+    last = re.lastIndex;
+  }
+  out.push(plain(s.slice(last)));
+  return out.join('');
+}
+function block(md) {
+  return md.split('\n').map((line) => {
+    if (!line.trim()) return '';
+    let m;
+    if ((m = line.match(/^#{2,4}\s+(.*)/))) return '<h4>' + inline(m[1]) + '</h4>';
+    if ((m = line.match(/^(\s*)(?:[-*]|\d+\.)\s+(.*)/))) return '<div class="li" style="margin-left:' + (1 + Math.floor(m[1].length / 2) * 1.1) + 'em">' + inline(m[2]) + '</div>';
+    return '<p>' + inline(line.trim()) + '</p>';
+  }).join('');
+}
+
+/* ---------- 함수 유형별 그림 ---------- */
+const VIS = {
+  loglin:    { label: '지수·로그', p: ['성장률 k', 0.45], cap: '지수로 커지는 양이 한계선에 닿는 시점은 로그로 구합니다. k가 커지면 그 시점이 빨라집니다.' },
+  expgrow:   { label: '지수 성장', p: ['성장률 k', 0.45], cap: '지수로 커지는 양이 한계선에 닿는 시점은 로그로 구합니다.' },
+  expdecay:  { label: '지수 감쇠', p: ['감쇠율 k', 0.4], cap: '같은 시간마다 같은 비율로 줄어듭니다. 점은 반감기입니다.' },
+  sine:      { label: '삼각함수 합성', p: ['위상차 φ', 0.85], cap: '두 파동의 합입니다. 위상차가 π에 가까울수록 서로 지워집니다.' },
+  damped:    { label: '감쇠 진동', p: ['감쇠 α', 0.35], cap: '지수 감쇠와 삼각함수의 곱입니다. 첫 봉우리가 최대 초과량입니다.' },
+  sequence:  { label: '수열·점화식', p: ['공비 r', 0.55], cap: '항이 이전 항에 따라 정해집니다. 공비가 1을 넘으면 발산합니다.' },
+  junction:  { label: '극한·연속', p: ['오른쪽 기울기', 0.5], cap: '두 식이 만나는 점입니다. 값은 이어져 있어도 기울기가 다르면 꺾입니다.' },
+  area:      { label: '정적분', p: ['적분 구간 끝', 0.6], cap: '곡선 아래 넓이가 누적량입니다.' },
+  scurve:    { label: '다항 S곡선', p: ['전환 시간 T', 0.5], cap: '5차 다항 궤적과 그 2계 도함수(가속도)입니다. 시간을 줄이면 가속도가 커집니다.' },
+  saturation:{ label: '포화 곡선', p: ['가파르기', 0.5], cap: '처음에는 빠르게 늘다가 한계에 가까워지며 느려집니다.' },
+  matrix:    { label: '벡터·행렬', p: ['사잇각 θ', 0.25], cap: '두 벡터의 내적을 크기로 나누면 코사인 유사도입니다.' },
+  extremum:  { label: '도함수·극값', p: ['접점 위치', 0.3], cap: '접선 기울기가 0이 되는 곳이 극값입니다.' },
+};
+function drawVis(cv, type, color, p, mini) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = cv.clientWidth || 300, h = cv.clientHeight || 84;
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, w, h);
+  const pad = mini ? 10 : 22, pw = w - pad * 2, ph = h - pad * 2;
+  const X = (u) => pad + u * pw, Y = (v) => pad + (1 - v) * ph;
+  c.save(); c.beginPath(); c.rect(0, 2, w, h - 4); c.clip();
+  c.strokeStyle = 'rgba(255,255,255,.06)'; c.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) { c.beginPath(); c.moveTo(X(i / 4), pad); c.lineTo(X(i / 4), h - pad); c.stroke(); c.beginPath(); c.moveTo(pad, Y(i / 4)); c.lineTo(w - pad, Y(i / 4)); c.stroke(); }
+  const curve = (f, col, lw, dash) => {
+    c.beginPath(); c.strokeStyle = col; c.lineWidth = lw; c.setLineDash(dash || []);
+    for (let i = 0; i <= 120; i++) { const u = i / 120, v = Math.max(-0.5, Math.min(1.5, f(u))); i ? c.lineTo(X(u), Y(v)) : c.moveTo(X(u), Y(v)); }
+    c.stroke(); c.setLineDash([]);
+  };
+  const dot = (u, v, col) => { c.beginPath(); c.fillStyle = col; c.arc(X(u), Y(v), mini ? 3 : 4.5, 0, 6.3); c.fill(); };
+  const hline = (v, col) => { c.beginPath(); c.strokeStyle = col; c.lineWidth = 1.2; c.setLineDash([5, 4]); c.moveTo(pad, Y(v)); c.lineTo(w - pad, Y(v)); c.stroke(); c.setLineDash([]); };
+  const dim = 'rgba(255,255,255,.38)', lw = mini ? 1.8 : 2.4;
+  let read = '';
+  if (type === 'loglin' || type === 'expgrow') {
+    const k = 1.5 + p * 5, th = 0.72, f = (u) => 0.06 * Math.exp(k * u);
+    hline(th, dim); curve(f, color, lw);
+    const t = Math.log(th / 0.06) / k; if (t <= 1) dot(t, th, '#fff');
+    read = 't* = ' + (t * 5).toFixed(2);
+  } else if (type === 'expdecay') {
+    const k = 1 + p * 7; curve((u) => 0.92 * Math.exp(-k * u), color, lw);
+    const t = Math.log(2) / k; hline(0.46, dim); if (t <= 1) dot(t, 0.46, '#fff');
+    read = '반감기 = ' + (t * 5).toFixed(2);
+  } else if (type === 'sine') {
+    const ph2 = p * Math.PI, a = (u) => Math.sin(u * 4 * Math.PI), b = (u) => Math.sin(u * 4 * Math.PI + ph2);
+    curve((u) => 0.5 + 0.2 * a(u), dim, 1.2); curve((u) => 0.5 + 0.2 * b(u), dim, 1.2, [4, 3]);
+    curve((u) => 0.5 + 0.2 * (a(u) + b(u)), color, lw);
+    read = '합성 진폭 = ' + Math.abs(2 * Math.cos(ph2 / 2)).toFixed(2);
+  } else if (type === 'damped') {
+    const al = 0.6 + p * 7, f = (u) => 0.5 + 0.45 * Math.exp(-al * u) * Math.cos(u * 9 * Math.PI) * 0.9;
+    curve((u) => 0.5 + 0.4 * Math.exp(-al * u), dim, 1, [4, 3]); curve((u) => 0.5 - 0.4 * Math.exp(-al * u), dim, 1, [4, 3]);
+    hline(0.5, 'rgba(255,255,255,.15)'); curve(f, color, lw);
+    read = '한 주기 뒤 진폭 ×' + Math.exp(-al * 2 / 9).toFixed(2);
+  } else if (type === 'sequence') {
+    const r = 0.6 + p * 0.8, n = mini ? 10 : 14; let vals = [], mx = 0;
+    for (let i = 0; i < n; i++) { vals.push(Math.pow(r, i)); mx = Math.max(mx, vals[i]); }
+    const bw = pw / n; c.fillStyle = color;
+    vals.forEach((v, i) => { const bh = (v / mx) * ph * 0.95; c.globalAlpha = 0.35 + 0.65 * (i / n); c.fillRect(X(i / n) + bw * 0.18, Y(0) - bh, bw * 0.64, bh); });
+    c.globalAlpha = 1; read = 'r = ' + r.toFixed(2) + (r > 1 ? ' (발산)' : r < 1 ? ' (수렴)' : '');
+  } else if (type === 'junction') {
+    const left = (u) => 0.15 + 0.6 * (3 * (u / 0.5) ** 2 - 2 * (u / 0.5) ** 3), s = (p - 0.5) * 2.4;
+    curve((u) => (u <= 0.5 ? left(u) : NaN), color, lw);
+    c.beginPath(); c.strokeStyle = color; c.lineWidth = lw; c.moveTo(X(0.5), Y(0.75)); c.lineTo(X(1), Y(Math.max(0, Math.min(1, 0.75 + s * 0.5)))); c.stroke();
+    dot(0.5, 0.75, '#fff'); read = Math.abs(s) < 0.05 ? '미분가능 (매끄러움)' : '연속이지만 꺾임';
+  } else if (type === 'area') {
+    const f = (u) => 0.12 + 0.75 * (1 - (2 * u - 1) ** 2) ** 2, b = 0.08 + p * 0.92;
+    c.beginPath(); c.fillStyle = color; c.globalAlpha = 0.22; c.moveTo(X(0), Y(0));
+    for (let i = 0; i <= 100; i++) { const u = (i / 100) * b; c.lineTo(X(u), Y(f(u))); }
+    c.lineTo(X(b), Y(0)); c.closePath(); c.fill(); c.globalAlpha = 1; curve(f, color, lw);
+    let A = 0, T = 0; for (let i = 0; i < 400; i++) { const u = (i + 0.5) / 400; T += f(u); if (u <= b) A += f(u); }
+    read = '전체의 ' + Math.round((A / T) * 100) + '%';
+  } else if (type === 'scurve') {
+    const T = 0.35 + p * 0.65, s = (u) => { const x = Math.min(1, u / T); return 10 * x ** 3 - 15 * x ** 4 + 6 * x ** 5; };
+    const acc = (u) => { const x = u / T; return x > 1 ? 0 : (60 * x - 180 * x * x + 120 * x ** 3) / (T * T); };
+    curve((u) => 0.5 + acc(u) * 0.012, dim, 1.3); curve((u) => 0.1 + 0.8 * s(u), color, lw);
+    read = '최대 가속도 ∝ ' + (5.77 / (T * T)).toFixed(1);
+  } else if (type === 'saturation') {
+    const k = 3 + p * 22; hline(0.9, dim); curve((u) => 0.08 + 0.82 / (1 + Math.exp(-k * (u - 0.45))), color, lw);
+    read = '중간점 기울기 = ' + (k / 4).toFixed(1);
+  } else if (type === 'matrix') {
+    const th = p * Math.PI, cx = X(0.5), cy = Y(0.2), R = Math.min(pw * 0.42, ph * 0.9);
+    const arrow = (ang, col, lw2) => { const x = cx + R * Math.cos(ang), y = cy - R * Math.sin(ang); c.beginPath(); c.strokeStyle = col; c.lineWidth = lw2; c.moveTo(cx, cy); c.lineTo(x, y); c.stroke(); c.beginPath(); c.fillStyle = col; c.arc(x, y, mini ? 2.5 : 4, 0, 6.3); c.fill(); };
+    c.beginPath(); c.strokeStyle = dim; c.lineWidth = 1; c.arc(cx, cy, R * 0.3, -0.25 - th, -0.25); c.stroke();
+    arrow(0.25, dim, 1.6); arrow(0.25 + th, color, lw);
+    read = 'cos θ = ' + Math.cos(th).toFixed(2);
+  } else {
+    const f = (u) => 0.12 + 0.78 * (27 / 4) * u * (1 - u) ** 2, df = (u) => 0.78 * (27 / 4) * ((1 - u) ** 2 - 2 * u * (1 - u));
+    curve(f, color, lw); const a = 0.04 + p * 0.9, m = df(a);
+    c.beginPath(); c.strokeStyle = '#fff'; c.lineWidth = 1.2; c.moveTo(X(a - 0.16), Y(f(a) - m * 0.16)); c.lineTo(X(a + 0.16), Y(f(a) + m * 0.16)); c.stroke();
+    dot(a, f(a), '#fff'); dot(1 / 3, f(1 / 3), color);
+    read = "f'(a) " + (Math.abs(m) < 0.12 ? '≈ 0 (극값)' : m > 0 ? '> 0 (증가)' : '< 0 (감소)');
+  }
+  c.restore();
+  return read;
+}
+
+/* ---------- 상태 ---------- */
+const S = { weeks: [], cases: [], topics: [], byId: new Map(), marks: {}, context: DEFAULT_CONTEXT,
+  f: { q: '', subject: new Set(), theme: new Set(), visual: new Set(), status: new Set() }, tq: '', open: null, purpose: 'verify', db: null, loaded: false };
+const statusOf = (id) => (S.marks[id] && S.marks[id].status) || 'new';
+
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 1800); }
+async function copy(text, okMsg) {
+  try { await navigator.clipboard.writeText(text); toast(okMsg || '복사했습니다'); }
+  catch (e) { const ta = $('#d-prompt'); ta.value = text; ta.focus(); ta.select(); toast('복사가 막혀 있습니다. 선택된 글을 직접 복사하세요'); }
+}
+
+/* ---------- 저장 ---------- */
+const queues = {};
+function saveMark(id, patch) {
+  S.marks[id] = { ...(S.marks[id] || {}), ...patch, at: Date.now() };
+  const body = { ...S.marks[id] };
+  try { localStorage.setItem('am-marks', JSON.stringify(S.marks)); } catch (e) {}
+  refreshCounts();
+  if (!S.db) return Promise.resolve(false);
+  queues[id] = (queues[id] || Promise.resolve()).then(() => S.db.doc('marks/' + id).set(body)).then(() => true)
+    .catch((e) => { note('저장하지 못했습니다. 이 기기에만 남아 있습니다. (' + (e && e.code || '오류') + ')'); return false; });
+  return queues[id];
+}
+function note(msg) { const n = $('#sysnote'); n.textContent = msg; n.hidden = !msg; }
+
+function ingest(weeks) {
+  S.weeks = weeks.filter((w) => w && w.date).sort((a, b) => (a.date < b.date ? 1 : -1));
+  S.cases = S.weeks.flatMap((w) => w.cases.map((c) => ({ ...c, docId: w.docId, hay: (c.title + ' ' + c.points.join(' ') + ' ' + SUBJ[c.subject]).toLowerCase() })));
+  S.topics = S.weeks.flatMap((w) => w.topics.map((t) => ({ ...t, hay: (t.title + ' ' + t.subjects + ' ' + t.goal).toLowerCase() })));
+  S.byId = new Map(S.cases.map((c) => [c.id, c]));
+  S.loaded = true;
+}
+
+async function boot() {
+  buildFilters(); route();
+  const timer = setTimeout(() => { if (!S.loaded) note('자료를 아직 불러오지 못했습니다. 연결 상태를 확인해 주세요.'); }, 10000);
+  let db = null;
+  try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch (e) { db = null; }
+  S.db = db;
+  if (db) {
+    try {
+      const snap = await db.collection('weeks').get();
+      ingest(snap.docs.map((d) => d.data()));
+      const st = await db.doc('settings/prompt').get();
+      if (st.exists && st.data().context) S.context = st.data().context;
+      db.collection('marks').onSnapshot((ms) => {
+        const next = {}; ms.docs.forEach((d) => { next[d.id] = d.data(); });
+        S.marks = next; refreshCounts(); renderCurrent(true);
+      }, () => note('상태와 메모를 실시간으로 받지 못하고 있습니다.'));
+    } catch (e) { note('자료를 불러오지 못했습니다. 잠시 뒤 다시 열어 주세요.'); }
+  } else {
+    try { const r = await fetch('seed.json'); if (r.ok) ingest(await r.json()); } catch (e) {}
+    try { S.marks = JSON.parse(localStorage.getItem('am-marks') || '{}'); } catch (e) {}
+    if (S.loaded) note('저장소에 연결되지 않아 상태와 메모가 이 기기에만 저장됩니다.');
+    else note('저장소에 연결할 수 없어 자료를 보여 줄 수 없습니다.');
+  }
+  clearTimeout(timer);
+  if (S.loaded && S.cases.length && !$('#sysnote').textContent) note('');
+  buildFilters(); refreshCounts(); route();
+}
+
+/* ---------- 화면 ---------- */
+function refreshCounts() {
+  if (!S.loaded) return;
+  $('#n-triage').textContent = S.cases.filter((c) => statusOf(c.id) === 'new').length;
+  $('#n-cases').textContent = S.cases.length; $('#n-topics').textContent = S.topics.length; $('#n-weeks').textContent = S.weeks.length;
+}
+function chipRow(host, key, items) {
+  host.querySelectorAll('.chip').forEach((n) => n.remove());
+  for (const [val, label, n] of items) {
+    host.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': S.f[key].has(val) ? 'true' : 'false', onclick: (e) => {
+      S.f[key].has(val) ? S.f[key].delete(val) : S.f[key].add(val);
+      e.currentTarget.setAttribute('aria-pressed', S.f[key].has(val)); renderCases();
+    } }, label, n != null ? el('span', { class: 'n' }, String(n)) : null));
+  }
+}
+function buildFilters() {
+  const cnt = (fn) => S.cases.filter(fn).length;
+  chipRow($('#f-subject'), 'subject', Object.entries(SUBJ).map(([k, v]) => [k, v, S.loaded ? cnt((c) => c.subject === k) : null]));
+  chipRow($('#f-theme'), 'theme', Object.entries(THEME).map(([k, v]) => [k, v, S.loaded ? cnt((c) => c.themes.includes(k)) : null]));
+  const vis = S.loaded ? Object.keys(VIS).filter((k) => cnt((c) => c.visual === k)) : [];
+  chipRow($('#f-visual'), 'visual', vis.map((k) => [k, VIS[k].label, cnt((c) => c.visual === k)]));
+  chipRow($('#f-status'), 'status', Object.entries(STATUS).map(([k, v]) => [k, v, null]));
+}
+function formulaHtml(c) { return c.formula ? tex(c.formula, false) : ''; }
+const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { const cv = e.target; drawVis(cv, cv.dataset.v, cv.dataset.c, VIS[cv.dataset.v].p[1], true); io.unobserve(cv); } }), { rootMargin: '200px' }) : null;
+
+function renderCases() {
+  const f = S.f, q = f.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const list = S.cases.filter((c) => {
+    const st = statusOf(c.id);
+    if (f.subject.size && !f.subject.has(c.subject)) return false;
+    if (f.theme.size && !c.themes.some((t) => f.theme.has(t))) return false;
+    if (f.visual.size && !f.visual.has(c.visual)) return false;
+    if (f.status.size ? !f.status.has(st) : st === 'skip') return false;
+    return q.every((w) => c.hay.includes(w));
+  });
+  const active = f.q || f.subject.size || f.theme.size || f.visual.size || f.status.size;
+  $('#reset-filters').hidden = !active;
+  $('#case-count').textContent = S.loaded ? `사례 ${list.length}개` + (f.status.size ? '' : ' (넘긴 사례 제외)') : '불러오는 중…';
+  const grid = $('#case-grid'); grid.textContent = '';
+  if (S.loaded && !list.length) { grid.append(el('div', { class: 'empty', style: 'grid-column:1/-1' }, '조건에 맞는 사례가 없습니다. 조건을 줄여 보세요.')); return; }
+  const frag = document.createDocumentFragment();
+  for (const c of list) {
+    const cv = el('canvas', { 'data-v': c.visual, 'data-c': SUBJ_COLOR[c.subject], 'aria-hidden': 'true' });
+    const st = statusOf(c.id);
+    frag.append(el('button', { class: 'card', type: 'button', onclick: () => { location.hash = c.id; } }, cv,
+      el('div', { class: 'body' },
+        el('div', { class: 'meta' }, el('span', { class: 'subj ' + c.subject }, SUBJ[c.subject]), el('span', {}, c.unit || VIS[c.visual].label), st !== 'new' ? el('span', { class: 'status ' + st }, STATUS[st]) : null),
+        el('div', { class: 'tech' }, c.tech),
+        el('div', { class: 'fx', html: formulaHtml(c) }),
+        el('div', { class: 'meta mono' }, c.week))));
+    if (io) io.observe(cv); else requestAnimationFrame(() => drawVis(cv, c.visual, SUBJ_COLOR[c.subject], VIS[c.visual].p[1], true));
+  }
+  grid.append(frag);
+}
+
+function renderTriage() {
+  const host = $('#triage-list'); host.textContent = '';
+  if (!S.loaded) { host.append(el('div', { class: 'empty' }, '불러오는 중…')); return; }
+  const groups = S.weeks.map((w) => [w, S.cases.filter((c) => c.week === w.date && statusOf(c.id) === 'new')]).filter(([, cs]) => cs.length);
+  if (!groups.length) { host.append(el('div', { class: 'empty' }, '분류할 사례가 없습니다. 다음 주 문서가 들어오면 여기에 나타납니다.')); return; }
+  groups.slice(0, 3).forEach(([w, cs]) => {
+    host.append(el('div', { class: 'weekhead' }, el('h2', { class: 'mono' }, w.date), el('span', { class: 'note' }, `남은 사례 ${cs.length}개 · ${w.focus}`)));
+    const box = el('div', { class: 'tri' });
+    for (const c of cs) {
+      box.append(el('div', { class: 'row' },
+        el('button', { class: 'open', type: 'button', onclick: () => { location.hash = c.id; } },
+          el('div', { class: 'meta' }, el('span', { class: 'subj ' + c.subject }, SUBJ[c.subject]), el('span', {}, c.unit)),
+          el('div', { class: 'tech' }, c.tech), el('div', { class: 'fx', html: formulaHtml(c) })),
+        el('div', { class: 'acts' },
+          el('button', { class: 'btn', type: 'button', onclick: () => { saveMark(c.id, { status: 'skip' }); renderTriage(); } }, '넘기기'),
+          el('button', { class: 'btn primary', type: 'button', onclick: () => { saveMark(c.id, { status: 'keep' }); renderTriage(); toast('관심 사례로 남겼습니다'); } }, '남기기'))));
+    }
+    host.append(box);
+  });
+  if (groups.length > 3) host.append(el('p', { class: 'note', style: 'margin-top:18px' }, `이전 ${groups.length - 3}개 주차에도 분류하지 않은 사례가 있습니다. 위 주차를 끝내면 이어서 나옵니다.`));
+}
+
+function renderTopics() {
+  const q = S.tq.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const list = S.topics.filter((t) => q.every((w) => t.hay.includes(w)));
+  $('#topic-count').textContent = S.loaded ? `주제 ${list.length}개` : '불러오는 중…';
+  const host = $('#topic-list'); host.textContent = '';
+  for (const t of list) {
+    const text = `[세특 탐구 주제] ${t.title}\n- 연계 과목: ${t.subjects}\n- 탐구 목표: ${t.goal}\n- 활동 구성:\n${t.steps.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}`;
+    host.append(el('details', { class: 'topic' },
+      el('summary', {}, el('div', { class: 'meta' }, el('span', { class: 'mono' }, t.week), el('span', {}, t.subjects)), el('div', { class: 't' }, t.title)),
+      el('div', { class: 'inner md' }, el('div', { html: '<b>탐구 목표</b> ' + inline(t.goal) }),
+        el('ol', { html: t.steps.map((s) => '<li>' + inline(s) + '</li>').join('') }),
+        el('div', {}, el('button', { class: 'btn primary small', type: 'button', onclick: () => copy(text, '주제를 복사했습니다') }, '주제 복사')))));
+  }
+  if (S.loaded && !list.length) host.append(el('div', { class: 'empty' }, '맞는 주제가 없습니다.'));
+}
+
+function renderWeeks() {
+  const host = $('#week-list'); host.textContent = '';
+  if (!S.loaded) { host.append(el('div', { class: 'empty' }, '불러오는 중…')); return; }
+  for (const w of S.weeks) {
+    const cs = S.cases.filter((c) => c.week === w.date), kept = cs.filter((c) => ['keep', 'deep', 'done'].includes(statusOf(c.id))).length;
+    host.append(el('details', { class: 'week' },
+      el('summary', {}, el('div', { class: 'meta' }, el('span', { class: 'mono' }, w.date), el('span', {}, `사례 ${cs.length} · 남긴 것 ${kept}`)), el('div', { class: 't', style: 'font-weight:600' }, w.focus)),
+      el('div', { class: 'inner md' },
+        el('ul', { html: w.insights.map((i) => '<li><b>' + esc(i.title) + '</b> ' + inline(i.text) + '</li>').join('') }),
+        el('h4', {}, w.examTitle || '출제 경향 분석'), el('div', { html: block(w.examTrends) }),
+        el('h4', {}, '참고 링크'), el('ul', { html: w.references.map((r) => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></li>`).join('') }),
+        el('div', {}, el('a', { href: 'https://docs.google.com/document/d/' + w.docId + '/edit', target: '_blank', rel: 'noopener' }, '원본 문서 열기 ↗')))));
+  }
+}
+
+/* ---------- 프롬프트 ---------- */
+const PURPOSE = {
+  verify: ['수식 검증', ['각 수식이 앞의 식이나 알려진 법칙에서 올바르게 유도되는지 단계별로 확인해 줘. 틀리거나 비약이 있으면 고친 식을 보여 줘.', '이 모델이 실제 현상을 얼마나 단순화했는지, 어떤 가정이 숨어 있는지 밝혀 줘.', '기호마다 뜻과 단위를 표로 정리하고, 단위가 맞는지 확인해 줘.', '실제 연구나 산업에서 쓰는 모델과 다르면 무엇이 다른지 알려 줘.']],
+  understand: ['내가 이해하기', ['이 기술이 무엇이고 왜 중요한지 비전공자도 알 수 있게 설명해 줘.', '낯선 용어를 하나씩 풀이해 줘.', '수식이 현상의 어떤 부분을 나타내는지 식마다 한두 문장으로 설명해 줘.', '이해하는 데 필요한 선수 개념을 교과 단원 이름으로 나열해 줘.', '내가 제대로 이해했는지 확인할 질문 3개를 내 줘.']],
+  sources: ['실제 출처 찾기', ['이 사례의 근거가 되는 논문, 교재, 기관 자료를 찾아 줘. 학술지 첫 화면이 아니라 해당 내용을 직접 다루는 문서여야 한다.', '출처마다 무엇을 확인할 수 있는지 한 줄로 적고, 직접 열어 확인한 것과 그렇지 않은 것을 구분해 줘.', '수업에 쓸 수 있는 실제 수치(전형적인 값의 범위)가 있으면 출처와 함께 알려 줘.', '한국어 자료가 있으면 따로 묶어 줘.']],
+  lesson: ['수업 설계', ['이 사례를 해당 단원 수업의 도입 5분에 쓰는 발문과 흐름을 제안해 줘.', '교과서 수준 문항 2개와 심화 문항 1개를 풀이와 함께 만들어 줘. 수치는 계산이 깔끔하게 떨어지게 정해 줘.', '학생이 흔히 할 오개념과 그에 대한 대응을 적어 줘.', '교육과정을 넘는 부분을 어떻게 덜어내거나 바꿔 말할지 제안해 줘.']],
+  seteuk: ['세특 확장', ['이 사례에서 출발하는 학생 탐구 질문을 기초, 표준, 심화 수준으로 하나씩 제안해 줘.', '각 질문에 대해 문제 정의 → 수리 모델링 → 공학 도구 검증의 3단계 보고서 뼈대를 써 줘.', '학생이 직접 계산하거나 그려야 할 부분과 자료를 인용하면 되는 부분을 구분해 줘.', '보고서에서 과장하거나 틀리게 쓰기 쉬운 부분을 미리 짚어 줘.']],
+  code: ['시뮬레이션 코드', ['이 수식을 그리는 Python 코드(numpy, matplotlib)를 작성해 줘. 매개변수는 맨 위에 모아 두고 뜻을 주석으로 적어 줘.', '매개변수 하나를 바꿔 가며 곡선이 어떻게 달라지는지 한 그림에 겹쳐 그려 줘.', '같은 내용을 GeoGebra에서 슬라이더로 만드는 입력 순서도 알려 줘.', '코드 결과가 수식으로 구한 값과 맞는지 확인하는 검산을 한 줄 넣어 줘.']],
+};
+function caseBlock(c) {
+  return `[사례] ${c.tech}\n[과목·단원] ${SUBJ[c.subject]}${c.unit ? ' · ' + c.unit : ''}\n[출처] ${c.week} 주차 리서치 문서 (자동 생성, 검증 전)\n[내용]\n${c.points.map((p) => '- ' + p.replace(/\*\*/g, '')).join('\n')}`;
+}
+function buildPrompt(c, key) {
+  const [, tasks] = PURPOSE[key];
+  return `${S.context}\n\n${caseBlock(c)}\n\n[요청]\n${tasks.map((t, i) => `${i + 1}. ${t}`).join('\n')}`;
+}
+function buildNlm(c) {
+  return [`"${c.tech}"에 대해 소스에 근거해서만 답해 줘. 소스에 없는 내용은 없다고 말해 줘.`, '',
+    '1. 이 기술의 원리를 소스에서 어떻게 설명하는지 요약해 줘.',
+    '2. 아래 수식이나 그와 같은 관계식이 소스에 나오는지, 나온다면 어떤 조건에서 성립한다고 하는지 알려 줘.',
+    ...c.points.flatMap((p) => [...p.matchAll(/\$\$?([^$]+)\$\$?/g)].map((m) => m[1].trim())).filter((f) => f.length > 10).slice(0, 3).map((f) => '   - ' + f),
+    '3. 소스에 나오는 실제 수치와 단위를 표로 정리해 줘.',
+    '4. 소스끼리 설명이 다르거나 주차 문서와 어긋나는 부분이 있으면 짚어 줘.',
+    '5. 고등학교 ' + SUBJ[c.subject] + ' 수준으로 설명할 때 빼도 되는 부분과 꼭 남겨야 할 부분을 구분해 줘.'].join('\n');
+}
+const resultName = (c) => `${c.id}_${c.tech.replace(/\(.*?\)/g, '').replace(/[\\/:*?"<>|]/g, ' ').trim().split(/\s+/).slice(0, 5).join(' ')}_심화`;
+
+/* ---------- 사례 상세 ---------- */
+let lastFocus = null;
+function related(c) {
+  const words = new Set(c.title.split(/[\s·&(),/]+/).filter((w) => w.length >= 2));
+  return S.cases.filter((o) => o.id !== c.id && o.visual === c.visual)
+    .map((o) => [o, (o.subject === c.subject ? 2 : 0) + o.title.split(/[\s·&(),/]+/).filter((w) => words.has(w)).length])
+    .sort((a, b) => b[1] - a[1]).slice(0, 5).map(([o]) => o);
+}
+function openCase(id) {
+  const c = S.byId.get(id), dlg = $('#detail'); if (!c) return;
+  S.open = c; const m = S.marks[id] || {};
+  const meta = $('#d-meta'); meta.textContent = '';
+  meta.append(el('span', { class: 'subj ' + c.subject }, SUBJ[c.subject]), el('span', {}, c.unit), el('span', { class: 'mono' }, c.week), ...c.themes.map((t) => el('span', {}, '#' + THEME[t])));
+  $('#d-title').textContent = c.tech;
+  $('#d-points').innerHTML = c.points.map((p) => '<li>' + inline(p) + '</li>').join('');
+  const v = VIS[c.visual], range = $('#d-range');
+  $('#d-plabel').textContent = v.p[0]; $('#d-cap').textContent = v.label + ' · ' + v.cap; range.value = v.p[1];
+  const redraw = () => { $('#d-read').textContent = drawVis($('#d-canvas'), c.visual, SUBJ_COLOR[c.subject], +range.value, false); };
+  range.oninput = redraw;
+  const rel = $('#d-related'); rel.textContent = '';
+  const rs = related(c);
+  rs.forEach((o) => rel.append(el('button', { type: 'button', onclick: () => { location.hash = o.id; } }, el('span', { class: 'w' }, o.week), o.tech)));
+  if (!rs.length) rel.append(el('span', { class: 'note' }, '같은 유형의 다른 사례가 없습니다.'));
+  const tp = $('#d-topics'); tp.textContent = '';
+  S.topics.filter((t) => t.week === c.week).forEach((t) => tp.append(el('button', { type: 'button', onclick: () => { closeCase(); S.tq = t.title.slice(0, 14); $('#tq').value = S.tq; location.hash = 'topics'; } }, t.title)));
+  renderStatus();
+  const pur = $('#d-purpose'); pur.textContent = '';
+  for (const [k, [label]] of Object.entries(PURPOSE)) pur.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': k === S.purpose ? 'true' : 'false', onclick: () => { S.purpose = k; pur.querySelectorAll('.chip').forEach((n) => n.setAttribute('aria-pressed', 'false')); pur.children[Object.keys(PURPOSE).indexOf(k)].setAttribute('aria-pressed', 'true'); $('#d-prompt').value = buildPrompt(c, k); } }, label));
+  $('#d-prompt').value = buildPrompt(c, S.purpose);
+  $('#d-doc').href = 'https://docs.google.com/document/d/' + c.docId + '/edit';
+  $('#d-name').textContent = resultName(c);
+  $('#d-link').value = m.link || ''; showLink(m.link);
+  $('#d-memo').value = m.memo || ''; $('#d-saved').textContent = '';
+  if (!dlg.open) { lastFocus = document.activeElement; dlg.showModal(); }
+  dlg.scrollTop = 0; requestAnimationFrame(redraw);
+}
+function renderStatus() {
+  const c = S.open; if (!c) return; const host = $('#d-status'), cur = statusOf(c.id); host.textContent = '';
+  for (const [k, label] of Object.entries(STATUS)) host.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': k === cur ? 'true' : 'false', onclick: () => { saveMark(c.id, { status: k }); renderStatus(); } }, label));
+}
+function showLink(url) {
+  const host = $('#d-linkopen'); host.textContent = '';
+  if (url && /^https:\/\//.test(url)) host.append(el('a', { href: url, target: '_blank', rel: 'noopener' }, '저장한 결과 문서 열기 ↗'));
+}
+function closeCase() { const dlg = $('#detail'); if (dlg.open) dlg.close(); }
+$('#detail').addEventListener('close', () => {
+  S.open = null; if (S.byId.has(location.hash.slice(1))) history.replaceState(null, '', '#' + (S.view || 'cases'));
+  renderCurrent(); if (lastFocus && lastFocus.isConnected) lastFocus.focus();
+});
+$('#detail').addEventListener('click', (e) => { if (e.target === $('#detail')) closeCase(); });
+$('#d-close').onclick = closeCase;
+$('#copy-prompt').onclick = () => { const c = S.open; copy($('#d-prompt').value, '프롬프트를 복사했습니다'); if (statusOf(c.id) === 'new' || statusOf(c.id) === 'keep') { saveMark(c.id, { status: 'deep' }); renderStatus(); } };
+$('#copy-nlm').onclick = () => copy(buildNlm(S.open), '질문 목록을 복사했습니다');
+$('#copy-name').onclick = () => copy(resultName(S.open), '문서 제목을 복사했습니다');
+$('#d-memo').addEventListener('change', async (e) => { const ok = await saveMark(S.open.id, { memo: e.target.value }); $('#d-saved').textContent = ok ? '저장됨' : '이 기기에 저장됨'; });
+$('#d-link').addEventListener('change', (e) => {
+  const url = e.target.value.trim(); if (url && !/^https:\/\//.test(url)) { toast('https:// 로 시작하는 주소를 넣어 주세요'); return; }
+  saveMark(S.open.id, url ? { link: url, status: 'done' } : { link: '' }); showLink(url); renderStatus(); if (url) toast('결과 문서를 연결했습니다');
+});
+
+/* ---------- 설정 ---------- */
+$('#open-settings').onclick = () => { $('#s-context').value = S.context; $('#settings').showModal(); };
+$('#s-cancel').onclick = () => $('#settings').close();
+$('#s-save').onclick = async () => {
+  S.context = $('#s-context').value.trim() || DEFAULT_CONTEXT; $('#settings').close();
+  if (S.db) { try { await S.db.doc('settings/prompt').set({ context: S.context }); toast('저장했습니다'); } catch (e) { toast('저장하지 못했습니다'); } }
+  else toast('이번 방문에만 적용됩니다');
+};
+
+/* ---------- 길 찾기 ---------- */
+const VIEWS = { triage: renderTriage, cases: renderCases, topics: renderTopics, weeks: renderWeeks };
+function renderCurrent(fromSync) {
+  if (fromSync && S.open) { renderStatus(); return; }
+  (VIEWS[S.view] || renderCases)();
+}
+function route() {
+  const h = location.hash.slice(1);
+  if (S.byId.has(h)) { show(S.picked || 'cases'); openCase(h); return; }
+  closeCase();
+  const fresh = S.loaded && S.weeks[0] && S.cases.some((c) => c.week === S.weeks[0].date && statusOf(c.id) === 'new');
+  if (VIEWS[h]) S.picked = h; else if (S.loaded && !S.picked) S.picked = fresh ? 'triage' : 'cases';
+  show(S.picked || 'cases');
+}
+function show(v) {
+  S.view = v;
+  for (const k of Object.keys(VIEWS)) $('#v-' + k).hidden = k !== v;
+  document.querySelectorAll('nav.views a').forEach((a) => a.dataset.view === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  VIEWS[v]();
+}
+window.addEventListener('hashchange', route);
+let qt; $('#q').addEventListener('input', (e) => { clearTimeout(qt); qt = setTimeout(() => { S.f.q = e.target.value; renderCases(); }, 120); });
+$('#tq').addEventListener('input', (e) => { S.tq = e.target.value; renderTopics(); });
+$('#reset-filters').onclick = () => { S.f = { q: '', subject: new Set(), theme: new Set(), visual: new Set(), status: new Set() }; $('#q').value = ''; buildFilters(); renderCases(); };
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !$('#detail').open) { e.preventDefault(); if (S.view !== 'cases') location.hash = 'cases'; setTimeout(() => $('#q').focus(), 0); }
+});
+boot();
+})();
+</script>
