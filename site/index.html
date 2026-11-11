@@ -211,6 +211,8 @@ dialog#settings textarea { width: 100%; min-height: 160px; background: #070807; 
       <h3>상태</h3>
       <div class="seg" id="d-status"></div>
       <h3>심화 조사</h3>
+      <div class="note" id="d-queue" hidden>관심 사례입니다. 수요일 저녁 자동 조사 때 출처 확인과 수식 검증을 해서 여기에 결과를 붙입니다.</div>
+      <div class="tool" id="d-deep" hidden></div>
       <div class="tool">
         <div class="hd"><b>Claude에 붙여 넣을 프롬프트</b><button class="btn primary" id="copy-prompt" type="button">프롬프트 복사</button></div>
         <div class="seg" id="d-purpose"></div>
@@ -397,7 +399,7 @@ function drawVis(cv, type, color, p, mini) {
 }
 
 /* ---------- 상태 ---------- */
-const S = { weeks: [], cases: [], topics: [], byId: new Map(), marks: {}, context: DEFAULT_CONTEXT,
+const S = { weeks: [], cases: [], topics: [], byId: new Map(), marks: {}, deep: {}, context: DEFAULT_CONTEXT,
   f: { q: '', subject: new Set(), theme: new Set(), visual: new Set(), status: new Set() }, tq: '', open: null, purpose: 'verify', db: null, loaded: false };
 const statusOf = (id) => (S.marks[id] && S.marks[id].status) || 'new';
 
@@ -439,6 +441,7 @@ async function boot() {
     try {
       const snap = await db.collection('weeks').get();
       ingest(snap.docs.map((d) => d.data()));
+      try { (await db.collection('deep').get()).docs.forEach((d) => { S.deep[d.id] = d.data(); }); } catch (e) {}
       const st = await db.doc('settings/prompt').get();
       if (st.exists && st.data().context) S.context = st.data().context;
       db.collection('marks').onSnapshot((ms) => {
@@ -504,7 +507,7 @@ function renderCases() {
     const st = statusOf(c.id);
     frag.append(el('button', { class: 'card', type: 'button', onclick: () => { location.hash = c.id; } }, cv,
       el('div', { class: 'body' },
-        el('div', { class: 'meta' }, el('span', { class: 'subj ' + c.subject }, SUBJ[c.subject]), el('span', {}, c.unit || VIS[c.visual].label), st !== 'new' ? el('span', { class: 'status ' + st }, STATUS[st]) : null),
+        el('div', { class: 'meta' }, el('span', { class: 'subj ' + c.subject }, SUBJ[c.subject]), el('span', {}, c.unit || VIS[c.visual].label), st !== 'new' ? el('span', { class: 'status ' + st }, STATUS[st]) : null, S.deep[c.id] ? el('span', { class: 'status done' }, '조사 결과') : null),
         el('div', { class: 'tech' }, c.tech),
         el('div', { class: 'fx', html: formulaHtml(c) }),
         el('div', { class: 'meta mono' }, c.week))));
@@ -528,7 +531,7 @@ function renderTriage() {
           el('div', { class: 'tech' }, c.tech), el('div', { class: 'fx', html: formulaHtml(c) })),
         el('div', { class: 'acts' },
           el('button', { class: 'btn', type: 'button', onclick: () => { saveMark(c.id, { status: 'skip' }); renderTriage(); } }, '넘기기'),
-          el('button', { class: 'btn primary', type: 'button', onclick: () => { saveMark(c.id, { status: 'keep' }); renderTriage(); toast('관심 사례로 남겼습니다'); } }, '남기기'))));
+          el('button', { class: 'btn primary', type: 'button', onclick: () => { saveMark(c.id, { status: 'keep' }); renderTriage(); toast('남겼습니다. 수요일 저녁에 자동 조사합니다'); } }, '남기기'))));
     }
     host.append(box);
   });
@@ -618,7 +621,7 @@ function openCase(id) {
   if (!rs.length) rel.append(el('span', { class: 'note' }, '같은 유형의 다른 사례가 없습니다.'));
   const tp = $('#d-topics'); tp.textContent = '';
   S.topics.filter((t) => t.week === c.week).forEach((t) => tp.append(el('button', { type: 'button', onclick: () => { closeCase(); S.tq = t.title.slice(0, 14); $('#tq').value = S.tq; location.hash = 'topics'; } }, t.title)));
-  renderStatus();
+  renderStatus(); renderDeep(c);
   const pur = $('#d-purpose'); pur.textContent = '';
   for (const [k, [label]] of Object.entries(PURPOSE)) pur.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': k === S.purpose ? 'true' : 'false', onclick: () => { S.purpose = k; pur.querySelectorAll('.chip').forEach((n) => n.setAttribute('aria-pressed', 'false')); pur.children[Object.keys(PURPOSE).indexOf(k)].setAttribute('aria-pressed', 'true'); $('#d-prompt').value = buildPrompt(c, k); } }, label));
   $('#d-prompt').value = buildPrompt(c, S.purpose);
@@ -631,7 +634,20 @@ function openCase(id) {
 }
 function renderStatus() {
   const c = S.open; if (!c) return; const host = $('#d-status'), cur = statusOf(c.id); host.textContent = '';
-  for (const [k, label] of Object.entries(STATUS)) host.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': k === cur ? 'true' : 'false', onclick: () => { saveMark(c.id, { status: k }); renderStatus(); } }, label));
+  for (const [k, label] of Object.entries(STATUS)) host.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': k === cur ? 'true' : 'false', onclick: () => { saveMark(c.id, { status: k }); renderStatus(); renderDeep(c); } }, label));
+}
+const VERDICT = { ok: '수식 확인됨', fix: '수식 수정 필요', unsure: '수식 불확실' };
+function renderDeep(c) {
+  const d = S.deep[c.id], host = $('#d-deep'); host.textContent = '';
+  host.hidden = !d; $('#d-queue').hidden = !!d || statusOf(c.id) !== 'keep';
+  if (!d) return;
+  host.append(el('div', { class: 'hd' }, el('b', {}, '자동 조사 결과'), el('span', { class: 'note mono' }, d.at || '')),
+    el('div', { class: 'meta' }, el('span', { class: 'status ' + (d.verdict === 'ok' ? 'done' : 'keep') }, VERDICT[d.verdict] || '검증 정보 없음'), el('span', {}, d.verdictNote || '')),
+    el('div', { class: 'md', html: block(String(d.summary || '')) }));
+  const src = (Array.isArray(d.sources) ? d.sources : []).filter((x) => x && /^https?:\/\//.test(x.url || ''));
+  if (src.length) host.append(el('div', { class: 'md' }, el('b', {}, '출처'), el('ul', { style: 'margin:6px 0 0;padding-left:1.2em', html: src.map((x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title || x.url)}</a>${x.note ? ' · ' + esc(x.note) : ''}</li>`).join('') })));
+  if (/^https:\/\//.test(d.docUrl || '')) host.append(el('div', {}, el('a', { href: d.docUrl, target: '_blank', rel: 'noopener' }, '전체 조사 문서 열기 ↗')));
+  host.append(el('div', { class: 'note' }, '자동으로 조사한 내용입니다. 수업에 쓰기 전에 출처를 직접 확인하세요.'));
 }
 function showLink(url) {
   const host = $('#d-linkopen'); host.textContent = '';
@@ -644,7 +660,7 @@ $('#detail').addEventListener('close', () => {
 });
 $('#detail').addEventListener('click', (e) => { if (e.target === $('#detail')) closeCase(); });
 $('#d-close').onclick = closeCase;
-$('#copy-prompt').onclick = () => { const c = S.open; copy($('#d-prompt').value, '프롬프트를 복사했습니다'); if (statusOf(c.id) === 'new' || statusOf(c.id) === 'keep') { saveMark(c.id, { status: 'deep' }); renderStatus(); } };
+$('#copy-prompt').onclick = () => { const c = S.open; copy($('#d-prompt').value, '프롬프트를 복사했습니다'); if (statusOf(c.id) === 'new') { saveMark(c.id, { status: 'deep' }); renderStatus(); } };
 $('#copy-nlm').onclick = () => copy(buildNlm(S.open), '질문 목록을 복사했습니다');
 $('#copy-name').onclick = () => copy(resultName(S.open), '문서 제목을 복사했습니다');
 $('#d-memo').addEventListener('change', async (e) => { const ok = await saveMark(S.open.id, { memo: e.target.value }); $('#d-saved').textContent = ok ? '저장됨' : '이 기기에 저장됨'; });
@@ -665,7 +681,7 @@ $('#s-save').onclick = async () => {
 /* ---------- 길 찾기 ---------- */
 const VIEWS = { triage: renderTriage, cases: renderCases, topics: renderTopics, weeks: renderWeeks };
 function renderCurrent(fromSync) {
-  if (fromSync && S.open) { renderStatus(); return; }
+  if (fromSync && S.open) { renderStatus(); renderDeep(S.open); return; }
   (VIEWS[S.view] || renderCases)();
 }
 function route() {
