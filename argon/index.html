@@ -101,6 +101,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body {
   margin: 0;
   padding: 0;
@@ -110,12 +111,68 @@ html, body {
   font-size: 15px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
 }
 button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button { cursor: pointer; user-select: none; }
 a { color: var(--c-y); text-underline-offset: 3px; }
 p { margin: 0; }
 :focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
+
+/* Typographic Math Fallback & Formula Styling */
+.m, .M {
+  font-family: var(--serif);
+  font-variant-numeric: lining-nums;
+}
+.m {
+  display: inline-block;
+  padding: 0 2px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.M {
+  display: block;
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.m-frac {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 3px;
+  font-size: 0.9em;
+  line-height: 1.15;
+}
+.m-frac > .num {
+  border-bottom: 1.2px solid currentColor;
+  padding: 0 3px 1px;
+}
+.m-frac > .den {
+  padding: 1px 3px 0;
+}
+.m-sqrt {
+  display: inline-flex;
+  align-items: baseline;
+}
+.m-sqrt > .rad {
+  font-family: var(--sans);
+  font-weight: 700;
+  margin-right: 1px;
+}
+.m-sqrt > .radicand {
+  border-top: 1.2px solid currentColor;
+  padding: 0 2px;
+}
+@keyframes syncFlash {
+  0% { box-shadow: 0 0 0 0 rgba(217, 78, 40, 0.55); }
+  100% { box-shadow: 0 0 0 10px rgba(217, 78, 40, 0); }
+}
+.flash-sync {
+  animation: syncFlash 0.55s ease-out;
+}
 
 /* ---------- Top Command Header ---------- */
 header.topbar {
@@ -450,7 +507,7 @@ header.topbar {
 .visual-frame {
   position: relative;
   aspect-ratio: 16 / 9;
-  max-height: 320px;
+  max-height: 235px;
   width: 100%;
   overflow: hidden;
   background: #F7F6F2;
@@ -504,7 +561,7 @@ header.topbar {
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  scroll-margin-top: 112px;
+  scroll-margin-top: 158px;
 }
 .module-head {
   padding: 16px 22px;
@@ -848,7 +905,7 @@ pre.code-box {
 /* ---------- Right Sticky Workbench ---------- */
 .right-workbench {
   position: sticky;
-  top: 104px;
+  top: 158px;
   display: grid;
   gap: 16px;
   min-width: 0;
@@ -1405,18 +1462,53 @@ dialog::backdrop {
     toast.tid = setTimeout(() => t.classList.remove('on'), 2200);
   }
 
+  function texToHtmlFallback(tex) {
+    let s = String(tex || '');
+    s = s.replace(/\\qquad/g, ' &emsp;&emsp; ').replace(/\\quad/g, ' &emsp; ').replace(/\\,/g, ' ');
+    s = s.replace(/\\bigl\(/g, '(').replace(/\\bigr\)/g, ')').replace(/\\Bigl\(/g, '(').replace(/\\Bigr\)/g, ')');
+    s = s.replace(/\\left\|/g, '|').replace(/\\right\|/g, '|').replace(/\\left\(/g, '(').replace(/\\right\)/g, ')').replace(/\\left\[/g, '[').replace(/\\right\]/g, ']');
+    s = s.replace(/\\text\{([^{}]*)\}/g, '<span style="font-family:var(--sans);font-weight:500">$1</span>');
+    s = s.replace(/\\xrightarrow\{\s*([^{}]*?)\s*\}/g, ' <span style="color:var(--act)">⟶($1)</span> ');
+    // Nested fractions (2 passes)
+    for (let p = 0; p < 2; p++) {
+      s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '<span class="m-frac"><span class="num">$1</span><span class="den">$2</span></span>');
+    }
+    s = s.replace(/\\sqrt\{([^{}]*)\}/g, '<span class="m-sqrt"><span class="rad">√</span><span class="radicand">$1</span></span>');
+    s = s.replace(/\\sqrt(\d+)/g, '√$1');
+    s = s.replace(/\\bar\{([^{}]*)\}/g, '$1&#772;').replace(/\\hat\{([^{}]*)\}/g, '$1&#770;');
+    const sym = {
+      '\\tau': 'τ', '\\omega': 'ω', '\\alpha': 'α', '\\beta': 'β', '\\theta': 'θ', '\\phi': 'φ',
+      '\\mu': 'μ', '\\pi': 'π', '\\lambda': 'λ', '\\delta': 'δ', '\\sigma': 'σ', '\\eta': 'η',
+      '\\Delta': 'Δ', '\\implies': ' ⟹ ', '\\le': ' ≤ ', '\\ge': ' ≥ ', '\\ll': ' ≪ ', '\\gg': ' ≫ ',
+      '\\approx': ' ≈ ', '\\equiv': ' ≡ ', '\\propto': ' ∝ ', '\\in': ' ∈ ', '\\pm': '±',
+      '\\cdot': '·', '\\times': '×', '\\infty': '∞', '\\partial': '∂', '\\int': '∫', '\\sum': '∑',
+      '\\ln': 'ln ', '\\log': 'log', '\\exp': 'exp', '\\sin': 'sin', '\\cos': 'cos', '\\tan': 'tan',
+      '\\max': 'max', '\\min': 'min', '\\dots': '…', '\\{': '{', '\\}': '}'
+    };
+    for (const [k, v] of Object.entries(sym)) {
+      s = s.split(k).join(v);
+    }
+    s = s.replace(/\^\{([^{}]*)\}/g, '<sup>$1</sup>').replace(/_\{([^{}]*)\}/g, '<sub>$1</sub>');
+    s = s.replace(/\^([0-9a-zA-Z+\-*′']+)/g, '<sup>$1</sup>').replace(/_([0-9a-zA-Z+\-*]+)/g, '<sub>$1</sub>');
+    s = s.replace(/'''/g, '‴').replace(/''/g, '″').replace(/'/g, '′');
+    return s;
+  }
+
   function renderMath(root = document) {
     $$('.m, .M', root).forEach((n) => {
       const src = n.dataset.tex || n.textContent;
       n.dataset.tex = src;
-      if (!window.katex) return;
-      try {
-        n.innerHTML = katex.renderToString(src, {
-          output: 'htmlAndMathml',
-          throwOnError: false,
-          displayMode: n.classList.contains('M'),
-        });
-      } catch (e) {}
+      if (window.katex) {
+        try {
+          n.innerHTML = katex.renderToString(src, {
+            output: 'htmlAndMathml',
+            throwOnError: false,
+            displayMode: n.classList.contains('M'),
+          });
+          return;
+        } catch (e) {}
+      }
+      n.innerHTML = texToHtmlFallback(src);
     });
   }
 
@@ -1999,10 +2091,18 @@ dialog::backdrop {
   /* ==========================================================================
      RENDER ALL 9 STEP PANES FOR ACTIVE COURSE
      ========================================================================== */
+  function pulseRightWorkbench() {
+    const card = $('.workbench-card');
+    if (!card) return;
+    card.classList.remove('flash-sync');
+    void card.offsetWidth;
+    card.classList.add('flash-sync');
+  }
+
   function renderCourseSteps() {
     const c = COURSES[state.courseIdx];
 
-    // Step 1: Summary
+    // Step 1: Summary + Quick Interactive CTAs
     $('#s1').innerHTML = `
       <div class="tiles">
         ${c.summary.tiles.map((t, i) => `
@@ -2014,32 +2114,69 @@ dialog::backdrop {
         `).join('')}
       </div>
       <div class="tiles">
-        ${c.summary.stats.map((st) => `
-          <div class="stat-card">
-            <div class="w">${st.w}</div>
+        ${c.summary.stats.map((st, idx) => `
+          <button type="button" class="stat-card s1-stat-cta" data-pidx="${idx % c.presets.length}" style="text-align:left;cursor:pointer;transition:transform 0.15s,border-color 0.15s" title="클릭하면 우측 실험실에 연관 프리셋이 즉시 적용됩니다">
+            <div class="w">${st.w} <span style="color:var(--act);font-size:11px">↗ 실험실 연동</span></div>
             <div class="big" style="color:var(${st.col})">${st.val}</div>
             <div class="u">${st.u}</div>
-          </div>
+          </button>
         `).join('')}
       </div>
       <div class="callout note">
-        <div class="lab">이 강좌의 핵심 학습 목표</div>
+        <div class="lab">이 강좌의 핵심 학습 목표 & 빠른 실행</div>
         <div>${c.summary.note}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <button type="button" class="btn primary" id="s1-cta-cinema">🎬 6단계 해설 시네마 바로 재생 →</button>
+          <button type="button" class="btn" id="s1-cta-derive">📐 5단계 수식 유도 보기 →</button>
+          <button type="button" class="btn" id="s1-cta-lab">🎛️ 한계 조건 프리셋 실험 →</button>
+        </div>
       </div>
     `;
 
-    // Step 2: Intuition & Cinema Link
+    $$('#s1 .s1-stat-cta').forEach((btn) => {
+      btn.onclick = () => {
+        const pr = c.presets[+btn.dataset.pidx] || c.presets[0];
+        switchWorkbenchTab('lab');
+        applyPresetValues(pr.vals);
+        pulseRightWorkbench();
+        toast(`우측 실험실에 [${pr.label}] 조건이 반영되었습니다`);
+      };
+    });
+    $('#s1-cta-cinema').onclick = () => {
+      goStep(1, false);
+      switchWorkbenchTab('cinema');
+      film.t = 0;
+      film.scene = -1;
+      setFilmPlaying(true);
+      pulseRightWorkbench();
+    };
+    $('#s1-cta-derive').onclick = () => goStep(2, false);
+    $('#s1-cta-lab').onclick = () => {
+      goStep(3, false);
+      switchWorkbenchTab('lab');
+      if (c.presets[0]) applyPresetValues(c.presets[0].vals);
+      pulseRightWorkbench();
+    };
+
+    // Step 2: Intuition & Direct Cinema Scene Triggers
     $('#s2').innerHTML = `
       <div class="callout tip">
         <div class="lab">우측 [해설 시네마 · 영상 스튜디오] 실시간 연동</div>
-        <div>이 단계에서는 오른쪽 패널이 자동으로 <b>[해설 시네마 · 영상 스튜디오]</b>로 전환됩니다. <b>[▶ 재생]</b>을 눌러 6개 장면을 확인하거나 <b>[🔴 영상 녹화 (.webm)]</b>로 강의 영상을 저장해 보세요.</div>
+        <div>아래 장면 버튼을 클릭하면 오른쪽 캔버스에서 해당 애니메이션이 즉시 재생됩니다.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+          <button type="button" class="btn primary" id="s2-play-all">▶ 전체 6장면 연속 재생</button>
+          ${c.scenes.map((sc, idx) => `
+            <button type="button" class="btn s2-scene-cta" data-sidx="${idx}">장면 ${idx + 1}: ${sc.t}</button>
+          `).join('')}
+        </div>
       </div>
       <p style="font-weight:600;font-size:15.5px">${c.intuition.lead}</p>
       <div class="tiles">
-        ${c.intuition.cards.map((cd) => `
+        ${c.intuition.cards.map((cd, idx) => `
           <div class="tile ${cd.cls}">
             <div class="h">${cd.h}</div>
             <p>${cd.p}</p>
+            <button type="button" class="btn s2-card-cta" data-sidx="${Math.min(c.scenes.length - 1, idx * 2)}" style="margin-top:6px;justify-self:start;padding:4px 10px;font-size:12px">🎬 이 개념 시네마 장면 재생 →</button>
           </div>
         `).join('')}
       </div>
@@ -2048,6 +2185,28 @@ dialog::backdrop {
         <div class="M">${c.intuition.chainTex}</div>
       </div>
     `;
+
+    $('#s2-play-all').onclick = () => {
+      switchWorkbenchTab('cinema');
+      film.t = 0;
+      film.scene = -1;
+      setFilmPlaying(true);
+      pulseRightWorkbench();
+      toast('전체 6장면 해설 시네마 재생을 시작합니다');
+    };
+    $$('#s2 .s2-scene-cta, #s2 .s2-card-cta').forEach((btn) => {
+      btn.onclick = () => {
+        const sidx = +btn.dataset.sidx;
+        switchWorkbenchTab('cinema');
+        film.t = sidx * SCENE_SEC;
+        film.scene = -1;
+        $('#film-scrub').value = film.t / (c.scenes.length * SCENE_SEC);
+        drawFilmFrame();
+        setFilmPlaying(true);
+        pulseRightWorkbench();
+        toast(`장면 ${sidx + 1} (${c.scenes[sidx].t}) 재생 중`);
+      };
+    });
 
     // Step 3: 5-Step Derivation Stepper
     $('#s3').innerHTML = `
@@ -2063,6 +2222,10 @@ dialog::backdrop {
             <p>${ds.p}</p>
             <div class="formula-box"><div class="M">${ds.tex1}</div></div>
             ${ds.tex2 ? `<div class="formula-box"><div class="M">${ds.tex2}</div></div>` : ''}
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+              <button type="button" class="btn derive-sync-cinema" data-sidx="${Math.min(c.scenes.length - 1, i)}">🎬 관련 시네마 장면(${i + 1}) 보기</button>
+              <button type="button" class="btn derive-sync-lab" data-pidx="${i % c.presets.length}">🎛️ 우측 실험실 그래프에서 확인</button>
+            </div>
           </div>
         `).join('')}
         <div class="derive-nav">
@@ -2088,12 +2251,39 @@ dialog::backdrop {
     dBtns.forEach((b) => { b.onclick = () => showDeriveStep(+b.dataset.dstep); });
     $('#derive-prev').onclick = () => showDeriveStep(dIdx - 1);
     $('#derive-next').onclick = () => showDeriveStep(dIdx + 1);
+    $$('#s3 .derive-sync-cinema').forEach((b) => {
+      b.onclick = () => {
+        const sidx = +b.dataset.sidx;
+        switchWorkbenchTab('cinema');
+        film.t = sidx * SCENE_SEC;
+        film.scene = -1;
+        drawFilmFrame();
+        setFilmPlaying(true);
+        pulseRightWorkbench();
+      };
+    });
+    $$('#s3 .derive-sync-lab').forEach((b) => {
+      b.onclick = () => {
+        const pr = c.presets[+b.dataset.pidx] || c.presets[0];
+        switchWorkbenchTab('lab');
+        applyPresetValues(pr.vals);
+        pulseRightWorkbench();
+        toast(`우측 실험실에 [${pr.label}] 조건이 적용되었습니다`);
+      };
+    });
 
-    // Step 4: Interactive Lab Guide
+    // Step 4: Interactive Lab Guide + Direct Preset Triggers
     $('#s4').innerHTML = `
       <div class="callout note">
-        <div class="lab">우측 [실시간 매개변수 실험실] 연동</div>
-        <div>오른쪽 실험실의 슬라이더나 아래 4가지 프리셋 버튼을 클릭해 수식과 그래프의 변화를 직접 실험해 보세요.</div>
+        <div class="lab">아래 시나리오 카드를 클릭하면 우측 [실시간 매개변수 실험실] 슬라이더와 그래프가 즉시 변경됩니다</div>
+        <div class="presets-row" style="margin-top:8px">
+          ${c.presets.map((pr, idx) => `
+            <button type="button" class="preset-btn s4-preset-cta" data-pidx="${idx}">
+              <b>${pr.label} <span style="color:var(--act)">→ 적용</span></b>
+              <span>${pr.desc}</span>
+            </button>
+          `).join('')}
+        </div>
       </div>
       <div class="formula-box">
         <div class="cap">${c.labGuide.cap}</div>
@@ -2108,6 +2298,15 @@ dialog::backdrop {
         `).join('')}
       </div>
     `;
+    $$('#s4 .s4-preset-cta').forEach((b) => {
+      b.onclick = () => {
+        const pr = c.presets[+b.dataset.pidx];
+        switchWorkbenchTab('lab');
+        applyPresetValues(pr.vals);
+        pulseRightWorkbench();
+        toast(`실험실 시나리오 적용: ${pr.label}`);
+      };
+    });
 
     // Step 5: Advanced Proof
     $('#s5').innerHTML = `
@@ -2311,8 +2510,11 @@ dialog::backdrop {
 
   function drawSubPlot(c, rect, fn, lo, hi, color, opts = {}) {
     const [x0, y0, w, h] = rect;
+    const topPad = 23;
+    const botPad = 5;
+    const plotH = Math.max(16, h - topPad - botPad);
     const X = (u) => x0 + u * w;
-    const Y = (v) => y0 + h - ((v - lo) / (hi - lo)) * h;
+    const Y = (v) => y0 + topPad + plotH - ((v - lo) / (hi - lo)) * plotH;
     const upto = opts.upto == null ? 1 : opts.upto;
 
     c.strokeStyle = css('--canvas-grid');
@@ -2336,22 +2538,22 @@ dialog::backdrop {
 
     if (opts.label) {
       c.fillStyle = color;
-      c.font = '700 12px ' + css('--sans');
+      c.font = '700 11.5px ' + css('--sans');
       c.textAlign = 'left';
       c.textBaseline = 'top';
-      c.fillText(opts.label, x0 + 8, y0 + 6);
+      c.fillText(opts.label, x0 + 8, y0 + 5);
     }
     if (opts.peakText) {
       c.fillStyle = css('--ink-muted');
-      c.font = '500 11.5px ' + css('--mono');
+      c.font = '600 11px ' + css('--mono');
       c.textAlign = 'right';
       c.textBaseline = 'top';
-      c.fillText(opts.peakText, x0 + w - 8, y0 + 6);
+      c.fillText(opts.peakText, x0 + w - 8, y0 + 5);
     }
 
     c.save();
     c.beginPath();
-    c.rect(x0, y0 - 1, w, h + 2);
+    c.rect(x0 + 1, y0 + topPad - 2, w - 2, plotH + 4);
     c.clip();
 
     if (opts.ghostFn) {
@@ -2385,24 +2587,45 @@ dialog::backdrop {
   function buildCurveButtons() {
     const bar = $('#curve-type-bar');
     bar.textContent = '';
-    bar.style.display = state.courseIdx === 0 ? 'flex' : 'none';
-    if (state.courseIdx !== 0) return;
-    Object.entries(CURVES).forEach(([k, v]) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'btn';
-      b.style.padding = '4px 10px';
-      b.style.fontSize = '12px';
-      b.textContent = v.name;
-      b.setAttribute('aria-pressed', k === state.curve);
-      b.onclick = () => {
-        state.curve = k;
-        $('#sim-formula-badge').textContent = v.formula;
-        buildCurveButtons();
-        drawSimLab();
-      };
-      bar.append(b);
-    });
+    bar.style.display = 'flex';
+    if (state.courseIdx === 0) {
+      Object.entries(CURVES).forEach(([k, v]) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn';
+        b.style.padding = '4px 10px';
+        b.style.fontSize = '12px';
+        b.textContent = v.name;
+        b.setAttribute('aria-pressed', k === state.curve);
+        b.onclick = () => {
+          state.curve = k;
+          $('#sim-formula-badge').textContent = v.formula;
+          buildCurveButtons();
+          drawSimLab();
+          pulseRightWorkbench();
+        };
+        bar.append(b);
+      });
+    } else {
+      const c = COURSES[state.courseIdx];
+      c.presets.forEach((pr, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn';
+        b.style.padding = '4px 9px';
+        b.style.fontSize = '11.5px';
+        b.textContent = pr.label;
+        b.setAttribute('aria-pressed', state.activePresetIdx === idx);
+        b.onclick = () => {
+          state.activePresetIdx = idx;
+          applyPresetValues(pr.vals);
+          buildCurveButtons();
+          pulseRightWorkbench();
+          toast(`실험실 모드 전환: ${pr.label}`);
+        };
+        bar.append(b);
+      });
+    }
   }
 
   function renderPresetsForCourse() {
@@ -2810,7 +3033,7 @@ dialog::backdrop {
     c.fillText(`aftermath STUDIO · ${COURSES[state.courseIdx].num} · 장면 0${idx + 1}/0${scenes.length} · ${scenes[idx].t}`, m, 18);
 
     const rMain = [m, m * 1.4, w - m * 2, h - m * 2.4];
-    const q = ease(p * 1.25);
+    const q = !film.playing && p < 0.05 ? 0.85 : ease(p * 1.25);
 
     if (state.courseIdx === 1) {
       // Course 2 Cinema: Exponential vs Log-Linear
@@ -3000,9 +3223,23 @@ dialog::backdrop {
     });
   }
 
+  $('#brand-home').onclick = (e) => {
+    e.preventDefault();
+    selectCourse(0, true);
+  };
+
+  function pulseElement(el) {
+    if (!el) return;
+    el.classList.remove('flash-sync');
+    void el.offsetWidth;
+    el.classList.add('flash-sync');
+  }
+
   function selectCourse(idx, notify) {
     state.courseIdx = idx;
     state.visualIdx = 0;
+    state.activePresetIdx = 0;
+    if (notify) state.stepIdx = 0;
     film.t = 0;
     film.scene = -1;
     setFilmPlaying(false);
@@ -3014,6 +3251,15 @@ dialog::backdrop {
     $('#hero-desc').textContent = c.desc;
     $('#sim-formula-badge').textContent = c.formulaBadge;
 
+    if (c.presets && c.presets[0] && c.presets[0].vals) {
+      const p = c.presets[0].vals;
+      if (p.curve) state.curve = p.curve;
+      if (p.T != null) $('#in-T').value = p.T;
+      if (p.W != null) $('#in-W').value = p.W;
+      if (p.mu != null) $('#in-mu').value = p.mu;
+      if (p.ax != null) $('#in-ax').value = p.ax;
+    }
+
     renderCoursesBar();
     renderVisualShowcase();
     renderCourseSteps();
@@ -3023,7 +3269,12 @@ dialog::backdrop {
     goStep(state.stepIdx, true);
     drawSimLab();
     drawFilmFrame();
-    if (notify) toast(`${c.num} (${c.title}) 전체 9단계 교재 및 실험실로 전환했습니다`);
+    if (notify) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      pulseElement($('#active-module'));
+      pulseRightWorkbench();
+      toast(`${c.num} (${c.title}) 전체 9단계 교재 및 실험실로 전환했습니다`);
+    }
   }
 
   function renderVisualShowcase() {
@@ -3040,6 +3291,13 @@ dialog::backdrop {
       b.onclick = () => {
         state.visualIdx = i;
         renderVisualShowcase();
+        const firstHotspot = c.visuals[i]?.hotspots?.[0];
+        if (firstHotspot?.preset) {
+          switchWorkbenchTab('lab');
+          applyPresetValues(firstHotspot.preset);
+          pulseRightWorkbench();
+        }
+        toast(`도해 전환: ${v.label}`);
       };
       switcher.append(b);
     });
@@ -3069,10 +3327,10 @@ dialog::backdrop {
         $$('.hotspot', layer).forEach((p, k) => p.setAttribute('aria-expanded', k === i));
         $('#hotspot-title').textContent = h.label;
         $('#hotspot-desc').textContent = h.text;
-        // IMMEDIATELY synchronize right simulator on pin click!
         if (h.preset) {
           switchWorkbenchTab('lab');
           applyPresetValues(h.preset);
+          pulseRightWorkbench();
           toast(`${h.label} 조건이 실험실 그래프에 즉시 반영되었습니다`);
         }
       };
@@ -3153,19 +3411,19 @@ dialog::backdrop {
     });
 
     // Synchronize right workbench with the step
-    if (state.stepIdx === 1) switchWorkbenchTab('cinema');
-    else if (state.stepIdx === 3) switchWorkbenchTab('lab');
+    if (state.stepIdx === 1) {
+      switchWorkbenchTab('cinema');
+    } else if (state.stepIdx === 0 || state.stepIdx === 3) {
+      switchWorkbenchTab('lab');
+    }
 
     try { localStorage.setItem('am-argon-step', String(state.stepIdx)); } catch (e) {}
     updateProgressUI();
 
     if (!quiet) {
-      // If all steps are expanded, scroll to that specific pane; otherwise scroll #active-module into clear view
       const targetEl = state.showAllSteps ? SECS[state.stepIdx] : $('#active-module');
-      const rect = targetEl.getBoundingClientRect();
-      if (rect.top < 95 || rect.top > window.innerHeight * 0.45) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      pulseElement(targetEl);
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
