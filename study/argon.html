@@ -1,0 +1,3367 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="aftermath 교사 연수 스튜디오 — Google Drive 주간 수학 리서치 아카이브 기반 인터랙티브 수리 모델링·시각화·영상 제작 웹앱">
+<title>aftermath 교사 연수 스튜디오 · Argon Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+/* ==========================================================================
+   aftermath Teacher Study Studio — Editorial Precision Instrument Design System
+   ========================================================================== */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #F6F4EE;
+  --bg-elev: #FFFFFF;
+  --bg-recess: #ECE9DF;
+  --bg-glass: rgba(246, 244, 238, 0.88);
+  --ink: #121417;
+  --ink-secondary: #3E454C;
+  --ink-muted: #687078;
+  --ink-faint: #8C949C;
+  --line: #D8D3C6;
+  --line-soft: #E6E2D6;
+  --line-strong: #B8B1A0;
+
+  /* Editorial & Mathematical Accents (No cliché purple-on-dark) */
+  --act: #D94E28;        /* International Vermilion */
+  --act-hover: #BF3F1C;
+  --act-ink: #FFFFFF;
+  --act-soft: rgba(217, 78, 40, 0.10);
+
+  /* Derivative & Function Semantic Channels */
+  --c-y: #0E6BA8;        /* Cobalt Blue — Position / Primary Function */
+  --c-v: #C87A08;        /* Ochre Amber — Velocity / 1st Derivative */
+  --c-a: #D94E28;        /* Vermilion — Acceleration / 2nd Derivative */
+  --c-j: #157A58;        /* Viridian Emerald — Jerk / 3rd Derivative */
+  --ok: #157A58;
+  --warn: #C87A08;
+  --bad: #C92A2A;
+
+  --t-y: rgba(14, 107, 168, 0.08);
+  --t-v: rgba(200, 122, 8, 0.09);
+  --t-a: rgba(217, 78, 40, 0.09);
+  --t-j: rgba(21, 122, 88, 0.09);
+  --t-ok: rgba(21, 122, 88, 0.10);
+  --t-bad: rgba(201, 42, 42, 0.10);
+
+  --canvas-bg: #FAF8F3;
+  --canvas-grid: rgba(18, 20, 23, 0.07);
+  --canvas-axis: rgba(18, 20, 23, 0.24);
+  --shadow-sm: 0 1px 3px rgba(18, 20, 23, 0.05);
+  --shadow-md: 0 8px 24px -4px rgba(18, 20, 23, 0.08);
+  --shadow-lg: 0 18px 40px -8px rgba(18, 20, 23, 0.14);
+
+  --sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --serif: "IBM Plex Serif", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0E1012;
+  --bg-elev: #16191D;
+  --bg-recess: #1D2126;
+  --bg-glass: rgba(14, 16, 18, 0.88);
+  --ink: #F2F0E8;
+  --ink-secondary: #C2C6CA;
+  --ink-muted: #8B9299;
+  --ink-faint: #616870;
+  --line: #2A2F36;
+  --line-soft: #20252B;
+  --line-strong: #3E4650;
+
+  --act: #FF6438;
+  --act-hover: #FF7B54;
+  --act-ink: #0E1012;
+  --act-soft: rgba(255, 100, 56, 0.14);
+
+  --c-y: #38B6FF;
+  --c-v: #F5B73B;
+  --c-a: #FF6B42;
+  --c-j: #34D399;
+  --ok: #34D399;
+  --warn: #F5B73B;
+  --bad: #FF6B6B;
+
+  --t-y: rgba(56, 182, 255, 0.10);
+  --t-v: rgba(245, 183, 59, 0.10);
+  --t-a: rgba(255, 107, 66, 0.11);
+  --t-j: rgba(52, 211, 153, 0.10);
+  --t-ok: rgba(52, 211, 153, 0.12);
+  --t-bad: rgba(255, 107, 107, 0.12);
+
+  --canvas-bg: #111417;
+  --canvas-grid: rgba(242, 240, 232, 0.06);
+  --canvas-axis: rgba(242, 240, 232, 0.24);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 40px -8px rgba(0, 0, 0, 0.6);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+button { cursor: pointer; }
+a { color: var(--c-y); text-underline-offset: 3px; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
+
+/* ---------- Top Command Header ---------- */
+header.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+/* Preserved aftermath Wordmark Structure */
+.sig {
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+  text-decoration: none;
+  color: var(--ink);
+}
+.sig .af { font-weight: 500; color: var(--ink-muted); }
+.sig .mm { font-family: var(--serif); font-weight: 700; color: var(--act); }
+.sig .q {
+  display: inline-block;
+  width: 0.32em;
+  height: 0.44em;
+  background: var(--act);
+  margin-left: 0.14em;
+  border-radius: 1px;
+}
+.edition-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--act-soft);
+  color: var(--act);
+  border: 1px solid color-mix(in srgb, var(--act) 28%, transparent);
+}
+.topbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+}
+.course-pill-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+.course-pill-bar::-webkit-scrollbar { display: none; }
+.course-pill {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--ink-secondary);
+  border-radius: 8px;
+  padding: 5px 11px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.course-pill:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.course-pill[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+.course-pill .c-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  opacity: 0.75;
+}
+.topbar-spacer { flex: 1; }
+
+.layout-switcher {
+  display: inline-flex;
+  background: var(--bg-recess);
+  padding: 3px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+}
+.layout-switcher button {
+  border: 0;
+  background: transparent;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  transition: all 0.15s;
+}
+.layout-switcher button[aria-pressed="true"] {
+  background: var(--bg-elev);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.prog-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-secondary);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+.prog-track {
+  width: 68px;
+  height: 5px;
+  background: var(--bg-recess);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.prog-track i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--ok);
+  transition: width 0.25s ease;
+}
+
+.icon-btn {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.icon-btn:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  background: var(--bg-recess);
+}
+
+/* ---------- Secondary Step Ribbon ---------- */
+.step-ribbon {
+  border-top: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--bg-elev) 65%, var(--bg));
+}
+.step-ribbon-inner {
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 7px 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.step-ribbon-inner::-webkit-scrollbar { display: none; }
+.step-tab {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-muted);
+  border-radius: 7px;
+  padding: 5px 11px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.step-tab:hover {
+  color: var(--ink);
+  background: var(--bg-recess);
+}
+.step-tab[aria-current="step"] {
+  background: var(--act-soft);
+  color: var(--act);
+  border-color: color-mix(in srgb, var(--act) 30%, transparent);
+  font-weight: 700;
+}
+.step-tab.done:not([aria-current="step"]) {
+  color: var(--ok);
+}
+.step-tab .s-idx {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  opacity: 0.8;
+}
+
+/* ---------- Main Workspace Grid ---------- */
+.workspace {
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(440px, 0.92fr);
+  gap: 22px;
+  align-items: start;
+}
+.workspace[data-layout="stage"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+.workspace[data-layout="stage"] .left-column {
+  order: 2;
+}
+.workspace[data-layout="stage"] .right-workbench {
+  position: static;
+  order: 1;
+}
+.workspace[data-layout="reader"] {
+  grid-template-columns: minmax(0, 920px);
+  justify-content: center;
+}
+.workspace[data-layout="reader"] .right-workbench {
+  position: static;
+}
+@media (max-width: 1120px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .right-workbench {
+    position: static !important;
+  }
+}
+
+/* ---------- Left Column: Course Header + Active Module + All Modules ---------- */
+.left-column {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.course-hero {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: 14px;
+}
+.hero-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+.subj-badge {
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--act-soft);
+  color: var(--act);
+}
+.course-hero h1 {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 29px);
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+}
+.course-hero .hero-desc {
+  color: var(--ink-secondary);
+  font-size: 15px;
+  max-width: 68ch;
+}
+
+/* Visual Concept Showcase Card (Nano Banana Illustrations + Interactive Hotspots) */
+.visual-showcase {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--canvas-bg);
+}
+.visual-tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 14px;
+  background: var(--bg-recess);
+  border-bottom: 1px solid var(--line);
+  font-size: 12.5px;
+}
+.visual-tabs .vt-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.vt-btn {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+.vt-btn[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+.visual-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  background: #F7F6F2;
+}
+.visual-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid #FFFFFF;
+  background: var(--act);
+  color: #FFFFFF;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.32);
+  transition: transform 0.15s ease, background 0.15s ease;
+  z-index: 3;
+}
+.hotspot:hover,
+.hotspot[aria-expanded="true"] {
+  transform: translate(-50%, -50%) scale(1.16);
+  background: var(--c-y);
+}
+.visual-caption-bar {
+  padding: 11px 16px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--bg-elev);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+}
+.visual-caption-bar b {
+  color: var(--act);
+  margin-right: 6px;
+}
+
+/* ---------- Lesson Step Panel ---------- */
+.module-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.module-head {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--bg-recess) 45%, var(--bg-elev));
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+.module-head-left {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.module-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  color: var(--act);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  flex: none;
+}
+.module-kicker {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.module-head h2 {
+  margin: 2px 0 3px;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+.module-goal {
+  font-size: 13.5px;
+  color: var(--ink-secondary);
+}
+.module-body {
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+}
+.module-foot {
+  padding: 14px 22px;
+  border-top: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--bg-recess) 35%, var(--bg-elev));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---------- Cards, Grids, Formulas, Callouts ---------- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.tile {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 14px 16px;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.tile .h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14.5px;
+}
+.tile .num-chip {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.tile p {
+  font-size: 14px;
+  color: var(--ink-secondary);
+}
+.tile.y { background: var(--t-y); border-color: color-mix(in srgb, var(--c-y) 28%, var(--line)); }
+.tile.v { background: var(--t-v); border-color: color-mix(in srgb, var(--c-v) 28%, var(--line)); }
+.tile.a { background: var(--t-a); border-color: color-mix(in srgb, var(--c-a) 28%, var(--line)); }
+.tile.j { background: var(--t-j); border-color: color-mix(in srgb, var(--c-j) 28%, var(--line)); }
+.tile.y .h { color: var(--c-y); }
+.tile.v .h { color: var(--c-v); }
+.tile.a .h { color: var(--c-a); }
+.tile.j .h { color: var(--c-j); }
+
+.stat-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 13px 15px;
+  display: grid;
+  gap: 3px;
+}
+.stat-card .w { font-size: 12px; color: var(--ink-muted); font-weight: 600; }
+.stat-card .big {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.stat-card .u { font-size: 12.5px; color: var(--ink-secondary); }
+
+.formula-box {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--c-y);
+  border-radius: 10px;
+  background: var(--canvas-bg);
+  padding: 13px 16px;
+  overflow-x: auto;
+}
+.formula-box .cap {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  margin-bottom: 6px;
+}
+.M { overflow-x: auto; padding: 3px 0; text-align: center; }
+
+.callout {
+  border-radius: 12px;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 4px;
+}
+.callout .lab {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.callout.note { background: var(--t-y); border-color: color-mix(in srgb, var(--c-y) 30%, var(--line)); }
+.callout.note .lab { color: var(--c-y); }
+.callout.tip { background: var(--t-ok); border-color: color-mix(in srgb, var(--ok) 30%, var(--line)); }
+.callout.tip .lab { color: var(--ok); }
+.callout.warn { background: var(--t-a); border-color: color-mix(in srgb, var(--c-a) 30%, var(--line)); }
+.callout.warn .lab { color: var(--c-a); }
+
+/* Stepper inside Derivation */
+.derive-stepper {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.derive-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--bg-recess);
+  border-bottom: 1px solid var(--line);
+}
+.derive-pane {
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+.derive-pane h3 { margin: 0; font-size: 16.5px; }
+.derive-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-recess);
+  border-top: 1px solid var(--line);
+}
+
+/* QA Accordions */
+details.qa {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  overflow: hidden;
+}
+details.qa summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 13px 16px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  font-weight: 600;
+}
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa .qm {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--act-soft);
+  color: var(--act);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+details.qa summary::after { content: "+"; font-family: var(--mono); font-size: 18px; color: var(--ink-muted); }
+details.qa[open] summary::after { content: "−"; }
+details.qa .in {
+  padding: 0 16px 15px 54px;
+  color: var(--ink-secondary);
+  display: grid;
+  gap: 8px;
+  font-size: 14.5px;
+}
+
+/* Cases Grid */
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+.case-link {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 12px 14px;
+  text-decoration: none;
+  color: var(--ink);
+  display: grid;
+  gap: 4px;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.case-link:hover {
+  transform: translateY(-2px);
+  border-color: var(--act);
+}
+.case-link .d { font-family: var(--mono); font-size: 11.5px; color: var(--ink-muted); }
+.case-link .t { font-weight: 600; font-size: 14px; line-height: 1.4; }
+.case-link .n { font-size: 12.5px; color: var(--act); font-weight: 500; }
+
+/* Classroom Material Cards & Code Blocks */
+.pcard {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+.pcard .hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.lv-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 99px;
+}
+.lv-pill.l1 { background: var(--t-y); color: var(--c-y); }
+.lv-pill.l2 { background: var(--t-v); color: var(--c-v); }
+.lv-pill.l3 { background: var(--t-a); color: var(--c-a); }
+.lv-pill.l4 { background: var(--t-j); color: var(--c-j); }
+.sol-box {
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  color: var(--ink-secondary);
+  font-size: 14px;
+}
+pre.code-box {
+  background: #14171A;
+  color: #ECEAE2;
+  border-radius: 10px;
+  padding: 14px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Quiz Grid */
+.quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.quiz-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+.quiz-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.quiz-opts button {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.quiz-opts button:hover { border-color: var(--line-strong); }
+.quiz-opts button.right {
+  border-color: var(--ok);
+  background: var(--t-ok);
+  color: var(--ok);
+  font-weight: 700;
+}
+.quiz-opts button.wrong {
+  border-color: var(--bad);
+  background: var(--t-bad);
+  color: var(--bad);
+}
+.quiz-why {
+  font-size: 13.5px;
+  color: var(--ink-secondary);
+  border-top: 1px solid var(--line-soft);
+  padding-top: 8px;
+}
+
+/* ---------- Right Sticky Workbench (Motion Video Studio + Interactive Lab) ---------- */
+.right-workbench {
+  position: sticky;
+  top: 104px;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.workbench-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.wb-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-recess);
+  border-bottom: 1px solid var(--line);
+}
+.wb-tab-group {
+  display: flex;
+  gap: 6px;
+}
+.wb-tab {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.wb-tab[aria-selected="true"] {
+  background: var(--act);
+  color: var(--act-ink);
+  border-color: var(--act);
+}
+
+/* Cinema & Video Recorder Stage */
+.cinema-stage {
+  display: grid;
+}
+.cinema-canvas-wrap {
+  position: relative;
+  background: var(--canvas-bg);
+  border-bottom: 1px solid var(--line-soft);
+}
+canvas#film-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+.rec-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(201, 42, 42, 0.92);
+  color: #FFFFFF;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.rec-indicator[hidden] { display: none; }
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse { 50% { opacity: 0.25; } }
+
+.cinema-controls {
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg-elev);
+}
+.cinema-scenes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg);
+}
+.scene-chip {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 12px;
+  color: var(--ink-secondary);
+}
+.scene-chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+.cinema-caption {
+  padding: 12px 16px;
+  font-size: 13.5px;
+  min-height: 5.2em;
+  display: grid;
+  gap: 4px;
+}
+.cinema-caption b {
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--act);
+  text-transform: uppercase;
+}
+
+/* Interactive Parameter Simulator Stage */
+.sim-stage {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+canvas#sim-plots {
+  display: block;
+  width: 100%;
+  height: 360px;
+  background: var(--canvas-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.sim-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .sim-grid { grid-template-columns: 1fr; }
+}
+.sliders-box {
+  display: grid;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.slider-row {
+  display: grid;
+  gap: 3px;
+  font-size: 13px;
+}
+.slider-row .lbl {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-secondary);
+}
+.slider-row .lbl b {
+  font-family: var(--mono);
+  color: var(--ink);
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--act);
+}
+.telemetry-box {
+  display: grid;
+  gap: 8px;
+}
+canvas#friction-canvas {
+  display: block;
+  width: 100%;
+  height: 145px;
+  background: var(--canvas-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.readouts {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  padding: 10px 12px;
+  font-size: 12.5px;
+  display: grid;
+  gap: 4px;
+}
+.readouts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.readouts span:last-child {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.readouts .verdict {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line-soft);
+  font-weight: 700;
+}
+.readouts .verdict.over span:last-child { color: var(--bad); }
+.readouts .verdict.fine span:last-child { color: var(--ok); }
+
+.presets-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.preset-btn {
+  text-align: left;
+  border: 1px dashed var(--line-strong);
+  background: var(--bg);
+  border-radius: 9px;
+  padding: 8px 11px;
+  font-size: 12.5px;
+  display: grid;
+  gap: 2px;
+  transition: all 0.15s;
+}
+.preset-btn:hover {
+  border-style: solid;
+  border-color: var(--act);
+  background: var(--act-soft);
+}
+.preset-btn b { font-size: 13px; color: var(--ink); }
+.preset-btn span { color: var(--ink-muted); font-size: 12px; }
+
+/* Buttons */
+.btn {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--line-strong); background: var(--bg-recess); }
+.btn.primary {
+  background: var(--act);
+  color: var(--act-ink);
+  border-color: var(--act);
+}
+.btn.primary:hover { background: var(--act-hover); }
+.btn[aria-pressed="true"],
+.btn[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+/* Drive Pipeline Modal / Drawer */
+dialog#pipeline-modal {
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--ink);
+  border-radius: 16px;
+  padding: 0;
+  width: min(980px, calc(100vw - 24px));
+  max-height: calc(100vh - 40px);
+  box-shadow: var(--shadow-lg);
+}
+dialog::backdrop {
+  background: rgba(12, 14, 16, 0.62);
+  backdrop-filter: blur(4px);
+}
+.modal-head {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-recess);
+}
+.modal-body {
+  padding: 22px;
+  display: grid;
+  gap: 18px;
+}
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.pipe-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+}
+.pipe-card .p-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--ink-muted);
+}
+.pipe-card h4 { margin: 0; font-size: 15px; }
+.pipe-card p { font-size: 13px; color: var(--ink-secondary); }
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 99px;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: var(--shadow-md);
+}
+#toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ==================== TOP COMMAND HEADER ==================== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="sig" aria-label="aftermath 교사 연수 홈">
+      <span class="af">after</span><span class="mm">math</span><span class="q"></span>
+    </a>
+    <span class="edition-tag">Argon Studio</span>
+    <div class="topbar-divider" aria-hidden="true"></div>
+
+    <!-- Multi-Course Curriculum Switcher (Google Drive 누적 주제 연동) -->
+    <div class="course-pill-bar" id="course-bar" role="tablist" aria-label="연수 강좌 선택"></div>
+
+    <div class="topbar-spacer"></div>
+
+    <!-- Workspace View Mode Switcher -->
+    <div class="layout-switcher" role="group" aria-label="화면 배치 모드">
+      <button type="button" data-mode="split" aria-pressed="true" title="교재와 실험실을 나란히 보기">스플릿 스튜디오</button>
+      <button type="button" data-mode="stage" aria-pressed="false" title="영상·시뮬레이션 크게 보기">시네마·실험실</button>
+      <button type="button" data-mode="reader" aria-pressed="false" title="연수 교재 중심 읽기">교재 집중</button>
+    </div>
+
+    <!-- Step Progress Indicator -->
+    <div class="prog-pill" title="현재 강좌 학습 진도">
+      <span id="prog-text">0 / 9</span>
+      <span class="prog-track"><i id="prog-bar"></i></span>
+    </div>
+
+    <!-- Google Drive Curriculum Pipeline Modal Trigger -->
+    <button class="icon-btn" id="open-pipeline" type="button">
+      <span>드라이브 연수 맵 (180사례)</span>
+    </button>
+
+    <!-- Theme Switcher -->
+    <button class="icon-btn" id="theme-toggle" type="button" aria-label="테마 전환">
+      <span id="theme-label">다크 스튜디오</span>
+    </button>
+
+    <!-- Link to Research Gallery -->
+    <a class="icon-btn" href="../site/index.html" target="_blank" rel="noopener">리서치 갤러리 ↗</a>
+  </div>
+
+  <!-- Step Navigation Ribbon -->
+  <div class="step-ribbon">
+    <nav class="step-ribbon-inner" id="steps-nav" aria-label="강좌 단계 이동"></nav>
+  </div>
+</header>
+
+<!-- ==================== MAIN SPLIT WORKSPACE ==================== -->
+<main class="workspace" id="workspace" data-layout="split">
+
+  <!-- LEFT COLUMN: Course Overview, Nano Banana Visual Gallery, Step Content -->
+  <div class="left-column">
+
+    <!-- Course Hero & Nano Banana Visual Diagram Showcase -->
+    <section class="course-hero" id="course-hero">
+      <div class="hero-eyebrow">
+        <span class="subj-badge" id="hero-subj">수학Ⅱ · 미적분</span>
+        <span id="hero-meta">Google Drive 주간 리서치 핵심 구조 #01 · 검증 완료 수식</span>
+      </div>
+      <h1 id="hero-title">1강 · 5차 다항 궤적과 저크(Jerk) 최소화</h1>
+      <p class="hero-desc" id="hero-desc">
+        자율주행 긴급 회피, eVTOL 수직 이착륙, 협동 로봇 관절 제어에서 반복 등장하는 5차 다항식
+        <span class="m">y(\tau)=W(10\tau^3-15\tau^4+6\tau^5)</span>의 유도부터 타이어 마찰원 한계, 변분법 증명까지 다루는 교사 연수 모듈입니다.
+      </p>
+
+      <!-- Nano Banana AI Generated Technical Illustration + Interactive Hotspots -->
+      <div class="visual-showcase">
+        <div class="visual-tabs">
+          <div class="vt-group" id="visual-switcher" role="tablist" aria-label="시각 도해 선택"></div>
+          <span style="color:var(--ink-muted);font-family:var(--mono);font-size:11.5px">핀(①~④)을 누르면 수식·시뮬레이터와 연동됩니다</span>
+        </div>
+        <div class="visual-frame" id="visual-frame">
+          <img id="visual-img" src="assets/quintic_trajectory_hero.jpg" alt="자율주행 5차 다항 궤적과 타이어 마찰원 정밀 일러스트">
+          <div id="hotspot-layer"></div>
+        </div>
+        <div class="visual-caption-bar">
+          <div><b id="hotspot-title">도해 해설</b><span id="hotspot-desc">그림 위의 번호 핀을 클릭해 출발·중간 변곡점·최대 가속도·도착 경계 조건을 확인하세요.</span></div>
+          <button class="btn" id="sync-sim-btn" type="button">이 조건으로 실험실 맞추기 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Lesson Step Card -->
+    <article class="module-card" id="active-module">
+      <div class="module-head">
+        <div class="module-head-left">
+          <div class="module-badge" id="mod-num">01</div>
+          <div>
+            <div class="module-kicker" id="mod-kicker">STEP 1 · 핵심 요약</div>
+            <h2 id="mod-title">세 문장으로 보는 5차 다항 궤적</h2>
+            <div class="module-goal" id="mod-goal">자율주행 차선 변경, eVTOL 이착륙, 로봇 팔 이동에 같은 식이 반복해서 나옵니다.</div>
+          </div>
+        </div>
+        <button class="btn" id="toggle-all-steps" type="button" title="모든 단계를 한 페이지로 펼쳐 보기">전체 단계 펼치기</button>
+      </div>
+
+      <!-- Step Sections Container -->
+      <div id="sections-host">
+
+        <!-- STEP 1: 요약 -->
+        <section class="module-body sec-pane" id="s1" data-step="1" data-kicker="1단계 · 핵심 요약" data-title="세 문장으로 보는 핵심 구조" data-goal="자율주행 차선 변경, eVTOL 이착륙, 로봇 팔 이동에 같은 식이 반복해서 나옵니다.">
+          <div class="tiles">
+            <div class="tile y">
+              <div class="h"><span class="num-chip">1</span>경계 조건 여섯 개</div>
+              <p>정지에서 출발해 정지로 끝나는 이동에서 처음(<span class="m">t=0</span>)과 끝(<span class="m">t=T</span>)의 <b>위치·속도·가속도</b> 6개를 지정하면 5차 다항식이 유일하게 결정됩니다.</p>
+            </div>
+            <div class="tile v">
+              <div class="h"><span class="num-chip">2</span>무차원 정규화 식 하나</div>
+              <div class="M">y(\tau)=W\,(10\tau^3-15\tau^4+6\tau^5)</div>
+              <p>무차원 시간 <span class="m">\tau=t/T\in[0,1]</span>를 쓰면 이동 폭 <span class="m">W</span>와 시간 <span class="m">T</span>만 바꿔 모든 공학 문제에 그대로 적용됩니다.</p>
+            </div>
+            <div class="tile j">
+              <div class="h"><span class="num-chip">3</span>최소 저크(Minimum Jerk) 최적성</div>
+              <p>같은 여섯 조건을 만족하는 모든 미분가능 함수 가운데 이 5차식이 <b>저크 제곱의 적분값</b> <span class="m">\int_0^T (y''')^2 dt</span>을 최소로 만듭니다.</p>
+            </div>
+          </div>
+
+          <div class="tiles">
+            <div class="stat-card">
+              <div class="w">최대 속도 (τ = 0.50)</div>
+              <div class="big" style="color:var(--c-v)">1.875</div>
+              <div class="u">× W/T · 평균 속도의 15/8배</div>
+            </div>
+            <div class="stat-card">
+              <div class="w">최대 가속도 (τ ≈ 0.211, 0.789)</div>
+              <div class="big" style="color:var(--c-a)">5.774</div>
+              <div class="u">× W/T² · 정확히 10/√3배</div>
+            </div>
+            <div class="stat-card">
+              <div class="w">최대 저크 (τ = 0, 1)</div>
+              <div class="big" style="color:var(--c-j)">60.0</div>
+              <div class="u">× W/T³ · 양 끝 경계에서 발생</div>
+            </div>
+            <div class="stat-card">
+              <div class="w">저크 에너지 최솟값</div>
+              <div class="big" style="color:var(--c-y)">720</div>
+              <div class="u">× W²/T⁵ · 변분법 전역 최적해</div>
+            </div>
+          </div>
+
+          <div class="callout note">
+            <div class="lab">연수 학습 목표</div>
+            <div>원본 리서치 문서의 <span class="m">y=c_5t^5+c_4t^4+c_3t^3</span>에서 계수가 왜 <span class="m">6, -15, 10</span>인지 수학Ⅱ 다항함수 미분으로 직접 유도하고, 타이어 마찰원 조건에서 최소 회피 시간 <span class="m">T_{\min}</span>을 도출할 수 있습니다.</div>
+          </div>
+        </section>
+
+        <!-- STEP 2: 그림·영상 설명 -->
+        <section class="module-body sec-pane" id="s2" data-step="2" data-kicker="2단계 · 직관과 물리적 의미" data-title="왜 가속도의 변화율(저크)을 제어해야 할까?" data-goal="오른쪽 시네마 스튜디오에서 6개 장면을 재생하거나 .webm 영상으로 녹화해 수업 자료로 바로 내보낼 수 있습니다." hidden>
+          <div class="callout tip">
+            <div class="lab">우측 영상 스튜디오 연동</div>
+            <div>오른쪽 패널의 <b>[해설 시네마 · 영상 스튜디오]</b>에서 6개 장면을 재생해 보세요. <b>[🎬 캔버스 영상 녹화]</b> 버튼을 누르면 현재 재생 중인 애니메이션이 고화질 <code>.webm</code> 동영상 파일로 즉시 다운로드됩니다.</div>
+          </div>
+
+          <p style="font-weight:600;font-size:15.5px">버스나 엘리베이터에 서 있을 때 몸이 '덜컥' 휘청이는 순간을 수학으로 구분해 봅시다.</p>
+          <div class="tiles">
+            <div class="tile y">
+              <div class="h">일정한 속도 (<span class="m">y''=0</span>)</div>
+              <p>등속 직선 운동에서는 알짜힘이 0입니다. 손잡이를 잡지 않아도 편안하게 서 있을 수 있습니다.</p>
+            </div>
+            <div class="tile v">
+              <div class="h">일정한 가속도 (<span class="m">y'''=0</span>)</div>
+              <p>일정한 힘이 걸리므로 몸을 살짝 기울이면 균형을 유지할 수 있습니다. 근육이 예측 가능한 상태입니다.</p>
+            </div>
+            <div class="tile a">
+              <div class="h">가속도가 급변할 때 (<span class="m">|y'''|\gg 0</span>)</div>
+              <p>급브레이크를 밟거나 떼는 순간 가속도가 불연속적으로 뛰면 승객이 휘청거리고 기계 관절에 충격파가 걸립니다. 이 <b>가속도의 시간 변화율</b>이 바로 <b>저크(Jerk, <span class="m">y'''</span>)</b>입니다.</p>
+            </div>
+          </div>
+
+          <div class="formula-box">
+            <div class="cap">위치에서 저크까지의 미분 계층 (수학Ⅱ → 물리·공학 확장)</div>
+            <div class="M">y(t)\ \xrightarrow{\ \frac{d}{dt}\ }\ v(t)=y'(t)\ \xrightarrow{\ \frac{d}{dt}\ }\ a(t)=y''(t)\propto F(t)\ \xrightarrow{\ \frac{d}{dt}\ }\ j(t)=y'''(t)\propto \frac{dF}{dt}</div>
+          </div>
+        </section>
+
+        <!-- STEP 3: 수식 세우기 -->
+        <section class="module-body sec-pane" id="s3" data-step="3" data-kicker="3단계 · 수식 유도" data-title="조건 여섯 개에서 10τ³ − 15τ⁴ + 6τ⁵ 유도하기" data-goal="수학Ⅱ의 다항함수 미분과 삼원일차연립방정식만으로 5단계 만에 계수를 완벽히 결정합니다." hidden>
+          <div class="derive-stepper" id="derive-box">
+            <div class="derive-tabs" id="derive-tabs" role="tablist"></div>
+
+            <div class="derive-pane" data-t="1. 경계조건 설정">
+              <h3>시간 [0, T] 동안 옆으로 W만큼 이동하는 6개의 경계조건</h3>
+              <p>출발 순간(<span class="m">t=0</span>)과 도착 순간(<span class="m">t=T</span>)에 차선이 평행하고 조향각(횡가속도)이 0이어야 핸들을 꺾는 충격이 없습니다.</p>
+              <div class="formula-box"><div class="M">y(0)=0,\quad y'(0)=0,\quad y''(0)=0,\qquad y(T)=W,\quad y'(T)=0,\quad y''(T)=0</div></div>
+              <p>독립된 선형 조건이 6개이므로 미정계수 6개를 갖는 5차 다항식을 세웁니다.</p>
+              <div class="formula-box"><div class="M">y(t)=a_0+a_1t+a_2t^2+a_3t^3+a_4t^4+a_5t^5</div></div>
+            </div>
+
+            <div class="derive-pane" data-t="2. 출발조건 소거" hidden>
+              <h3>출발 조건(t = 0)으로 상수항·일차항·이차항 소거</h3>
+              <p><span class="m">t=0</span>을 대입하면 <span class="m">y(0)=a_0=0</span>, <span class="m">y'(0)=a_1=0</span>, <span class="m">y''(0)=2a_2=0</span>이므로 처음 세 계수가 즉시 사라집니다.</p>
+              <div class="formula-box"><div class="M">y(t)=a_3t^3+a_4t^4+a_5t^5</div></div>
+              <div class="callout note">
+                <div class="lab">드라이브 원본 문서와의 연결</div>
+                <div>주간 리서치 문서에 등장하는 <span class="m">y(t)=c_5t^5+c_4t^4+c_3t^3</span> 형태가 바로 <span class="m">t=0</span> 초기 조건 3개를 적용한 직후의 식입니다.</div>
+              </div>
+            </div>
+
+            <div class="derive-pane" data-t="3. 무차원 연립방정식" hidden>
+              <h3>도착 조건(t = T)과 치환으로 연립방정식 세우기</h3>
+              <p>계산을 깔끔하게 하기 위해 <span class="m">b_3=a_3T^3,\ b_4=a_4T^4,\ b_5=a_5T^5</span>로 치환하고 <span class="m">t=T</span>에서의 조건을 적습니다.</p>
+              <div class="formula-box"><div class="M">\begin{aligned}
+              b_3 + b_4 + b_5 &= W && \text{— 위치 } y(T)=W \\
+              3b_3 + 4b_4 + 5b_5 &= 0 && \text{— 속도 } T\cdot y'(T)=0 \\
+              6b_3 + 12b_4 + 20b_5 &= 0 && \text{— 가속도 } T^2\cdot y''(T)=0
+              \end{aligned}</div></div>
+            </div>
+
+            <div class="derive-pane" data-t="4. 가감법 풀이" hidden>
+              <h3>삼원일차연립방정식 풀기</h3>
+              <div class="tiles">
+                <div class="tile"><div class="h"><span class="num-chip">가</span>(식3)÷2 − (식2)</div><div class="M">2b_4+5b_5=0 \implies b_4=-\frac{5}{2}b_5</div></div>
+                <div class="tile"><div class="h"><span class="num-chip">나</span>(식2)에 대입</div><div class="M">3b_3-5b_5=0 \implies b_3=\frac{5}{3}b_5</div></div>
+                <div class="tile"><div class="h"><span class="num-chip">다</span>(식1)에 대입</div><div class="M">\left(\frac{5}{3}-\frac{5}{2}+1\right)b_5=\frac{1}{6}b_5=W</div></div>
+              </div>
+              <div class="formula-box"><div class="M">b_5=6W,\qquad b_4=-15W,\qquad b_3=10W</div></div>
+            </div>
+
+            <div class="derive-pane" data-t="5. 도함수와 극값" hidden>
+              <h3>정규화 모양 함수 s(τ)와 1·2·3계 도함수</h3>
+              <div class="formula-box">
+                <div class="cap">무차원 시간 τ = t/T (0 ≤ τ ≤ 1)에 대한 표준형</div>
+                <div class="M">y(t)=W\,s(\tau),\qquad s(\tau)=10\tau^3-15\tau^4+6\tau^5</div>
+              </div>
+              <div class="tiles">
+                <div class="tile v"><div class="h">속도 계수</div><div class="M">s'(\tau)=30\tau^2(1-\tau)^2</div><p><span class="m">\tau=1/2</span>에서 최댓값 <span class="m">15/8=1.875</span></p></div>
+                <div class="tile a"><div class="h">가속도 계수</div><div class="M">s''(\tau)=60\tau(1-\tau)(1-2\tau)</div><p><span class="m">\tau=\frac{3\mp\sqrt3}{6}</span>에서 최댓값 <span class="m">\frac{10}{\sqrt3}\approx 5.774</span></p></div>
+                <div class="tile j"><div class="h">저크 계수</div><div class="M">s'''(\tau)=60(1-6\tau+6\tau^2)</div><p><span class="m">\tau=0,1</span>에서 최댓값 <span class="m">60</span></p></div>
+              </div>
+            </div>
+
+            <div class="derive-nav">
+              <button class="btn" type="button" id="derive-prev">← 이전 유도 단계</button>
+              <button class="btn primary" type="button" id="derive-next">다음 유도 단계 →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 4: 만져 보기 (실험실 연동 해설) -->
+        <section class="module-body sec-pane" id="s4" data-step="4" data-kicker="4단계 · 매개변수 실험과 마찰원" data-title="타이어 마찰원 한계와 최소 회피 시간 도출" data-goal="우측 실시간 시뮬레이터에서 이동 시간 T, 폭 W, 노면 마찰계수 μ, 제동 감속도를 조작하며 한계 조건을 검증합니다." hidden>
+          <div class="callout note">
+            <div class="lab">우측 실시간 실험실 연동</div>
+            <div>오른쪽 패널 상단 탭을 <b>[실시간 매개변수 실험실]</b>로 전환하면 슬라이더와 시나리오 프리셋(급회피, 빗길, 복합 제동, 3차·7차 비교)을 즉시 조작할 수 있습니다.</div>
+          </div>
+
+          <div class="formula-box">
+            <div class="cap">타이어 마찰원(Kamm's Circle) 구속 조건과 최소 회피 시간 부등식</div>
+            <div class="M">a_x^2 + a_{y,\max}^2 \le (\mu g)^2 \implies \left(\frac{10}{\sqrt{3}}\frac{W}{T^2}\right)^2 \le (\mu g)^2 - a_x^2 \implies T_{\min} = \sqrt{\frac{10\,W}{\sqrt{3}\,\sqrt{(\mu g)^2 - a_x^2}}}</div>
+          </div>
+
+          <div class="tiles">
+            <div class="tile a">
+              <div class="h">왜 제동과 조향을 동시에 하면 위험할까?</div>
+              <p>브레이크(<span class="m">a_x</span>)가 마찰원 반지름 <span class="m">\mu g</span>의 상당 부분을 소모하면, 옆 방향 회피에 쓸 수 있는 가용 가속도 <span class="m">a_{y,\text{avail}}=\sqrt{(\mu g)^2-a_x^2}</span>이 급감하여 필요 회피 시간 <span class="m">T_{\min}</span>이 길어집니다.</p>
+            </div>
+            <div class="tile v">
+              <div class="h">차수별 상충 관계 (3차 vs 5차 vs 7차)</div>
+              <p>3차식은 최대 가속도가 <span class="m">6W/T^2</span>이고 양 끝에서 가속도가 불연속입니다. 7차식은 양 끝 저크까지 0이지만 최대 가속도가 <span class="m">7.51W/T^2</span>로 커져 타이어 한계를 더 쉽게 넘습니다.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 5: 왜 5차인가 (변분법 증명) -->
+        <section class="module-body sec-pane" id="s5" data-step="5" data-kicker="5단계 · 심화 배경 (변분법)" data-title="왜 수많은 함수 가운데 하필 5차 다항식인가?" data-goal="미적분 선택과목의 부분적분법만으로 5차 다항식이 저크 에너지를 전역 최소화함을 엄밀하게 증명합니다." hidden>
+          <div class="tiles">
+            <div class="tile">
+              <div class="h"><span class="num-chip">1</span>목적 범함수 정의</div>
+              <p>이동 구간 동안 발생하는 저크 제곱의 총합을 비용 함수로 정의합니다.</p>
+              <div class="M">J[y]=\int_0^T \bigl(y'''(t)\bigr)^2\,dt</div>
+            </div>
+            <div class="tile">
+              <div class="h"><span class="num-chip">2</span>임의의 섭동 함수 <span class="m">\eta(t)</span> 도입</div>
+              <p>5차식 <span class="m">y(t)</span>와 동일한 6개 경계조건을 만족하는 임의의 함수를 <span class="m">y(t)+\eta(t)</span>라 두면, 차이 함수 <span class="m">\eta</span>는 양 끝(<span class="m">t=0, T</span>)에서 <span class="m">\eta=\eta'=\eta''=0</span>입니다.</p>
+            </div>
+          </div>
+
+          <div class="formula-box">
+            <div class="cap">3 · 제곱 전개 후 교차항에 부분적분 3회 연속 적용</div>
+            <div class="M">J[y+\eta] = J[y] + 2\int_0^T y'''\eta'''\,dt + \int_0^T (\eta''')^2\,dt</div>
+            <div class="M">\int_0^T y'''\eta'''\,dt = \Bigl[y'''\eta''\Bigr]_0^T - \int_0^T y^{(4)}\eta''\,dt = \cdots = -\int_0^T y^{(6)}(t)\,\eta(t)\,dt = 0</div>
+          </div>
+
+          <div class="callout tip">
+            <div class="lab">핵심 통찰: 5차 다항식을 6번 미분하면 항등적으로 0이다!</div>
+            <div><span class="m">y(t)</span>가 5차 다항식이므로 <span class="m">y^{(6)}(t)\equiv 0</span>이고, 양 끝 경계항은 <span class="m">\eta=\eta'=\eta''=0</span>에 의해 모두 소거됩니다. 따라서 <span class="m">J[y+\eta]=J[y]+\int_0^T(\eta''')^2dt \ge J[y]</span>가 되어 등호는 <span class="m">\eta\equiv 0</span>일 때만 성립합니다. (Flash &amp; Hogan, 1985)</div>
+          </div>
+        </section>
+
+        <!-- STEP 6: 문답 -->
+        <section class="module-body sec-pane" id="s6" data-step="6" data-kicker="6단계 · 교사 문답 (FAQ)" data-title="수업과 세특 지도에서 자주 나오는 질문 다섯 가지" data-goal="질문을 먼저 생각해 본 뒤 아코디언을 눌러 핵심 해설을 확인하세요." hidden>
+          <details class="qa" open>
+            <summary><span class="qm">Q1</span>가속도까지 0으로 맞출 필요가 있나요? 속도만 0이면 충분하지 않나요?</summary>
+            <div class="in"><p>속도만 양 끝에서 0으로 맞춘 3차 다항식 <span class="m">s(\tau)=3\tau^2-2\tau^3</span>은 가속도가 <span class="m">s''(\tau)=6-12\tau</span>여서 출발 순간 <span class="m">6W/T^2</span>으로 불연속 점프를 합니다. 자동차로 치면 출발 순간 핸들을 순간이동으로 꺾어야 한다는 뜻이라 물리적으로 불가능하며 큰 저크 충격이 발생합니다.</p></div>
+          </details>
+          <details class="qa">
+            <summary><span class="qm">Q2</span>차수를 7차로 올리면 더 부드럽고 좋아지나요?</summary>
+            <div class="in"><p>양 끝에서 저크까지 0으로 맞추면 7차식 <span class="m">s(\tau)=35\tau^4-84\tau^5+70\tau^6-20\tau^7</span>이 됩니다. 출발·도착은 더 부드럽지만, 정해진 시간 <span class="m">T</span> 안에 이동을 마쳐야 하므로 중간 구간의 최대 가속도가 <span class="m">7.51W/T^2</span>로 5차식(<span class="m">5.77W/T^2</span>)보다 약 30% 커집니다. 긴급 회피처럼 타이어 마찰 한계가 중요한 상황에서는 오히려 불리합니다.</p></div>
+          </details>
+          <details class="qa">
+            <summary><span class="qm">Q3</span>학생들에게 '저크(Jerk)' 개념을 소개해도 2015/2022 개정 교육과정에 맞나요?</summary>
+            <div class="in"><p>수학Ⅱ에서는 위치 → 속도(1계 도함수) → 가속도(2계 도함수)까지 다룹니다. 저크는 용어만 새로울 뿐 수학적으로는 "다항함수를 한 번 더 미분해 가속도의 극값과 변화율을 분석한다"는 활동이므로 수학Ⅱ 세특 심화 탐구로 매우 자연스럽습니다.</p></div>
+          </details>
+          <details class="qa">
+            <summary><span class="qm">Q4</span>원본 구글 드라이브 문서의 수식에는 누락이나 오류가 없었나요?</summary>
+            <div class="in"><p>원본 문서의 <span class="m">y(t)=c_5t^5+c_4t^4+c_3t^3</span> 꼴과 <span class="m">y'''(t)=0</span>에서 가속도 극값을 구한다는 논리는 정확합니다. 다만 원본에는 구체적 계수(<span class="m">10, -15, 6</span>)와 최대 가속도 상수(<span class="m">10/\sqrt3</span>)가 생략되어 있어 이 연수 페이지에서 완전히 유도해 보충했습니다.</p></div>
+          </details>
+        </section>
+
+        <!-- STEP 7: 사례 연결 -->
+        <section class="module-body sec-pane" id="s7" data-step="7" data-kicker="7단계 · 리서치 아카이브 연결" data-title="같은 수학 구조를 공유하는 주차별 사례 6선" data-goal="기술 도메인(자율주행·eVTOL·로봇·고속철도)은 달라도 수리 모델의 뼈대는 동일합니다." hidden>
+          <div class="cases-grid" id="cases-grid">
+            <a class="case-link" href="../site/index.html#c20261111-math2-2" target="_blank" rel="noopener">
+              <span class="d">2026-11-11 · 수학Ⅱ</span>
+              <span class="t">자율주행 긴급 회피 조향과 타이어 마찰원</span>
+              <span class="n">1강 출발점 사례 열기 ↗</span>
+            </a>
+            <a class="case-link" href="../site/index.html#c20261014-math2-2" target="_blank" rel="noopener">
+              <span class="d">2026-10-14 · 수학Ⅱ</span>
+              <span class="t">자율주행 차선 변경 최소 저크 궤적</span>
+              <span class="n">승차감 최적화 관점 ↗</span>
+            </a>
+            <a class="case-link" href="../site/index.html#c20261007-math2-2" target="_blank" rel="noopener">
+              <span class="d">2026-10-07 · 수학Ⅱ</span>
+              <span class="t">eVTOL 수직 이착륙 5차 다항 고도 궤적</span>
+              <span class="n">횡변위 y 대신 고도 h(t) 적용 ↗</span>
+            </a>
+            <a class="case-link" href="../site/index.html#c20260923-math2-2" target="_blank" rel="noopener">
+              <span class="d">2026-09-23 · 수학Ⅱ</span>
+              <span class="t">협동 로봇과 초고속 엘리베이터 S-Curve 제어</span>
+              <span class="n">7차 다항식 확장 비교 ↗</span>
+            </a>
+            <a class="case-link" href="../site/index.html#c20260819-math2-2" target="_blank" rel="noopener">
+              <span class="d">2026-08-19 · 수학Ⅱ</span>
+              <span class="t">로봇 팔 관절 각도 제어와 저크 최소화</span>
+              <span class="n">회전 각도 θ(t)에 동일 수식 적용 ↗</span>
+            </a>
+            <a class="case-link" href="../site/index.html#c20261111-math2-1" target="_blank" rel="noopener">
+              <span class="d">2026-11-11 · 수학Ⅱ</span>
+              <span class="t">고속철도 노즈 단면적의 3차 다항 접합</span>
+              <span class="n">3차 스플라인 3x²−2x³ 사례 ↗</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- STEP 8: 예시 자료 -->
+        <section class="module-body sec-pane" id="s8" data-step="8" data-kicker="8단계 · 수업·세특 즉시 활용 자료" data-title="발문, 수준별 문항 4선, Python·GeoGebra 코드" data-goal="버튼 하나로 수식(LaTeX 포함)과 코드를 복사해 활동지나 슬라이드에 바로 붙여 넣으세요." hidden>
+          <div class="derive-tabs" id="mat-tabs" role="tablist">
+            <button class="btn" type="button" data-mat="intro" aria-selected="true">도입 발문 (5분)</button>
+            <button class="btn" type="button" data-mat="probs" aria-selected="false">수준별 문항 4개</button>
+            <button class="btn" type="button" data-mat="python" aria-selected="false">Python 시뮬레이션</button>
+            <button class="btn" type="button" data-mat="geogebra" aria-selected="false">GeoGebra 스크립트</button>
+          </div>
+
+          <div class="mat-pane" data-mat-pane="intro">
+            <div class="pcard">
+              <div class="hd"><b>수업 첫 5분 도입 발문</b><button class="btn primary copy-btn" data-target="ex-intro" type="button">발문 복사</button></div>
+              <p id="ex-intro" style="font-size:16px;font-weight:500;padding:12px;background:var(--t-v);border-radius:10px">
+                "엘리베이터나 버스가 출발하고 멈출 때 우리 몸이 '덜컥' 하고 쏠리는 순간은 정확히 언제일까요? 속도가 가장 빠를 때일까요, 가속도가 가장 클 때일까요, 아니면 가속도가 변하는 순간일까요?"
+              </p>
+              <p style="font-size:13.5px;color:var(--ink-muted)">학생들의 대답을 칠판에 분류한 뒤, 위치를 세 번 미분한 도함수 <span class="m">y'''(t)</span>가 승차감을 결정한다는 사실로 다항함수 미분 단원을 여는 흐름입니다.</p>
+            </div>
+          </div>
+
+          <div class="mat-pane" data-mat-pane="probs" hidden>
+            <div style="display:grid;gap:10px">
+              <div class="pcard">
+                <div class="hd"><span class="lv-pill l1">수준 1 · 교과서 기본</span><button class="btn copy-btn" data-target="ex-p1" type="button">문항 복사</button></div>
+                <div id="ex-p1">함수 <span class="m">f(x)=10x^3-15x^4+6x^5\ (0\le x\le 1)</span>에 대하여 도함수 <span class="m">f'(x)</span>의 최댓값과 그때의 <span class="m">x</span>의 값을 구하시오.</div>
+                <div class="sol-box"><b>해설:</b> <span class="m">f'(x)=30x^2(1-x)^2=30\{x(1-x)\}^2</span>이므로 <span class="m">x=\tfrac12</span>에서 최댓값 <span class="m">30\times\tfrac{1}{16}=\tfrac{15}{8}=1.875</span>를 갖습니다.</div>
+              </div>
+              <div class="pcard">
+                <div class="hd"><span class="lv-pill l2">수준 2 · 내신 표준</span><button class="btn copy-btn" data-target="ex-p2" type="button">문항 복사</button></div>
+                <div id="ex-p2">위 함수 <span class="m">f(x)</span>에 대하여 이계도함수 <span class="m">g(x)=f''(x)</span>라 할 때, 닫힌구간 <span class="m">[0,1]</span>에서 <span class="m">g(x)</span>의 최댓값을 구하시오.</div>
+                <div class="sol-box"><b>해설:</b> <span class="m">g'(x)=60(1-6x+6x^2)=0</span>에서 <span class="m">x=\tfrac{3-\sqrt3}{6}</span>일 때 극대이자 최대이며, 대입하면 <span class="m">g_{\max}=\tfrac{10\sqrt3}{3}\approx 5.774</span>입니다.</div>
+              </div>
+              <div class="pcard">
+                <div class="hd"><span class="lv-pill l3">수준 3 · 심화 서술형</span><button class="btn copy-btn" data-target="ex-p3" type="button">문항 복사</button></div>
+                <div id="ex-p3">오차다항함수 <span class="m">f(x)=ax^5+bx^4+cx^3</span>이 <span class="m">f(1)=1,\ f'(1)=0,\ f''(1)=0</span>을 만족시킬 때 상수 <span class="m">a,b,c</span>를 구하고, 구간 <span class="m">[0,1]</span>에서 <span class="m">f(x)</span>가 단조증가함을 보이시오.</div>
+                <div class="sol-box"><b>해설:</b> 연립방정식을 풀면 <span class="m">a=6,\ b=-15,\ c=10</span>이며, <span class="m">f'(x)=30x^2(1-x)^2\ge 0</span>이므로 구간 전체에서 단조증가합니다.</div>
+              </div>
+              <div class="pcard">
+                <div class="hd"><span class="lv-pill l4">수준 4 · 모빌리티 융합 탐구</span><button class="btn copy-btn" data-target="ex-p4" type="button">문항 복사</button></div>
+                <div id="ex-p4">자율주행차가 <span class="m">T</span>초 동안 옆 차선으로 <span class="m">W=3.5\,\text{m}</span> 이동할 때 최대 횡가속도는 <span class="m">a_{\max}=\tfrac{10}{\sqrt3}\tfrac{W}{T^2}</span>이다. 노면 한계 가속도가 <span class="m">7.84\,\text{m/s}^2</span>일 때 미끄러지지 않는 최소 시간 <span class="m">T</span>를 구하시오.</div>
+                <div class="sol-box"><b>해설:</b> <span class="m">T^2 \ge \dfrac{35}{\sqrt3\times 7.84}\approx 2.577 \implies T_{\min}\approx 1.61\,\text{s}</span> (약 1.7초 이상 필요).</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mat-pane" data-mat-pane="python" hidden>
+            <div class="pcard">
+              <div class="hd"><b>Python (NumPy · Matplotlib) 궤적 및 마찰 한계 검산 코드</b><button class="btn primary copy-btn" data-target="ex-py" type="button">코드 복사</button></div>
+<pre class="code-box" id="ex-py">import numpy as np
+import matplotlib.pyplot as plt
+
+W, T = 3.5, 2.5          # 횡이동 거리(m), 이동 시간(s)
+mu, g = 0.8, 9.8         # 마찰계수, 중력가속도(m/s^2)
+
+t = np.linspace(0, T, 500)
+tau = t / T
+y = W * (10*tau**3 - 15*tau**4 + 6*tau**5)
+v = (W / T)    * 30 * tau**2 * (1 - tau)**2
+a = (W / T**2) * 60 * tau * (1 - tau) * (1 - 2*tau)
+j = (W / T**3) * 60 * (1 - 6*tau + 6*tau**2)
+
+print(f"최대 속도 검산: 수치={v.max():.4f}, 이론={15/8 * W/T:.4f} m/s")
+print(f"최대 가속도 검산: 수치={a.max():.4f}, 이론={10/np.sqrt(3) * W/T**2:.4f} m/s^2")
+print(f"최소 회피 시간 T_min = {np.sqrt(10*W / (np.sqrt(3)*mu*g)):.3f} s")</pre>
+            </div>
+          </div>
+
+          <div class="mat-pane" data-mat-pane="geogebra" hidden>
+            <div class="pcard">
+              <div class="hd"><b>GeoGebra 클래식 수식 입력 스크립트</b><button class="btn primary copy-btn" data-target="ex-gg" type="button">스크립트 복사</button></div>
+<pre class="code-box" id="ex-gg">W = Slider(1.5, 5.5, 0.1)
+T = Slider(1.0, 5.0, 0.05)
+s(x) = 10x^3 - 15x^4 + 6x^5
+y(x) = If(0 <= x <= T, W * s(x / T))
+v(x) = Derivative(y)
+a(x) = Derivative(v)
+j(x) = Derivative(a)
+Extremum(a, 0, T/2)</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 9: 이해 확인 -->
+        <section class="module-body sec-pane" id="s9" data-step="9" data-kicker="9단계 · 이해 확인 퀴즈" data-title="핵심 개념 확인 네 문제" data-goal="답을 고르면 즉시 수리적 해설이 표시되고 학습 진도가 저장됩니다." hidden>
+          <div class="quiz-grid" id="quiz-host"></div>
+        </section>
+
+      </div>
+
+      <!-- Step Footer Navigation -->
+      <div class="module-foot">
+        <button class="btn" id="step-prev" type="button">← 이전 단계</button>
+        <span id="step-status-label" style="font-family:var(--mono);font-size:12px;color:var(--ink-muted)">1 / 9 단계</span>
+        <button class="btn primary" id="step-next" type="button">이해 완료 · 다음 단계 →</button>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- RIGHT STICKY WORKBENCH: Motion Cinema & Video Studio + Real-Time Parameter Lab -->
+  <aside class="right-workbench" aria-label="인터랙티브 시네마 및 실험실">
+    <div class="workbench-card">
+      <div class="wb-tabs">
+        <div class="wb-tab-group" role="tablist">
+          <button class="wb-tab" type="button" data-wb="lab" aria-selected="true">실시간 매개변수 실험실</button>
+          <button class="wb-tab" type="button" data-wb="cinema" aria-selected="false">해설 시네마 · 영상 스튜디오</button>
+        </div>
+        <button class="btn" id="rec-video-btn" type="button" title="현재 캔버스 애니메이션을 WebM 동영상으로 녹화·저장합니다">
+          🎬 영상 녹화 (.webm)
+        </button>
+      </div>
+
+      <!-- WORKBENCH PANE 1: Real-time Interactive Parameter Simulator -->
+      <div class="sim-stage" id="wb-pane-lab">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;gap:5px;flex-wrap:wrap" id="curve-type-bar" role="group" aria-label="다항식 차수 비교"></div>
+          <span style="font-family:var(--mono);font-size:11.5px;color:var(--ink-muted)" id="sim-formula-badge">s(τ) = 10τ³ − 15τ⁴ + 6τ⁵</span>
+        </div>
+
+        <canvas id="sim-plots" aria-label="위치, 속도, 가속도, 저크 실시간 그래프"></canvas>
+
+        <div class="sim-grid">
+          <div class="sliders-box" id="sliders-host">
+            <div class="slider-row">
+              <div class="lbl"><label for="in-T" id="lbl-p1">이동 시간 T</label><b id="val-T">2.50 s</b></div>
+              <input id="in-T" type="range" min="1.0" max="5.0" step="0.05" value="2.5">
+            </div>
+            <div class="slider-row">
+              <div class="lbl"><label for="in-W" id="lbl-p2">횡이동 폭 W</label><b id="val-W">3.5 m</b></div>
+              <input id="in-W" type="range" min="1.5" max="5.5" step="0.1" value="3.5">
+            </div>
+            <div class="slider-row">
+              <div class="lbl"><label for="in-mu" id="lbl-p3">노면 마찰계수 μ</label><b id="val-mu">0.80</b></div>
+              <input id="in-mu" type="range" min="0.2" max="1.0" step="0.05" value="0.8">
+            </div>
+            <div class="slider-row">
+              <div class="lbl"><label for="in-ax" id="lbl-p4">동시 제동 감속도 aₓ</label><b id="val-ax">0.00 m/s²</b></div>
+              <input id="in-ax" type="range" min="0" max="7.0" step="0.25" value="0">
+            </div>
+          </div>
+
+          <div class="telemetry-box">
+            <canvas id="friction-canvas" aria-label="타이어 마찰원 및 가속도 벡터"></canvas>
+            <div class="readouts" id="sim-readouts"></div>
+          </div>
+        </div>
+
+        <div class="presets-row" id="sim-presets">
+          <button class="preset-btn" type="button" data-preset='{"curve":"qui","T":1.45,"W":3.5,"mu":0.8,"ax":0}'>
+            <b>⚡ 1.45초 급회피 (한계 돌파)</b>
+            <span>T를 줄이면 가속도가 T²에 반비례해 폭증합니다</span>
+          </button>
+          <button class="preset-btn" type="button" data-preset='{"curve":"qui","T":2.5,"W":3.5,"mu":0.35,"ax":0}'>
+            <b>🌧️ 젖은 노면 (μ = 0.35)</b>
+            <span>마찰원이 축소되어 최소 회피 시간이 늘어납니다</span>
+          </button>
+          <button class="preset-btn" type="button" data-preset='{"curve":"qui","T":2.1,"W":3.5,"mu":0.8,"ax":6.0}'>
+            <b>🛑 급브레이크 + 조향 동시 입력</b>
+            <span>제동이 마찰원을 소모해 횡방향 여유가 사라집니다</span>
+          </button>
+          <button class="preset-btn" type="button" data-preset='{"curve":"cub","T":2.5,"W":3.5,"mu":0.8,"ax":0}'>
+            <b>📐 3차 다항식과 비교</b>
+            <span>양 끝에서 가속도가 0이 아니어서 충격이 발생합니다</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- WORKBENCH PANE 2: Animated Cinema Explainer & Video Studio -->
+      <div class="cinema-stage" id="wb-pane-cinema" hidden>
+        <div class="cinema-canvas-wrap">
+          <canvas id="film-canvas" aria-label="단계별 수학 해설 애니메이션 캔버스"></canvas>
+          <div class="rec-indicator" id="rec-badge" hidden>
+            <span class="rec-dot"></span>
+            <span id="rec-timer">REC 00:00</span>
+          </div>
+        </div>
+        <div class="cinema-controls">
+          <button class="btn primary" id="film-play" type="button">▶ 재생</button>
+          <input id="film-scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="장면 재생 위치">
+          <select id="film-speed" class="btn" aria-label="재생 배속" style="padding:5px 8px">
+            <option value="0.75">0.75×</option>
+            <option value="1" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+          </select>
+          <button class="btn" id="film-voice" type="button" aria-pressed="false">🔊 음성 해설</button>
+        </div>
+        <div class="cinema-scenes" id="film-scenes"></div>
+        <div class="cinema-caption">
+          <b id="film-cap-title">장면 1 · 옆으로 W만큼 옮기기</b>
+          <span id="film-cap-text">재생을 누르면 차량의 궤적, 속도·가속도 벡터, 마찰원 한계가 실시간 애니메이션으로 그려집니다.</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<!-- ==================== GOOGLE DRIVE CURRICULUM PIPELINE MODAL ==================== -->
+<dialog id="pipeline-modal" aria-labelledby="pipe-title">
+  <div class="modal-head">
+    <div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--act);font-weight:700">GOOGLE DRIVE · 수학수업_아이디어 아카이브 연동</div>
+      <h3 id="pipe-title" style="margin:2px 0 0;font-size:18px">누적 리서치 문서(15개 주차 · 180개 사례) → 교사 연수 코스 파이프라인</h3>
+    </div>
+    <button class="btn" id="close-pipeline" type="button">닫기</button>
+  </div>
+  <div class="modal-body">
+    <p style="color:var(--ink-secondary);font-size:14px">
+      매주 Google Drive <code>수학수업_아이디어</code> 폴더에 쌓이는 리서치 문서의 180개 사례는 아래 <b>핵심 수리 구조 강좌</b>들로 묶여 연수 모듈로 이어집니다. 상단 강좌 탭이나 아래 카드를 눌러 각 연수 모듈을 바로 체험해 보세요.
+    </p>
+    <div class="pipeline-grid" id="pipeline-cards"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:8px;border-top:1px solid var(--line)">
+      <span style="font-size:13px;color:var(--ink-muted)">원본 문서 위치: Google Drive <code>수학수업_아이디어</code> 폴더</span>
+      <div style="display:flex;gap:8px">
+        <a class="btn" href="https://drive.google.com/drive/folders/12sIE0fL_yMVWLroq6d3NJNo2lV508wfj" target="_blank" rel="noopener">구글 드라이브 폴더 열기 ↗</a>
+        <a class="btn primary" href="../site/index.html" target="_blank" rel="noopener">180개 전체 사례 갤러리 열기 ↗</a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toast.tid);
+    toast.tid = setTimeout(() => t.classList.remove('on'), 2200);
+  }
+
+  function renderMath(root = document) {
+    $$('.m, .M', root).forEach((n) => {
+      const src = n.dataset.tex || n.textContent;
+      n.dataset.tex = src;
+      if (!window.katex) return;
+      try {
+        n.innerHTML = katex.renderToString(src, {
+          output: 'htmlAndMathml',
+          throwOnError: false,
+          displayMode: n.classList.contains('M'),
+        });
+      } catch (e) {}
+    });
+  }
+
+  /* ==========================================================================
+     MULTI-COURSE CURRICULUM DATA (1강 ~ 4강 + 드라이브 누적 구조)
+     ========================================================================== */
+  const COURSES = [
+    {
+      id: 'quintic-jerk',
+      num: '1강',
+      title: '5차 다항 궤적과 저크',
+      fullTitle: '1강 · 5차 다항 궤적과 저크(Jerk) 최소화',
+      subj: '수학Ⅱ · 미적분',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #01 · 모빌리티·로봇 제어 (24개 사례 연결)',
+      desc: '자율주행 긴급 회피, eVTOL 수직 이착륙, 협동 로봇 관절 제어에서 반복 등장하는 5차 다항식 y(τ) = W(10τ³ − 15τ⁴ + 6τ⁵)의 계수 유도부터 타이어 마찰원 한계, 변분법 최적성 증명까지 다루는 연수입니다.',
+      visuals: [
+        {
+          label: '자율주행 회피 궤적 & 마찰원',
+          img: 'assets/quintic_trajectory_hero.jpg',
+          alt: '자율주행 차량의 5차 다항식 차선 변경 궤적과 타이어 마찰원 도해',
+          hotspots: [
+            { x: 19, y: 71, label: '① 출발 경계 (τ = 0)', text: 'y(0)=0, y′(0)=0, y″(0)=0. 조향각과 횡가속도가 0에서 매끄럽게 시작해 핸들 충격이 없습니다.', preset: { curve: 'qui', T: 2.5, W: 3.5, mu: 0.8, ax: 0 } },
+            { x: 35, y: 54, label: '② 최대 횡가속도 (τ ≈ 0.211)', text: 's‴(τ)=0의 첫 근 τ=(3−√3)/6에서 가속도가 최댓값 5.774 W/T²에 도달합니다.', preset: { curve: 'qui', T: 1.65, W: 3.5, mu: 0.8, ax: 0 } },
+            { x: 48, y: 43, label: '③ 변곡점 · 최대 횡속도 (τ = 0.5)', text: 's″(0.5)=0인 대칭 중심점입니다. 횡속도가 1.875 W/T로 최대가 되며 조향 방향이 반전됩니다.', preset: { curve: 'qui', T: 2.5, W: 4.2, mu: 0.8, ax: 0 } },
+            { x: 85, y: 74, label: '④ 타이어 마찰원 (Kamm Circle)', text: '종방향 제동(aₓ)과 횡방향 조향(aᵧ)의 벡터 합 √(aₓ²+aᵧ²)이 반지름 μg 원 안에 있어야 미끄러지지 않습니다.', preset: { curve: 'qui', T: 2.0, W: 3.5, mu: 0.8, ax: 5.5 } },
+          ],
+        },
+        {
+          label: 'eVTOL 수직 이착륙 고도 전이',
+          img: 'assets/evtol_flight_profile.jpg',
+          alt: 'eVTOL 수직 이착륙 S-커브 비행 고도 프로파일',
+          hotspots: [
+            { x: 30, y: 77, label: '① 버티포트 이륙 (t = 0)', text: '고도 h(0)=0, 상승률 h′(0)=0, 수직가속도 h″(0)=0으로 부양 추력이 부드럽게 증가합니다.', preset: { curve: 'qui', T: 3.5, W: 5.0, mu: 0.9, ax: 0 } },
+            { x: 54, y: 51, label: '② 천이 비행 변곡점 (τ = 0.5)', text: '최대 상승 속도 1.875 H/T 지점을 지나며 로터 틸트각이 수평 순항 모드로 전환됩니다.', preset: { curve: 'qui', T: 3.0, W: 4.5, mu: 0.85, ax: 0 } },
+            { x: 77, y: 23, label: '③ 순항 고도 진입 (t = T)', text: '목표 고도 H에 오버슈트 없이 안착하며 수직 가속도가 정확히 0으로 수렴합니다.', preset: { curve: 'sep', T: 3.2, W: 4.5, mu: 0.85, ax: 0 } },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'log-linearization',
+      num: '2강',
+      title: '지수 모델과 로그 선형화',
+      fullTitle: '2강 · 지수 감쇠·성장과 로그 선형화(Log-Linearization)',
+      subj: '수학Ⅰ · 미적분',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #02 · 배터리·바이오·반도체 (38개 사례 연결)',
+      desc: '전고체 배터리 수명 열화, 약물 혈중 농도 반감기, EUV 노광 광량 감쇠에서 비선형 지수 함수 y = A₀ e^(−kt)에 자연로그를 취해 직선 Y = Y₀ − kt로 변환하고 임계 도달 시점을 역산하는 표준 기법입니다.',
+      visuals: [
+        {
+          label: '지수 감쇠의 로그 프리즘 선형화',
+          img: 'assets/log_linearization_hero.jpg',
+          alt: '지수 감쇠 곡선이 프리즘을 통과해 로그 선형 직선으로 변환되는 과학 일러스트',
+          hotspots: [
+            { x: 22, y: 34, label: '① 비선형 지수 감쇠 영역', text: '시간에 따라 일정 비율로 줄어드는 y(t) = A₀ e^(−kt) 곡선입니다. 초기 기울기가 가파르고 점차 완만해집니다.', preset: { curve: 'qui', T: 2.2, W: 3.5, mu: 0.8, ax: 0 } },
+            { x: 50, y: 49, label: '② 로그 변환 (ln y = ln A₀ − kt)', text: '양변에 로그를 취하면 곡률이 사라지고 기울기가 −k인 완벽한 일차함수 직선으로 변환됩니다.', preset: { curve: 'qui', T: 3.0, W: 4.0, mu: 0.8, ax: 0 } },
+            { x: 78, y: 67, label: '③ 반감기 및 수명 한계선 역산', text: '임계치 θ에 도달하는 시점 t* = (1/k) ln(A₀/θ)를 실험 데이터 최소제곱 회귀 직선에서 즉시 읽습니다.', preset: { curve: 'qui', T: 4.0, W: 2.5, mu: 0.8, ax: 0 } },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'wave-interference',
+      num: '3강',
+      title: '삼각함수 합성과 상쇄 간섭',
+      fullTitle: '3강 · 삼각함수 합성과 능동 파동 상쇄(ANC)',
+      subj: '수학Ⅰ · 미적분',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #03 · 음향·통신·양자 (29개 사례 연결)',
+      desc: '노이즈 캔슬링(ANC) 이어폰, 전기차 실내 능동 소음 제어, 6G 위상 배열 빔포밍에서 두 정현파 sin(ωt) + sin(ωt + φ) = 2cos(φ/2)sin(ωt + φ/2)의 위상차 φ를 조절해 진폭을 상쇄·보강하는 원리입니다.',
+      visuals: [
+        {
+          label: '역위상(φ = π) 파동 상쇄 간섭',
+          img: 'assets/wave_interference_hero.jpg',
+          alt: '반대 위상의 두 파동이 만나 평평한 직선으로 상쇄되는 음향 물리 도해',
+          hotspots: [
+            { x: 22, y: 36, label: '① 외부 소음 파동 y₁ = A sin(ωt)', text: '외부에서 유입되는 주기적 소음 신호입니다. 마루와 골이 주기적으로 반복됩니다.', preset: { curve: 'qui', T: 2.5, W: 3.5, mu: 0.8, ax: 0 } },
+            { x: 22, y: 64, label: '② 제어 역위상 파동 y₂ = A sin(ωt + φ)', text: '마이크가 감지한 소음에 위상차 φ ≈ π(반 파장 λ/2 이동)를 주어 스피커로 방사합니다.', preset: { curve: 'qui', T: 2.0, W: 3.5, mu: 0.8, ax: 0 } },
+            { x: 64, y: 50, label: '③ 합성 진폭 2A|cos(φ/2)| = 0', text: '완벽한 역위상(φ=π)일 때 합성파가 0이 되며, 위상 오차 Δφ가 있으면 잔류 소음 2A|sin(Δφ/2)|가 남습니다.', preset: { curve: 'qui', T: 3.5, W: 2.0, mu: 0.8, ax: 0 } },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'damped-oscillation',
+      num: '4강',
+      title: '감쇠 진동과 오버슈트',
+      fullTitle: '4강 · 감쇠 진동(e^(−αt)cos ωt)과 오버슈트 제어',
+      subj: '미적분 · 기하',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #04 · 고속열차·전력망·제진 설계 (31개 사례 연결)',
+      desc: '고속열차 대차 서스펜션, 초고층 빌딩 동조질량감쇠기(TMD), 전력망 주파수 복원에서 지수 감쇠와 삼각함수의 곱 f(t) = A₀ e^(−αt) cos(ωt)의 극값 수열(등비수열)과 감쇠비를 다룹니다.',
+      visuals: [
+        {
+          label: '고속열차 서스펜션과 감쇠 포락선',
+          img: 'assets/damped_oscillation_hero.jpg',
+          alt: '고속열차 대차 스프링-댐퍼 시스템과 지수 포락선을 가진 감쇠 진동 그래프',
+          hotspots: [
+            { x: 28, y: 42, label: '① 스프링(k) 복원력과 댐퍼(c) 감쇠력', text: '스프링은 진동을 만들고(cos ωt), 유압 댐퍼는 에너지를 흡수해 진폭을 지수적으로 줄입니다(e^(−αt)).', preset: { curve: 'qui', T: 2.5, W: 3.5, mu: 0.8, ax: 0 } },
+            { x: 62, y: 26, label: '② 첫 번째 극대 (최대 오버슈트)', text: 'f′(t)=0에서 탄젠트 조건 tan(ωt) = −α/ω를 만족하는 첫 시각이며, 진폭 포락선 ±e^(−αt)보다 살짝 안쪽에서 접합니다.', preset: { curve: 'qui', T: 1.8, W: 4.0, mu: 0.8, ax: 0 } },
+            { x: 78, y: 40, label: '③ 극값 크기의 등비수열 성질', text: '주기 T = 2π/ω마다 진폭이 일정 공비 r = e^(−αT)배로 감소하므로 미적분과 등비수열이 아름답게 결합됩니다.', preset: { curve: 'qui', T: 3.2, W: 3.0, mu: 0.8, ax: 0 } },
+          ],
+        },
+      ],
+    },
+  ];
+
+  /* ==========================================================================
+     MATH CURVES & SIMULATION ENGINE
+     ========================================================================== */
+  const G = 9.8;
+  const CURVES = {
+    lin: {
+      name: '1차 (등속)',
+      formula: 's(τ) = τ',
+      s: (x) => x,
+      d1: () => 1,
+      d2: () => 0,
+      d3: () => 0,
+      note: '출발·도착 순간 속도가 불연속 점프하여 가속도가 무한대(충격)입니다.',
+    },
+    cub: {
+      name: '3차 스플라인',
+      formula: 's(τ) = 3τ² − 2τ³',
+      s: (x) => 3 * x * x - 2 * x ** 3,
+      d1: (x) => 6 * x * (1 - x),
+      d2: (x) => 6 - 12 * x,
+      d3: () => -12,
+      note: '속도는 연속이지만 양 끝에서 가속도가 ±6W/T²로 불연속 점프합니다.',
+    },
+    qui: {
+      name: '5차 (최소 저크)',
+      formula: 's(τ) = 10τ³ − 15τ⁴ + 6τ⁵',
+      s: (x) => 10 * x ** 3 - 15 * x ** 4 + 6 * x ** 5,
+      d1: (x) => 30 * x * x * (1 - x) ** 2,
+      d2: (x) => 60 * x * (1 - x) * (1 - 2 * x),
+      d3: (x) => 60 * (1 - 6 * x + 6 * x * x),
+      note: '위치·속도·가속도가 모두 0에서 시작해 0으로 끝나는 최소 저크 최적 궤적입니다.',
+    },
+    sep: {
+      name: '7차 (S-Curve)',
+      formula: 's(τ) = 35τ⁴ − 84τ⁵ + 70τ⁶ − 20τ⁷',
+      s: (x) => 35 * x ** 4 - 84 * x ** 5 + 70 * x ** 6 - 20 * x ** 7,
+      d1: (x) => 140 * x ** 3 * (1 - x) ** 3,
+      d2: (x) => 420 * x * x * (1 - x) ** 2 * (1 - 2 * x),
+      d3: (x) => 840 * x * (1 - x) * (1 - 5 * x + 5 * x * x),
+      note: '저크까지 양 끝에서 0이지만, 최대 가속도가 7.51W/T²로 5차보다 30% 더 커집니다.',
+    },
+  };
+
+  const peak = (fn) => {
+    let m = 0;
+    for (let i = 0; i <= 500; i++) m = Math.max(m, Math.abs(fn(i / 500)));
+    return m;
+  };
+
+  /* State */
+  const state = {
+    courseIdx: 0,
+    visualIdx: 0,
+    stepIdx: 0,
+    showAllSteps: false,
+    curve: 'qui',
+    wbTab: 'lab',
+    done: {},
+    quiz: {},
+    db: null,
+  };
+
+  /* ==========================================================================
+     CANVAS DRAWING HELPERS
+     ========================================================================== */
+  function fitCanvas(cv) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = cv.clientWidth || 640;
+    const h = cv.clientHeight || 360;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+    }
+    const c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.fillStyle = css('--canvas-bg');
+    c.fillRect(0, 0, w, h);
+    return [c, w, h];
+  }
+
+  function drawSubPlot(c, rect, fn, lo, hi, color, opts = {}) {
+    const [x0, y0, w, h] = rect;
+    const X = (u) => x0 + u * w;
+    const Y = (v) => y0 + h - ((v - lo) / (hi - lo)) * h;
+    const upto = opts.upto == null ? 1 : opts.upto;
+
+    // Grid & Box
+    c.strokeStyle = css('--canvas-grid');
+    c.lineWidth = 1;
+    for (let k = 1; k < 4; k++) {
+      c.beginPath();
+      c.moveTo(x0 + (w * k) / 4, y0);
+      c.lineTo(x0 + (w * k) / 4, y0 + h);
+      c.stroke();
+    }
+    c.strokeStyle = css('--line');
+    c.strokeRect(x0, y0, w, h);
+
+    if (lo < 0 && hi > 0) {
+      c.strokeStyle = css('--canvas-axis');
+      c.beginPath();
+      c.moveTo(x0, Y(0));
+      c.lineTo(x0 + w, Y(0));
+      c.stroke();
+    }
+
+    if (opts.label) {
+      c.fillStyle = color;
+      c.font = '700 12px ' + css('--sans');
+      c.textAlign = 'left';
+      c.textBaseline = 'top';
+      c.fillText(opts.label, x0 + 8, y0 + 6);
+    }
+    if (opts.peakText) {
+      c.fillStyle = css('--ink-muted');
+      c.font = '500 11.5px ' + css('--mono');
+      c.textAlign = 'right';
+      c.textBaseline = 'top';
+      c.fillText(opts.peakText, x0 + w - 8, y0 + 6);
+    }
+
+    c.save();
+    c.beginPath();
+    c.rect(x0, y0 - 1, w, h + 2);
+    c.clip();
+
+    // Optional Ghost Reference (Quintic)
+    if (opts.ghostFn) {
+      c.beginPath();
+      c.strokeStyle = css('--ink-faint');
+      c.globalAlpha = 0.35;
+      c.lineWidth = 1.5;
+      c.setLineDash([4, 4]);
+      for (let i = 0; i <= 200; i++) {
+        const u = i / 200;
+        i ? c.lineTo(X(u), Y(opts.ghostFn(u))) : c.moveTo(X(u), Y(opts.ghostFn(u)));
+      }
+      c.stroke();
+      c.setLineDash([]);
+      c.globalAlpha = 1;
+    }
+
+    // Main Curve
+    c.beginPath();
+    c.strokeStyle = color;
+    c.lineWidth = opts.lw || 2.5;
+    const N = 240;
+    for (let i = 0; i <= N * upto; i++) {
+      const u = i / N;
+      i ? c.lineTo(X(u), Y(fn(u))) : c.moveTo(X(u), Y(fn(u)));
+    }
+    c.stroke();
+    c.restore();
+    return { X, Y };
+  }
+
+  /* ==========================================================================
+     REAL-TIME PARAMETER LAB (Supports all 4 Courses!)
+     ========================================================================== */
+  function buildCurveButtons() {
+    const bar = $('#curve-type-bar');
+    bar.textContent = '';
+    Object.entries(CURVES).forEach(([k, v]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn';
+      b.style.padding = '4px 10px';
+      b.style.fontSize = '12px';
+      b.textContent = v.name;
+      b.setAttribute('aria-pressed', k === state.curve);
+      b.onclick = () => {
+        state.curve = k;
+        $('#sim-formula-badge').textContent = v.formula;
+        buildCurveButtons();
+        drawSimLab();
+      };
+      bar.append(b);
+    });
+  }
+
+  function drawSimLab() {
+    const T = +$('#in-T').value;
+    const W = +$('#in-W').value;
+    const mu = +$('#in-mu').value;
+    const ax = +$('#in-ax').value;
+    const cu = CURVES[state.curve];
+    const refQui = CURVES.qui;
+
+    $('#val-T').textContent = T.toFixed(2) + ' s';
+    $('#val-W').textContent = W.toFixed(1) + ' m';
+    $('#val-mu').textContent = mu.toFixed(2);
+    $('#val-ax').textContent = ax.toFixed(2) + ' m/s²';
+
+    const [c, w, h] = fitCanvas($('#sim-plots'));
+    const pad = 12;
+    const gap = 8;
+    const ph = (h - pad * 2 - gap * 3) / 4;
+    const R = (i) => [pad, pad + i * (ph + gap), w - pad * 2, ph];
+
+    const vS = W / T;
+    const aS = W / (T * T);
+    const jS = W / T ** 3;
+    const lim = mu * G;
+    const ayAvail = Math.sqrt(Math.max(0, lim * lim - ax * ax));
+
+    const vm = vS * peak(cu.d1);
+    const am = aS * peak(cu.d2);
+    const jm = jS * peak(cu.d3);
+    const showGhost = state.curve !== 'qui';
+
+    if (state.courseIdx === 1) {
+      // COURSE 2: Exponential Decay & Log-Linearization
+      const k = 0.25 + (5.2 - T) * 0.28; // decay rate k from slider 1
+      const A0 = W * 20;                 // initial capacity (%)
+      const theta = mu * 80;             // threshold
+      const noise = ax * 0.015;
+      $('#lbl-p1').textContent = '열화·감쇠 상수 조절 (T 역비례)';
+      $('#val-T').textContent = 'k = ' + k.toFixed(2) + ' /h';
+      $('#lbl-p2').textContent = '초기 상태량 A₀';
+      $('#val-W').textContent = A0.toFixed(0) + ' %';
+      $('#lbl-p3').textContent = '임계 수명 한계선 θ';
+      $('#val-mu').textContent = theta.toFixed(0) + ' %';
+      $('#lbl-p4').textContent = '측정 노이즈 σ';
+      $('#val-ax').textContent = (noise * 100).toFixed(1) + ' %';
+
+      const yExp = (u) => A0 * Math.exp(-k * (u * 5));
+      const yLog = (u) => Math.log(Math.max(1, yExp(u)));
+      const yDer = (u) => -k * yExp(u);
+      const halfLife = Math.log(2) / k;
+      const tStar = theta < A0 ? Math.log(A0 / theta) / k : 0;
+
+      const g0 = drawSubPlot(c, R(0), yExp, 0, 120, css('--c-y'), {
+        label: '원래 지수 감쇠 곡선 y(t) = A₀·e^(−kt)',
+        peakText: '반감기 t₁/₂ = ' + halfLife.toFixed(2) + ' h',
+      });
+      c.strokeStyle = css('--bad');
+      c.setLineDash([5, 4]);
+      c.beginPath();
+      c.moveTo(g0.X(0), g0.Y(theta));
+      c.lineTo(g0.X(1), g0.Y(theta));
+      c.stroke();
+      c.setLineDash([]);
+
+      drawSubPlot(c, R(1), yLog, 1.5, 5.0, css('--c-a'), {
+        label: '로그 선형화 직선 Y(t) = ln y(t) = ln A₀ − kt',
+        peakText: '기울기 = −' + k.toFixed(2),
+      });
+      drawSubPlot(c, R(2), yDer, -120, 10, css('--c-v'), {
+        label: '순간 변화율 y′(t) = −k·y(t)',
+        peakText: '초기 속도 ' + (-k * A0).toFixed(1),
+      });
+      drawSubPlot(c, R(3), (u) => Math.pow(0.5, (u * 5) / halfLife) * 100, 0, 110, css('--c-j'), {
+        label: '잔존 비율 (1/2)^(t / t₁/₂) [%]',
+        peakText: '임계 도달 t* = ' + tStar.toFixed(2) + ' h',
+      });
+
+      $('#sim-readouts').innerHTML = [
+        ['감쇠율 상수 k', k.toFixed(3) + ' h⁻¹'],
+        ['반감기 t₁/₂ = ln2 / k', halfLife.toFixed(2) + ' h'],
+        ['로그 직선 기울기', (-k).toFixed(3)],
+        ['임계 도달 시점 t*', tStar > 0 ? tStar.toFixed(2) + ' h' : '즉시 도달'],
+      ].map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') +
+        `<div class="verdict ${tStar < 2.0 ? 'over' : 'fine'}"><span>수명 판정</span><span>${tStar < 2.0 ? '⚠️ 조기 열화 주의' : '✓ 정상 수명 구간'}</span></div>`;
+
+      const [fc, fw, fh] = fitCanvas($('#friction-canvas'));
+      fc.strokeStyle = css('--line');
+      fc.strokeRect(18, 18, fw - 36, fh - 36);
+      fc.beginPath();
+      fc.strokeStyle = css('--c-a');
+      fc.lineWidth = 2.4;
+      fc.moveTo(28, 30);
+      fc.lineTo(fw - 28, fh - 30);
+      fc.stroke();
+      for (let i = 0; i < 8; i++) {
+        const u = (i + 0.5) / 8;
+        const px = 28 + u * (fw - 56);
+        const py = 30 + u * (fh - 60) + Math.sin(i * 2.3) * (ax * 2.2);
+        fc.fillStyle = css('--c-y');
+        fc.beginPath();
+        fc.arc(px, py, 3.5, 0, Math.PI * 2);
+        fc.fill();
+      }
+      fc.fillStyle = css('--ink-muted');
+      fc.font = '600 11px ' + css('--sans');
+      fc.fillText('로그-선형 회귀 산점도 (ln y vs t)', 24, 32);
+      return;
+    }
+
+    if (state.courseIdx === 2) {
+      // COURSE 3: Trigonometric Wave Superposition & ANC
+      const phi = ((T - 1.0) / 4.0) * Math.PI * 2; // phase 0 ~ 2pi
+      const amp = W / 3.5;
+      const ratio = mu; // secondary wave amplitude ratio
+      const freq = 2 + Math.round(ax * 0.5);
+
+      $('#lbl-p1').textContent = '제어파 위상차 φ (0 ~ 2π)';
+      $('#val-T').textContent = ((phi * 180) / Math.PI).toFixed(0) + '° (' + (phi / Math.PI).toFixed(2) + 'π)';
+      $('#lbl-p2').textContent = '소음 원신호 진폭 A';
+      $('#val-W').textContent = amp.toFixed(2);
+      $('#lbl-p3').textContent = '제어파 진폭 일치율 r';
+      $('#val-mu').textContent = (ratio * 100).toFixed(0) + ' %';
+      $('#lbl-p4').textContent = '주파수 배수 ω';
+      $('#val-ax').textContent = freq + ' Hz';
+
+      const w1 = (u) => amp * Math.sin(u * freq * Math.PI * 2);
+      const w2 = (u) => amp * ratio * Math.sin(u * freq * Math.PI * 2 + phi);
+      const wSum = (u) => w1(u) + w2(u);
+      const resAmp = amp * Math.sqrt(1 + ratio * ratio + 2 * ratio * Math.cos(phi));
+      const db = 20 * Math.log10(Math.max(0.01, resAmp / amp));
+
+      drawSubPlot(c, R(0), w1, -1.8, 1.8, css('--c-y'), {
+        label: '소음 원신호 y₁(t) = A sin(ωt)',
+        peakText: '진폭 A = ' + amp.toFixed(2),
+      });
+      drawSubPlot(c, R(1), w2, -1.8, 1.8, css('--c-v'), {
+        label: 'ANC 제어 파동 y₂(t) = rA sin(ωt + φ)',
+        peakText: '위상차 φ = ' + ((phi * 180) / Math.PI).toFixed(0) + '°',
+      });
+      drawSubPlot(c, R(2), wSum, -2.6, 2.6, css('--c-a'), {
+        label: '합성 파동 y₁ + y₂ (간섭 결과)',
+        peakText: '합성 진폭 = ' + resAmp.toFixed(2),
+      });
+      drawSubPlot(c, R(3), (u) => wSum(u) ** 2, -0.1, 4.5, css('--c-j'), {
+        label: '순간 잔류 음향 에너지 (y₁ + y₂)²',
+        peakText: (db <= 0 ? db.toFixed(1) : '+' + db.toFixed(1)) + ' dB',
+      });
+
+      const canceled = resAmp < 0.25 * amp;
+      $('#sim-readouts').innerHTML = [
+        ['위상차 φ', ((phi * 180) / Math.PI).toFixed(0) + '°'],
+        ['이론 합성 진폭', resAmp.toFixed(3)],
+        ['소음 감쇄율', db.toFixed(1) + ' dB'],
+        ['간섭 유형', Math.cos(phi) < -0.5 ? '상쇄 간섭' : Math.cos(phi) > 0.5 ? '보강 간섭' : '부분 간섭'],
+      ].map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') +
+        `<div class="verdict ${canceled ? 'fine' : 'over'}"><span>ANC 판정</span><span>${canceled ? '✓ 고효율 소음 상쇄 달성' : '⚠️ 위상·진폭 정합 필요'}</span></div>`;
+
+      // Phasor Diagram
+      const [fc, fw, fh] = fitCanvas($('#friction-canvas'));
+      const cx = fw / 2, cy = fh / 2, Rr = Math.min(fw, fh) * 0.34;
+      fc.strokeStyle = css('--canvas-axis');
+      fc.beginPath(); fc.arc(cx, cy, Rr, 0, Math.PI * 2); fc.stroke();
+      // Vector 1
+      fc.strokeStyle = css('--c-y'); fc.lineWidth = 2.4;
+      fc.beginPath(); fc.moveTo(cx, cy); fc.lineTo(cx + Rr, cy); fc.stroke();
+      // Vector 2
+      const x2 = cx + Rr * ratio * Math.cos(phi), y2 = cy - Rr * ratio * Math.sin(phi);
+      fc.strokeStyle = css('--c-v');
+      fc.beginPath(); fc.moveTo(cx, cy); fc.lineTo(x2, y2); fc.stroke();
+      // Resultant
+      fc.strokeStyle = css('--c-a'); fc.lineWidth = 3;
+      fc.beginPath(); fc.moveTo(cx, cy); fc.lineTo(cx + Rr + (x2 - cx), y2); fc.stroke();
+      fc.fillStyle = css('--ink-muted'); fc.font = '600 11px ' + css('--sans');
+      fc.fillText('페이저(Phasor) 벡터 합성도', 8, 15);
+      return;
+    }
+
+    if (state.courseIdx === 3) {
+      // COURSE 4: Damped Oscillation & Overshoot
+      const alpha = (6.0 - T) * 0.65;
+      const A0 = W;
+      const omega = (0.4 + mu) * 12;
+      $('#lbl-p1').textContent = '댐퍼 감쇠 계수 α';
+      $('#val-T').textContent = 'α = ' + alpha.toFixed(2) + ' /s';
+      $('#lbl-p2').textContent = '초기 충격 변위 A₀';
+      $('#val-W').textContent = A0.toFixed(1) + ' cm';
+      $('#lbl-p3').textContent = '고유 각진동수 ω';
+      $('#val-mu').textContent = omega.toFixed(1) + ' rad/s';
+      $('#lbl-p4').textContent = '외란 보정 계수';
+      $('#val-ax').textContent = ax.toFixed(2);
+
+      const xFn = (u) => A0 * Math.exp(-alpha * u * 3) * Math.cos(omega * u * 3);
+      const envUp = (u) => A0 * Math.exp(-alpha * u * 3);
+      const vFn = (u) => {
+        const t = u * 3;
+        return -A0 * Math.exp(-alpha * t) * (alpha * Math.cos(omega * t) + omega * Math.sin(omega * t));
+      };
+      const ratio = Math.exp((-Math.PI * alpha) / omega);
+
+      drawSubPlot(c, R(0), xFn, -5.8, 5.8, css('--c-y'), {
+        label: '감쇠 진동 변위 x(t) = A₀·e^(−αt)cos(ωt)',
+        peakText: '포락선 ±A₀e^(−αt)',
+        ghostFn: envUp,
+      });
+      drawSubPlot(c, R(1), vFn, -65, 65, css('--c-v'), {
+        label: '진동 속도 x′(t)',
+        peakText: '극값 간격 Δt = π/ω',
+      });
+      drawSubPlot(c, R(2), (u) => A0 * Math.exp(-alpha * u * 3), -0.2, 5.8, css('--c-a'), {
+        label: '진폭 감쇠 포락선 A(t) = A₀·e^(−αt)',
+        peakText: '반주기 공비 r = ' + ratio.toFixed(2),
+      });
+      drawSubPlot(c, R(3), (u) => 0.5 * xFn(u) ** 2, -0.2, 16, css('--c-j'), {
+        label: '잔류 탄성 에너지 ½kx²',
+        peakText: '1주기 후 ' + (ratio ** 4 * 100).toFixed(1) + '% 잔존',
+      });
+
+      $('#sim-readouts').innerHTML = [
+        ['감쇠 계수 α', alpha.toFixed(2) + ' s⁻¹'],
+        ['각진동수 ω', omega.toFixed(1) + ' rad/s'],
+        ['극값 등비수열 공비 r', ratio.toFixed(3)],
+        ['1차 오버슈트 비율', (ratio * 100).toFixed(1) + ' %'],
+      ].map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') +
+        `<div class="verdict ${ratio > 0.65 ? 'over' : 'fine'}"><span>제진 판정</span><span>${ratio > 0.65 ? '⚠️ 진동 지속 (감쇠 부족)' : '✓ 신속 진동 수렴'}</span></div>`;
+
+      // Phase Portrait Spiral (x vs v)
+      const [fc, fw, fh] = fitCanvas($('#friction-canvas'));
+      const cx = fw / 2, cy = fh / 2;
+      fc.strokeStyle = css('--canvas-axis');
+      fc.beginPath(); fc.moveTo(12, cy); fc.lineTo(fw - 12, cy); fc.moveTo(cx, 10); fc.lineTo(cx, fh - 10); fc.stroke();
+      fc.beginPath();
+      fc.strokeStyle = css('--c-y');
+      fc.lineWidth = 2;
+      for (let i = 0; i <= 260; i++) {
+        const u = i / 260;
+        const px = cx + xFn(u) * 11;
+        const py = cy - vFn(u) * 0.9;
+        i ? fc.lineTo(px, py) : fc.moveTo(px, py);
+      }
+      fc.stroke();
+      fc.fillStyle = css('--ink-muted'); fc.font = '600 11px ' + css('--sans');
+      fc.fillText('위상 평면 나선 (위치 x vs 속도 x′)', 8, 15);
+      return;
+    }
+
+    // COURSE 1 (Default): Quintic Polynomial Trajectory & Jerk
+    $('#lbl-p1').textContent = '이동 시간 T';
+    $('#lbl-p2').textContent = '횡이동 폭 W';
+    $('#lbl-p3').textContent = '노면 마찰계수 μ';
+    $('#lbl-p4').textContent = '동시 제동 감속도 aₓ';
+
+    drawSubPlot(c, R(0), (u) => W * cu.s(u), -0.4, 5.8, css('--c-y'), {
+      label: '위치 y(t) [m]',
+      peakText: '최종 변위 ' + W.toFixed(1) + ' m',
+      ghostFn: showGhost ? (u) => W * refQui.s(u) : null,
+    });
+    drawSubPlot(c, R(1), (u) => vS * cu.d1(u), -0.4, 5.5, css('--c-v'), {
+      label: '속도 y′(t) [m/s]',
+      peakText: '최대 ' + vm.toFixed(2) + ' m/s',
+      ghostFn: showGhost ? (u) => vS * refQui.d1(u) : null,
+    });
+    const gAcc = drawSubPlot(c, R(2), (u) => aS * cu.d2(u), -11, 11, css('--c-a'), {
+      label: '가속도 y″(t) [m/s²]',
+      peakText: state.curve === 'lin' ? '양 끝 ∞' : '최대 ' + am.toFixed(2) + ' m/s²',
+      ghostFn: showGhost ? (u) => aS * refQui.d2(u) : null,
+    });
+    drawSubPlot(c, R(3), (u) => jS * cu.d3(u), -45, 45, css('--c-j'), {
+      label: '저크 y‴(t) [m/s³]',
+      peakText: state.curve === 'lin' || state.curve === 'cub' ? '양 끝 ∞' : '최대 ' + jm.toFixed(1) + ' m/s³',
+      ghostFn: showGhost ? (u) => jS * refQui.d3(u) : null,
+    });
+
+    // Draw Tire Friction Limit Lines on Acceleration Plot
+    c.strokeStyle = css('--bad');
+    c.setLineDash([5, 4]);
+    c.lineWidth = 1.3;
+    [ayAvail, -ayAvail].forEach((v) => {
+      c.beginPath();
+      c.moveTo(gAcc.X(0), gAcc.Y(v));
+      c.lineTo(gAcc.X(1), gAcc.Y(v));
+      c.stroke();
+    });
+    c.setLineDash([]);
+
+    const over = state.curve === 'lin' || am > ayAvail || ayAvail === 0;
+    const kPeak = peak(cu.d2);
+    const tMin = state.curve === 'lin' || ayAvail === 0 ? null : Math.sqrt((kPeak * W) / ayAvail);
+
+    $('#sim-readouts').innerHTML = [
+      ['최대 횡속도', vm.toFixed(2) + ' m/s'],
+      ['최대 횡가속도', state.curve === 'lin' ? '∞ (불연속)' : am.toFixed(2) + ' m/s²'],
+      ['가용 횡가속도 한계', ayAvail.toFixed(2) + ' m/s²'],
+      ['최소 필요 시간 T_min', tMin ? tMin.toFixed(2) + ' s' : '불가능'],
+    ]
+      .map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`)
+      .join('') +
+      `<div class="verdict ${over ? 'over' : 'fine'}"><span>마찰원 판정</span><span>${
+        over ? '⚠️ 한계 초과 (미끄러짐)' : '✓ 안전 범위 내'
+      }</span></div>`;
+
+    // Draw Tire Friction Circle (Kamm's Circle)
+    const [fc, fw, fh] = fitCanvas($('#friction-canvas'));
+    const cx = fw / 2;
+    const cy = fh / 2;
+    const scale = (Math.min(fw, fh) / 2 - 18) / 11.5;
+    const rLim = lim * scale;
+
+    fc.strokeStyle = css('--canvas-axis');
+    fc.lineWidth = 1;
+    fc.beginPath();
+    fc.moveTo(cx - 75, cy);
+    fc.lineTo(cx + 75, cy);
+    fc.moveTo(cx, 10);
+    fc.lineTo(cx, fh - 10);
+    fc.stroke();
+
+    // Limit circle
+    fc.beginPath();
+    fc.strokeStyle = css('--ink-muted');
+    fc.fillStyle = over ? css('--t-bad') : css('--t-ok');
+    fc.arc(cx, cy, rLim, 0, Math.PI * 2);
+    fc.fill();
+    fc.setLineDash([4, 3]);
+    fc.stroke();
+    fc.setLineDash([]);
+
+    // Vector arrow (ay, ax)
+    const ayClamp = state.curve === 'lin' ? 11 : Math.min(am, 11.5);
+    const px = cx + ayClamp * scale;
+    const py = cy + ax * scale;
+
+    fc.beginPath();
+    fc.strokeStyle = over ? css('--bad') : css('--ok');
+    fc.lineWidth = 2.6;
+    fc.moveTo(cx, cy);
+    fc.lineTo(px, py);
+    fc.stroke();
+
+    fc.beginPath();
+    fc.fillStyle = over ? css('--bad') : css('--ok');
+    fc.arc(px, py, 5, 0, Math.PI * 2);
+    fc.fill();
+
+    fc.fillStyle = css('--ink-muted');
+    fc.font = '600 11px ' + css('--sans');
+    fc.fillText('마찰원 반지름 μg = ' + lim.toFixed(1), 8, 15);
+    fc.textAlign = 'right';
+    fc.fillText('횡가속도 aᵧ →', fw - 8, cy - 5);
+  }
+
+  ['in-T', 'in-W', 'in-mu', 'in-ax'].forEach((id) => {
+    $('#' + id).addEventListener('input', drawSimLab);
+  });
+
+  $$('#sim-presets .preset-btn').forEach((btn) => {
+    btn.onclick = () => {
+      const p = JSON.parse(btn.dataset.preset);
+      state.curve = p.curve;
+      $('#in-T').value = p.T;
+      $('#in-W').value = p.W;
+      $('#in-mu').value = p.mu;
+      $('#in-ax').value = p.ax;
+      $('#sim-formula-badge').textContent = CURVES[state.curve].formula;
+      buildCurveButtons();
+      drawSimLab();
+      toast('프리셋 조건을 실험실에 적용했습니다');
+    };
+  });
+
+  /* ==========================================================================
+     ANIMATED CINEMA EXPLAINER & WEBM VIDEO STUDIO
+     ========================================================================== */
+  const SCENES = [
+    {
+      t: '옆으로 W만큼 회피하기',
+      cap: '전방에 장애물이 나타났습니다. 자율주행차는 T초 동안 옆 차선으로 W미터 이동해야 합니다. 5차 다항 궤적(실선)과 1차 직선 궤적(점선)의 움직임을 비교해 보세요.',
+    },
+    {
+      t: '1차 등속 이동의 모순',
+      cap: '일정한 옆 방향 속도로 옮기려면 출발(t=0)과 도착(t=T) 순간 속도가 0에서 갑자기 뛰어야 합니다. 가속도가 무한대가 되어 실제 차량은 따라갈 수 없습니다.',
+    },
+    {
+      t: '3차 다항식의 가속도 점프',
+      cap: '처음과 끝 속도를 0으로 맞춘 3차식(3τ²−2τ³)은 속도가 매끄럽지만, 출발 순간 가속도가 0에서 6W/T²로 불연속 점프하여 승객이 덜컥하는 충격을 받습니다.',
+    },
+    {
+      t: '6개 경계조건 → 5차 다항식',
+      cap: '출발(위치·속도·가속도=0)과 도착(위치=W, 속도·가속도=0) 6개 조건을 모두 만족시키면 유일한 5차 다항식 s(τ)=10τ³−15τ⁴+6τ⁵이 완성됩니다.',
+    },
+    {
+      t: '속도·가속도 극값의 위치',
+      cap: '속도는 정중앙(τ=0.5)에서 1.875 W/T로 최대가 되고, 가속도는 τ≈0.211과 τ≈0.789에서 ±5.774 W/T²로 극값을 갖습니다.',
+    },
+    {
+      t: '시간 단축과 마찰원 한계',
+      cap: '회피 시간 T를 줄이면 최대 가속도는 1/T²에 비례해 급증합니다. 타이어 마찰 한계 μg를 넘지 않는 최소 시간 T_min이 안전의 마지노선입니다.',
+    },
+  ];
+
+  const SCENE_SEC = 8;
+  const TOTAL_SEC = SCENES.length * SCENE_SEC;
+  const film = {
+    t: 0,
+    playing: false,
+    speed: 1,
+    last: 0,
+    scene: -1,
+    voice: false,
+    recorder: null,
+    chunks: [],
+    recStart: 0,
+    recTimerId: null,
+  };
+
+  function buildSceneButtons() {
+    const host = $('#film-scenes');
+    host.textContent = '';
+    SCENES.forEach((s, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'scene-chip';
+      b.textContent = `${i + 1}. ${s.t}`;
+      b.setAttribute('aria-pressed', i === 0);
+      b.onclick = () => {
+        film.t = i * SCENE_SEC;
+        film.scene = -1;
+        $('#film-scrub').value = film.t / TOTAL_SEC;
+        drawFilmFrame();
+        setFilmPlaying(true);
+      };
+      host.append(b);
+    });
+  }
+
+  function drawFilmFrame() {
+    const cv = $('#film-canvas');
+    const [c, w, h] = fitCanvas(cv);
+    const idx = Math.min(SCENES.length - 1, Math.floor(film.t / SCENE_SEC));
+    const p = (film.t - idx * SCENE_SEC) / SCENE_SEC;
+    const ease = (x) => Math.max(0, Math.min(1, x));
+    const m = Math.max(20, w * 0.05);
+
+    // Top studio header watermark inside canvas (so recorded WebM video looks like a pro lecture!)
+    c.fillStyle = css('--ink-muted');
+    c.font = '600 11.5px ' + css('--mono');
+    c.textAlign = 'left';
+    c.fillText(`aftermath STUDIO · SCENE 0${idx + 1}/06 · ${SCENES[idx].t}`, m, 18);
+
+    const Q = CURVES.qui;
+    const K = CURVES.cub;
+    const L = CURVES.lin;
+
+    if (idx === 0) {
+      // Top-down highway with car + velocity & acceleration vectors
+      const top = h * 0.22;
+      const laneH = h * 0.28;
+      const x0 = m;
+      const x1 = w - m;
+
+      c.strokeStyle = css('--line-strong');
+      c.lineWidth = 2;
+      [0, 2].forEach((i) => {
+        c.beginPath();
+        c.moveTo(x0, top + laneH * i);
+        c.lineTo(x1, top + laneH * i);
+        c.stroke();
+      });
+      c.setLineDash([12, 10]);
+      c.beginPath();
+      c.moveTo(x0, top + laneH);
+      c.lineTo(x1, top + laneH);
+      c.stroke();
+      c.setLineDash([]);
+
+      const yStart = top + laneH * 1.5;
+      const yEnd = top + laneH * 0.5;
+      const X = (u) => x0 + 24 + u * (x1 - x0 - 48);
+      const Yq = (u) => yStart + (yEnd - yStart) * Q.s(ease((u - 0.12) / 0.68));
+
+      // Obstacle
+      c.fillStyle = css('--bad');
+      c.beginPath();
+      c.roundRect(X(0.82), yStart - 16, 48, 32, 6);
+      c.fill();
+      c.fillStyle = '#FFFFFF';
+      c.font = '700 11px ' + css('--sans');
+      c.textAlign = 'center';
+      c.fillText('장애물', X(0.82) + 24, yStart + 4);
+
+      // Full dotted preview path
+      c.beginPath();
+      c.strokeStyle = css('--line-strong');
+      c.setLineDash([4, 4]);
+      for (let i = 0; i <= 160; i++) {
+        const u = i / 160;
+        i ? c.lineTo(X(u), Yq(u)) : c.moveTo(X(u), Yq(u));
+      }
+      c.stroke();
+      c.setLineDash([]);
+
+      // Active quintic path up to q
+      const q = ease(p * 1.12);
+      c.beginPath();
+      c.strokeStyle = css('--c-y');
+      c.lineWidth = 3.2;
+      for (let i = 0; i <= 160 * q; i++) {
+        const u = i / 160;
+        i ? c.lineTo(X(u), Yq(u)) : c.moveTo(X(u), Yq(u));
+      }
+      c.stroke();
+
+      // Car body at q
+      const tau = ease((q - 0.12) / 0.68);
+      const cx = X(q);
+      const cy = Yq(q);
+      const vy = Q.d1(tau);
+      const ay = Q.d2(tau);
+
+      c.save();
+      c.translate(cx, cy);
+      c.fillStyle = css('--ink');
+      c.beginPath();
+      c.roundRect(-20, -11, 40, 22, 5);
+      c.fill();
+
+      // Lateral acceleration vector arrow
+      if (Math.abs(ay) > 0.05) {
+        const aLen = -ay * 5.5;
+        c.strokeStyle = css('--c-a');
+        c.lineWidth = 2.5;
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.lineTo(0, aLen);
+        c.stroke();
+      }
+      c.restore();
+
+      c.fillStyle = css('--ink-secondary');
+      c.font = '600 12.5px ' + css('--mono');
+      c.textAlign = 'left';
+      c.fillText(`진행률 τ = ${tau.toFixed(2)}  |  횡속도 계수 s′ = ${vy.toFixed(2)}  |  횡가속도 계수 s″ = ${ay.toFixed(2)}`, m, h - 18);
+    } else if (idx === 1) {
+      const ph = (h - m * 2.4) / 2;
+      const r1 = [m, m * 1.3, w - m * 2, ph];
+      const r2 = [m, m * 1.6 + ph, w - m * 2, ph];
+      const q = ease(p * 1.4);
+      drawSubPlot(c, r1, L.s, -0.1, 1.15, css('--c-y'), { label: '1차 등속 위치 s(τ) = τ', upto: q });
+      const g2 = drawSubPlot(c, r2, () => 1, -0.3, 1.6, css('--c-v'), { label: '1차 속도 s′(τ) = 1 (양 끝 불연속 점프!)', upto: q });
+      c.fillStyle = css('--bad');
+      c.beginPath();
+      c.arc(g2.X(0), g2.Y(1), 6, 0, Math.PI * 2);
+      c.fill();
+    } else if (idx === 2) {
+      const ph = (h - m * 2.4) / 2;
+      const r1 = [m, m * 1.3, w - m * 2, ph];
+      const r2 = [m, m * 1.6 + ph, w - m * 2, ph];
+      const q = ease(p * 1.4);
+      drawSubPlot(c, r1, K.s, -0.1, 1.15, css('--c-y'), { label: '3차 다항식 위치 s(τ) = 3τ² − 2τ³', upto: q });
+      const g2 = drawSubPlot(c, r2, K.d2, -7.5, 7.5, css('--c-a'), { label: '3차 가속도 s″(τ) = 6 − 12τ (출발 순간 6W/T² 점프!)', upto: q });
+      c.fillStyle = css('--bad');
+      c.beginPath();
+      c.arc(g2.X(0), g2.Y(6), 6, 0, Math.PI * 2);
+      c.fill();
+    } else if (idx === 3) {
+      const r = [m * 1.2, m * 1.5, w - m * 2.4, h * 0.45];
+      const g = drawSubPlot(c, r, Q.s, -0.1, 1.15, css('--c-y'), { label: '5차 최소 저크 궤적 s(τ) = 10τ³ − 15τ⁴ + 6τ⁵', upto: ease(p * 1.3), lw: 3 });
+      c.fillStyle = css('--ink');
+      c.font = '700 13px ' + css('--mono');
+      c.textAlign = 'left';
+      c.fillText('출발(τ=0): y=0, y′=0, y″=0', g.X(0), r[1] + r[3] + 28);
+      c.textAlign = 'right';
+      c.fillText('도착(τ=1): y=W, y′=0, y″=0', g.X(1), r[1] + r[3] + 28);
+      c.textAlign = 'center';
+      c.fillStyle = css('--act');
+      c.fillText('조건 6개 → 미정계수 6개 → 5차 다항식 유일 결정', w / 2, r[1] + r[3] + 58);
+    } else if (idx === 4) {
+      const gap = 8;
+      const ph = (h - m * 2.2 - gap * 2) / 3;
+      const rs = [0, 1, 2].map((i) => [m, m * 1.2 + i * (ph + gap), w - m * 2, ph]);
+      const q = ease(p * 1.35);
+      drawSubPlot(c, rs[0], Q.s, -0.1, 1.15, css('--c-y'), { label: '위치 s(τ)', upto: q });
+      const gv = drawSubPlot(c, rs[1], Q.d1, -0.2, 2.3, css('--c-v'), { label: '속도 s′(τ) · τ=0.5에서 최댓값 1.875', upto: q });
+      const ga = drawSubPlot(c, rs[2], Q.d2, -7, 7, css('--c-a'), { label: '가속도 s″(τ) · τ≈0.211에서 최댓값 5.774', upto: q });
+      if (q > 0.5) {
+        c.fillStyle = css('--c-v');
+        c.beginPath();
+        c.arc(gv.X(0.5), gv.Y(1.875), 5, 0, Math.PI * 2);
+        c.fill();
+      }
+      const tauMax = (3 - Math.sqrt(3)) / 6;
+      if (q > tauMax) {
+        c.fillStyle = css('--c-a');
+        c.beginPath();
+        c.arc(ga.X(tauMax), ga.Y(Q.d2(tauMax)), 5, 0, Math.PI * 2);
+        c.fill();
+      }
+    } else {
+      const r = [m, m * 1.4, w - m * 2, h - m * 2.6];
+      const T = 2.8 - 1.5 * ease(p * 1.2);
+      const W = 3.5;
+      const lim = 0.8 * G;
+      const am = ((10 / Math.sqrt(3)) * W) / (T * T);
+      const over = am > lim;
+      const g = drawSubPlot(c, r, (u) => (W / (T * T)) * Q.d2(u), -13, 13, over ? css('--bad') : css('--c-a'), {
+        label: `이동 시간 T = ${T.toFixed(2)}s 일 때 횡가속도 곡선`,
+        peakText: `최대 ${am.toFixed(2)} m/s² (한계 ${lim.toFixed(2)} m/s²)`,
+        lw: 3,
+      });
+      c.strokeStyle = css('--bad');
+      c.setLineDash([6, 4]);
+      [lim, -lim].forEach((v) => {
+        c.beginPath();
+        c.moveTo(g.X(0), g.Y(v));
+        c.lineTo(g.X(1), g.Y(v));
+        c.stroke();
+      });
+      c.setLineDash([]);
+    }
+
+    if (idx !== film.scene) {
+      film.scene = idx;
+      $('#film-cap-title').textContent = `장면 ${idx + 1} · ${SCENES[idx].t}`;
+      $('#film-cap-text').textContent = SCENES[idx].cap;
+      $$('#film-scenes .scene-chip').forEach((b, i) => b.setAttribute('aria-pressed', i === idx));
+      if (film.playing && film.voice) speakScene(idx);
+    }
+  }
+
+  function speakScene(idx) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(SCENES[idx].cap);
+      u.lang = 'ko-KR';
+      u.rate = 1.05;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  function tickFilm(now) {
+    if (!film.playing) return;
+    film.t += ((now - film.last) / 1000) * film.speed;
+    film.last = now;
+    if (film.t >= TOTAL_SEC) {
+      film.t = TOTAL_SEC - 0.001;
+      setFilmPlaying(false);
+    }
+    $('#film-scrub').value = film.t / TOTAL_SEC;
+    drawFilmFrame();
+    if (film.playing) requestAnimationFrame(tickFilm);
+  }
+
+  function setFilmPlaying(on) {
+    film.playing = on;
+    $('#film-play').textContent = on ? '⏸ 일시정지' : film.t >= TOTAL_SEC - 0.05 ? '↺ 처음부터' : '▶ 재생';
+    if (on) {
+      if (film.t >= TOTAL_SEC - 0.05) {
+        film.t = 0;
+        film.scene = -1;
+      }
+      film.last = performance.now();
+      if (film.voice) speakScene(Math.floor(film.t / SCENE_SEC));
+      requestAnimationFrame(tickFilm);
+    } else if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+  }
+
+  $('#film-play').onclick = () => setFilmPlaying(!film.playing);
+  $('#film-scrub').oninput = (e) => {
+    setFilmPlaying(false);
+    film.t = Math.min(TOTAL_SEC - 0.001, +e.target.value * TOTAL_SEC);
+    drawFilmFrame();
+  };
+  $('#film-speed').onchange = (e) => {
+    film.speed = +e.target.value || 1;
+  };
+  $('#film-voice').onclick = () => {
+    film.voice = !film.voice;
+    $('#film-voice').setAttribute('aria-pressed', film.voice);
+    if (film.voice && film.playing) speakScene(film.scene);
+    else if (!film.voice && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  };
+
+  /* ---------- WebM Video Studio Recorder ---------- */
+  $('#rec-video-btn').onclick = () => {
+    if (film.recorder && film.recorder.state === 'recording') {
+      film.recorder.stop();
+      return;
+    }
+    // Switch to cinema tab and start recording
+    switchWorkbenchTab('cinema');
+    const cv = $('#film-canvas');
+    if (!cv.captureStream || typeof MediaRecorder === 'undefined') {
+      toast('이 브라우저는 캔버스 WebM 녹화를 지원하지 않습니다.');
+      return;
+    }
+    try {
+      const stream = cv.captureStream(30);
+      const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+        ? 'video/webm;codecs=vp9'
+        : 'video/webm';
+      const rec = new MediaRecorder(stream, { mimeType: mime });
+      film.chunks = [];
+      rec.ondataavailable = (ev) => {
+        if (ev.data && ev.data.size > 0) film.chunks.push(ev.data);
+      };
+      rec.onstop = () => {
+        clearInterval(film.recTimerId);
+        $('#rec-badge').hidden = true;
+        $('#rec-video-btn').textContent = '🎬 영상 녹화 (.webm)';
+        const blob = new Blob(film.chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `aftermath_${COURSES[state.courseIdx].id}_lecture.webm`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        toast('연수 해설 영상을 .webm 파일로 저장했습니다!');
+      };
+      film.recorder = rec;
+      rec.start(200);
+      film.recStart = Date.now();
+      $('#rec-badge').hidden = false;
+      $('#rec-video-btn').textContent = '⏹ 녹화 종료 및 저장';
+      if (!film.playing) setFilmPlaying(true);
+      film.recTimerId = setInterval(() => {
+        const s = Math.floor((Date.now() - film.recStart) / 1000);
+        const mm = String(Math.floor(s / 60)).padStart(2, '0');
+        const ss = String(s % 60).padStart(2, '0');
+        $('#rec-timer').textContent = `REC ${mm}:${ss}`;
+      }, 500);
+      toast('캔버스 영상 녹화를 시작했습니다. 원하는 시점에 [녹화 종료]를 누르세요.');
+    } catch (err) {
+      toast('녹화를 시작하지 못했습니다: ' + err.message);
+    }
+  };
+
+  /* ==========================================================================
+     COURSE, VISUAL ILLUSTRATION HOTSPOTS & STEPPER NAVIGATION
+     ========================================================================== */
+  function renderCoursesBar() {
+    const bar = $('#course-bar');
+    bar.textContent = '';
+    COURSES.forEach((c, idx) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'course-pill';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', idx === state.courseIdx);
+      b.innerHTML = `<span class="c-num">${c.num}</span><span>${c.title}</span>`;
+      b.onclick = () => selectCourse(idx);
+      bar.append(b);
+    });
+  }
+
+  function selectCourse(idx) {
+    state.courseIdx = idx;
+    state.visualIdx = 0;
+    const c = COURSES[idx];
+    $('#hero-subj').textContent = c.subj;
+    $('#hero-meta').textContent = c.meta;
+    $('#hero-title').textContent = c.fullTitle;
+    $('#hero-desc').textContent = c.desc;
+    const courseFormulas = [
+      CURVES[state.curve].formula,
+      'ln y(t) = ln A₀ − kt',
+      'y₁ + y₂ = 2A cos(φ/2) sin(ωt + φ/2)',
+      'x(t) = A₀ e^(−αt) cos(ωt)',
+    ];
+    $('#sim-formula-badge').textContent = courseFormulas[idx] || courseFormulas[0];
+    $('#curve-type-bar').style.display = idx === 0 ? 'flex' : 'none';
+    renderCoursesBar();
+    renderVisualShowcase();
+    updateStep7Cases();
+    drawSimLab();
+    drawFilmFrame();
+  }
+
+  function renderVisualShowcase() {
+    const c = COURSES[state.courseIdx];
+    const switcher = $('#visual-switcher');
+    switcher.textContent = '';
+    c.visuals.forEach((v, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'vt-btn';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', i === state.visualIdx);
+      b.textContent = v.label;
+      b.onclick = () => {
+        state.visualIdx = i;
+        renderVisualShowcase();
+      };
+      switcher.append(b);
+    });
+
+    const curVis = c.visuals[state.visualIdx];
+    const img = $('#visual-img');
+    img.onerror = () => {
+      const ghRaw = 'https://raw.githubusercontent.com/irun20000-eng/Math-Research/claude/aftermath-gallery-roadmap-ctquuo/study/' + curVis.img;
+      if (img.src !== ghRaw) img.src = ghRaw;
+    };
+    img.src = curVis.img;
+    img.alt = curVis.alt;
+
+    const layer = $('#hotspot-layer');
+    layer.textContent = '';
+    let activePreset = curVis.hotspots[0] ? curVis.hotspots[0].preset : null;
+
+    curVis.hotspots.forEach((h, i) => {
+      const pin = document.createElement('button');
+      pin.type = 'button';
+      pin.className = 'hotspot';
+      pin.style.left = h.x + '%';
+      pin.style.top = h.y + '%';
+      pin.textContent = String(i + 1);
+      pin.title = h.label;
+      pin.setAttribute('aria-expanded', i === 0);
+      pin.onclick = () => {
+        $$('.hotspot', layer).forEach((p, k) => p.setAttribute('aria-expanded', k === i));
+        $('#hotspot-title').textContent = h.label;
+        $('#hotspot-desc').textContent = h.text;
+        activePreset = h.preset;
+      };
+      layer.append(pin);
+    });
+
+    if (curVis.hotspots[0]) {
+      $('#hotspot-title').textContent = curVis.hotspots[0].label;
+      $('#hotspot-desc').textContent = curVis.hotspots[0].text;
+    }
+
+    $('#sync-sim-btn').onclick = () => {
+      if (!activePreset) return;
+      state.curve = activePreset.curve;
+      $('#in-T').value = activePreset.T;
+      $('#in-W').value = activePreset.W;
+      $('#in-mu').value = activePreset.mu;
+      $('#in-ax').value = activePreset.ax;
+      switchWorkbenchTab('lab');
+      buildCurveButtons();
+      drawSimLab();
+      toast('도해의 수리 조건을 우측 실험실에 동기화했습니다');
+    };
+  }
+
+  /* ---------- 9-Step Module Navigation ---------- */
+  const SECS = $$('.sec-pane');
+
+  function buildStepsRibbon() {
+    const nav = $('#steps-nav');
+    nav.textContent = '';
+    SECS.forEach((sec, idx) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'step-tab';
+      b.innerHTML = `<span class="s-idx">0${idx + 1}</span><span>${sec.dataset.kicker.split('·')[1].trim()}</span>`;
+      b.onclick = () => goStep(idx);
+      nav.append(b);
+    });
+  }
+
+  function goStep(idx) {
+    state.stepIdx = Math.max(0, Math.min(SECS.length - 1, idx));
+    const active = SECS[state.stepIdx];
+    $('#mod-num').textContent = '0' + (state.stepIdx + 1);
+    $('#mod-kicker').textContent = active.dataset.kicker;
+    $('#mod-title').textContent = active.dataset.title;
+    $('#mod-goal').textContent = active.dataset.goal;
+
+    SECS.forEach((s, k) => {
+      s.hidden = !state.showAllSteps && k !== state.stepIdx;
+    });
+
+    // Auto-switch workbench tab on step 2 (cinema) or step 4 (lab)
+    if (active.id === 's2') switchWorkbenchTab('cinema');
+    if (active.id === 's4') switchWorkbenchTab('lab');
+
+    try { localStorage.setItem('am-argon-step', String(state.stepIdx)); } catch (e) {}
+    updateProgressUI();
+  }
+
+  function updateProgressUI() {
+    const doneCount = SECS.filter((s) => state.done[s.id]).length;
+    $('#prog-text').textContent = `${doneCount} / ${SECS.length}`;
+    $('#prog-bar').style.width = `${(doneCount / SECS.length) * 100}%`;
+    $('#step-status-label').textContent = `${state.stepIdx + 1} / ${SECS.length} 단계`;
+
+    $$('#steps-nav .step-tab').forEach((b, k) => {
+      b.classList.toggle('done', !!state.done[SECS[k].id]);
+      if (k === state.stepIdx) b.setAttribute('aria-current', 'step');
+      else b.removeAttribute('aria-current');
+    });
+
+    $('#step-prev').disabled = state.stepIdx === 0;
+    const isLast = state.stepIdx === SECS.length - 1;
+    const curId = SECS[state.stepIdx].id;
+    $('#step-next').textContent = state.done[curId]
+      ? isLast ? '처음 단계로 ↺' : '다음 단계 →'
+      : isLast ? '강좌 이수 완료 ✓' : '이해 완료 · 다음 단계 →';
+  }
+
+  $('#step-prev').onclick = () => goStep(state.stepIdx - 1);
+  $('#step-next').onclick = () => {
+    const curId = SECS[state.stepIdx].id;
+    const isLast = state.stepIdx === SECS.length - 1;
+    if (!state.done[curId]) {
+      state.done[curId] = true;
+      saveState();
+      if (isLast) toast('축하합니다! 강좌의 모든 단계를 마쳤습니다.');
+    }
+    goStep(isLast ? 0 : state.stepIdx + 1);
+  };
+
+  $('#toggle-all-steps').onclick = () => {
+    state.showAllSteps = !state.showAllSteps;
+    $('#toggle-all-steps').textContent = state.showAllSteps ? '단계별로 접기' : '전체 단계 펼치기';
+    SECS.forEach((s, k) => {
+      s.hidden = !state.showAllSteps && k !== state.stepIdx;
+    });
+  };
+
+  /* ---------- Derivation Stepper ---------- */
+  const derivePanes = $$('#derive-box .derive-pane');
+  let deriveIdx = 0;
+  function showDerive(i) {
+    deriveIdx = Math.max(0, Math.min(derivePanes.length - 1, i));
+    derivePanes.forEach((p, k) => { p.hidden = k !== deriveIdx; });
+    $$('#derive-tabs button').forEach((b, k) => b.setAttribute('aria-selected', k === deriveIdx));
+    $('#derive-prev').disabled = deriveIdx === 0;
+    $('#derive-next').disabled = deriveIdx === derivePanes.length - 1;
+  }
+  derivePanes.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn';
+    b.textContent = p.dataset.t;
+    b.onclick = () => showDerive(i);
+    $('#derive-tabs').append(b);
+  });
+  $('#derive-prev').onclick = () => showDerive(deriveIdx - 1);
+  $('#derive-next').onclick = () => showDerive(deriveIdx + 1);
+  showDerive(0);
+
+  /* ---------- Classroom Materials Tabs & Copy ---------- */
+  $$('#mat-tabs button').forEach((b) => {
+    b.onclick = () => {
+      const target = b.dataset.mat;
+      $$('#mat-tabs button').forEach((x) => x.setAttribute('aria-selected', x === b));
+      $$('.mat-pane').forEach((p) => { p.hidden = p.dataset.matPane !== target; });
+    };
+  });
+
+  $$('.copy-btn').forEach((b) => {
+    b.onclick = async () => {
+      const el = $('#' + b.dataset.target);
+      if (!el) return;
+      const clone = el.cloneNode(true);
+      $$('[data-tex]', clone).forEach((n) => { n.textContent = '$' + n.dataset.tex + '$'; });
+      try {
+        await navigator.clipboard.writeText(clone.textContent.trim());
+        toast('클립보드에 복사했습니다 (수식 LaTeX 변환 포함)');
+      } catch (e) {
+        toast('복사 권한이 제한되어 있습니다.');
+      }
+    };
+  });
+
+  /* ---------- Self-Check Quiz ---------- */
+  const QUIZ = [
+    {
+      q: '5차 다항 궤적에서 옆 방향 최대 속도는 평균 속도 W/T의 몇 배입니까?',
+      o: ['1.5배', '1.875배 (15/8)', '2.0배', '5.774배'],
+      a: 1,
+      why: 's′(τ) = 30τ²(1−τ)²은 대칭 중심 τ = 1/2에서 최댓값 30/16 = 15/8 = 1.875를 갖습니다.',
+    },
+    {
+      q: '이동 거리 W를 유지하면서 이동 시간 T를 절반(1/2)으로 줄이면 최대 가속도와 최대 저크는 각각 몇 배가 됩니까?',
+      o: ['2배, 4배', '4배, 4배', '4배, 8배', '8배, 16배'],
+      a: 2,
+      why: '가속도는 W/T²에, 저크는 W/T³에 비례하므로 T가 1/2이 되면 각각 4배, 8배로 급증합니다.',
+    },
+    {
+      q: '3차 다항식 s(τ) = 3τ² − 2τ³으로 차선을 변경할 때 출발 순간(τ = 0) 옆 방향 가속도는 얼마입니까?',
+      o: ['0', '3W/T²', '6W/T²', '12W/T²'],
+      a: 2,
+      why: 's″(τ) = 6 − 12τ이므로 τ = 0에서 6W/T²입니다. 출발 전 가속도 0과 불연속이 되어 충격이 발생합니다.',
+    },
+    {
+      q: 'W = 3.5 m, 마찰계수 μ = 0.8 (μg = 7.84 m/s²), 제동 없이 5차 궤적으로 회피할 때 최소 시간 T_min에 가장 가까운 값은?',
+      o: ['약 1.0초', '약 1.6초', '약 2.3초', '약 3.0초'],
+      a: 1,
+      why: 'T ≥ √(10×3.5 / (√3 × 7.84)) = √2.577 ≈ 1.61초입니다.',
+    },
+  ];
+
+  function renderQuiz() {
+    const host = $('#quiz-host');
+    host.textContent = '';
+    QUIZ.forEach((it, idx) => {
+      const card = document.createElement('div');
+      card.className = 'quiz-card';
+      const picked = state.quiz['q' + idx];
+      card.innerHTML = `<b>Q${idx + 1}. ${it.q}</b><div class="quiz-opts"></div>` +
+        (picked != null ? `<div class="quiz-why">${picked === it.a ? '✓ 정답입니다. ' : '✕ 다시 확인해 보세요. '}${it.why}</div>` : '');
+      const opts = card.querySelector('.quiz-opts');
+      it.o.forEach((optText, k) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = optText;
+        if (picked != null && k === it.a) b.className = 'right';
+        else if (picked === k) b.className = 'wrong';
+        b.onclick = () => {
+          state.quiz['q' + idx] = k;
+          saveState();
+          renderQuiz();
+        };
+        opts.append(b);
+      });
+      host.append(card);
+    });
+  }
+
+  /* ---------- Right Workbench Tab Switching ---------- */
+  function switchWorkbenchTab(tab) {
+    state.wbTab = tab;
+    $$('.wb-tab').forEach((b) => b.setAttribute('aria-selected', b.dataset.wb === tab));
+    $('#wb-pane-lab').hidden = tab !== 'lab';
+    $('#wb-pane-cinema').hidden = tab !== 'cinema';
+    if (tab === 'lab') drawSimLab();
+    if (tab === 'cinema') drawFilmFrame();
+  }
+  $$('.wb-tab').forEach((b) => {
+    b.onclick = () => switchWorkbenchTab(b.dataset.wb);
+  });
+
+  /* ---------- Layout Mode & Theme Switcher ---------- */
+  $$('.layout-switcher button').forEach((b) => {
+    b.onclick = () => {
+      const mode = b.dataset.mode;
+      $('#workspace').dataset.layout = mode;
+      $$('.layout-switcher button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+      setTimeout(() => {
+        drawSimLab();
+        drawFilmFrame();
+      }, 60);
+    };
+  });
+
+  $('#theme-toggle').onclick = () => {
+    const cur = document.documentElement.dataset.theme || 'light';
+    const next = cur === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    $('#theme-label').textContent = next === 'light' ? '다크 스튜디오' : '라이트 에디토리얼';
+    drawSimLab();
+    drawFilmFrame();
+  };
+
+  /* ---------- Google Drive Feed & Hybrid (1+2) Course Queue ---------- */
+  let driveFeed = null;
+  const COURSE_VISUAL_KEYS = ['scurve', 'loglin', 'sine', 'damped'];
+  const SUBJ_NAMES = { math1: '수학Ⅰ', math2: '수학Ⅱ', calc: '미적분', aimath: '인공지능 수학' };
+
+  function updateStep7Cases() {
+    if (!driveFeed || !driveFeed.byVisual) return;
+    const vKey = COURSE_VISUAL_KEYS[state.courseIdx] || 'scurve';
+    const cases = driveFeed.byVisual[vKey] || [];
+    if (!cases.length) return;
+    const grid = $('#cases-grid');
+    if (!grid) return;
+    grid.textContent = '';
+    cases.slice(0, 9).forEach((c, i) => {
+      const a = document.createElement('a');
+      a.className = 'case-link';
+      a.href = `../site/index.html#${c.id}`;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      const isLatest = c.week === driveFeed.latestWeekDate;
+      a.innerHTML = `<span class="d">${c.week} · ${SUBJ_NAMES[c.subject] || c.subject}${isLatest ? ' · <b style="color:var(--act)">NEW</b>' : ''}</span>
+        <span class="t">${c.tech}</span>
+        <span class="n">${c.unit ? c.unit + ' · ' : ''}갤러리 상세 열기 ↗</span>`;
+      grid.append(a);
+    });
+  }
+
+  async function loadDriveFeed(showMsg) {
+    try {
+      const r = await fetch('feed.json?t=' + Date.now());
+      if (r.ok) {
+        driveFeed = await r.json();
+      } else if (state.db) {
+        const snap = await state.db.collection('weeks').get();
+        const weeks = snap.docs.map((d) => d.data()).filter((w) => w && w.date).sort((a, b) => (a.date < b.date ? 1 : -1));
+        if (weeks.length) {
+          const allCases = weeks.flatMap((w) => w.cases || []);
+          const byVisual = {};
+          allCases.forEach((c) => {
+            byVisual[c.visual] = byVisual[c.visual] || [];
+            byVisual[c.visual].push(c);
+          });
+          driveFeed = {
+            totalWeeks: weeks.length,
+            totalCases: allCases.length,
+            latestWeekDate: weeks[0].date,
+            latestWeekFocus: weeks[0].focus || '',
+            byVisual,
+            nextCourseQueue: [],
+          };
+        }
+      }
+      if (!driveFeed) return;
+      updateStep7Cases();
+      const btn = $('#open-pipeline span');
+      if (btn && driveFeed.totalCases) {
+        btn.textContent = `드라이브 연수 맵 (${driveFeed.totalWeeks}주 · ${driveFeed.totalCases}사례)`;
+      }
+      if (showMsg) {
+        toast(`수요일 문서(${driveFeed.latestWeekDate}) 기준 ${driveFeed.totalCases}개 사례 동기화 완료!`);
+      }
+    } catch (e) {}
+  }
+
+  function renderPipelineModal() {
+    const host = $('#pipeline-cards');
+    host.textContent = '';
+
+    // Check teacher's local marks ('keep' / 'deep') from gallery localStorage
+    let localMarks = {};
+    try { localMarks = JSON.parse(localStorage.getItem('am-marks') || '{}'); } catch (e) {}
+    const keptIds = Object.entries(localMarks)
+      .filter(([, v]) => v && (v.status === 'keep' || v.status === 'deep'))
+      .map(([k]) => k);
+
+    const PIPELINE = [
+      ...COURSES.map((c, idx) => {
+        const vKey = COURSE_VISUAL_KEYS[idx];
+        const cnt = driveFeed && driveFeed.byVisual && driveFeed.byVisual[vKey] ? driveFeed.byVisual[vKey].length : null;
+        return {
+          tag: `${c.num} · 개설 완료${cnt ? ` (${cnt}사례 연결)` : ''}`,
+          title: c.title,
+          subj: c.subj,
+          desc: c.meta,
+          idx,
+          isOpened: true,
+        };
+      }),
+    ];
+
+    if (driveFeed && Array.isArray(driveFeed.nextCourseQueue)) {
+      driveFeed.nextCourseQueue.forEach((q, i) => {
+        const isTeacherKept = keptIds.includes(q.caseId) || q.source === 'teacher_keep';
+        PIPELINE.push({
+          tag: isTeacherKept ? `★ 1순위 · 교사 관심(keep) 지정` : `⚡ ${q.badge}`,
+          title: `${COURSES.length + i + 1}강 후보 · ${q.courseTitle}`,
+          subj: q.subj,
+          desc: `기준 문서: ${q.week} (${q.caseId}) · 동일 구조 누적 ${q.relatedCount}개 사례`,
+          idx: 0,
+          caseId: q.caseId,
+          isOpened: false,
+        });
+      });
+    } else {
+      PIPELINE.push(
+        {
+          tag: '5강 후보 · 혼합 방식 자동 큐',
+          title: '로지스틱 포화 곡선과 S자 성장 한계',
+          subj: '미적분 · 인공지능 수학',
+          desc: '신경망 시그모이드 활성화 함수, 감염병 확산, 신재생 에너지 보급률 포화 모델',
+          idx: 0,
+          isOpened: false,
+        },
+        {
+          tag: '6강 후보 · 혼합 방식 자동 큐',
+          title: '벡터 내적·코사인 유사도와 행렬 최적화',
+          subj: '인공지능 수학 · 기하',
+          desc: 'LLM 임베딩 유사도 검색, 추천 시스템, 경사하강법 손실 함수 수렴 분석',
+          idx: 0,
+          isOpened: false,
+        }
+      );
+    }
+
+    PIPELINE.forEach((p) => {
+      const card = document.createElement('div');
+      card.className = 'pipe-card';
+      card.innerHTML = `<div class="p-top"><span style="color:${p.isOpened ? 'var(--ok)' : 'var(--act)'};font-weight:700">${p.tag}</span><span>${p.subj}</span></div>
+        <h4>${p.title}</h4>
+        <p>${p.desc}</p>`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = p.isOpened ? 'btn primary' : 'btn';
+      btn.textContent = p.isOpened ? '이 연수 모듈 열기 →' : '원본 사례 갤러리에서 보기 ↗';
+      btn.onclick = () => {
+        if (p.isOpened) {
+          $('#pipeline-modal').close();
+          selectCourse(p.idx);
+          toast(`${p.title} 연수 모듈로 전환했습니다`);
+        } else if (p.caseId) {
+          window.open(`../site/index.html#${p.caseId}`, '_blank', 'noopener');
+        }
+      };
+      card.append(btn);
+      host.append(card);
+    });
+  }
+
+  $('#open-pipeline').onclick = async () => {
+    await loadDriveFeed(false);
+    renderPipelineModal();
+    $('#pipeline-modal').showModal();
+  };
+  $('#close-pipeline').onclick = () => $('#pipeline-modal').close();
+  $('#pipeline-modal').addEventListener('click', (e) => {
+    if (e.target === $('#pipeline-modal')) $('#pipeline-modal').close();
+  });
+
+  /* ---------- Persistence (localStorage + Claude Artifact DB compatible) ---------- */
+  function saveState() {
+    const body = { done: { ...state.done }, quiz: { ...state.quiz }, at: Date.now() };
+    try { localStorage.setItem('am-study-quintic-jerk', JSON.stringify(body)); } catch (e) {}
+    if (state.db) {
+      state.db.doc('progress/quintic-jerk').set(body).catch(() => {});
+    }
+  }
+
+  async function boot() {
+    renderMath(document);
+    renderCoursesBar();
+    renderVisualShowcase();
+    buildStepsRibbon();
+    buildCurveButtons();
+    buildSceneButtons();
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('am-study-quintic-jerk') || 'null');
+      if (saved) {
+        state.done = saved.done || {};
+        state.quiz = saved.quiz || {};
+      }
+      state.stepIdx = +localStorage.getItem('am-argon-step') || 0;
+    } catch (e) {}
+
+    renderQuiz();
+    goStep(state.stepIdx);
+    drawSimLab();
+    drawFilmFrame();
+    loadDriveFeed(false);
+
+    window.addEventListener('resize', () => {
+      drawSimLab();
+      drawFilmFrame();
+    });
+
+    if (window.claude && window.claude.use) {
+      try {
+        const db = await window.claude.use('db');
+        if (db) {
+          state.db = db;
+          const snap = await db.doc('progress/quintic-jerk').get();
+          if (snap.exists) {
+            const d = snap.data();
+            state.done = d.done || state.done;
+            state.quiz = d.quiz || state.quiz;
+            renderQuiz();
+            updateProgressUI();
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
