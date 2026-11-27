@@ -245,7 +245,7 @@ dialog#settings textarea { width: 100%; min-height: 160px; background: var(--ink
           <input id="d-link" type="url" placeholder="https://docs.google.com/…" aria-label="결과 문서 주소">
           <div class="note" id="d-linkopen"></div>
         </div>
-        <div class="note">☆ 관심으로 표시한 사례는 수요일 저녁 자동 조사 때 출처 확인과 수식 검증을 해서 "내용" 탭에 결과를 붙입니다.</div>
+        <div class="note">☆ 관심으로 표시한 사례는 수요일 저녁에 출처 확인과 수식 검증을 해서 "내용" 탭에 결과를 붙이고, 수업 흐름안과 활동지도 만들어 둡니다.</div>
       </div>
     </div>
   </div>
@@ -739,7 +739,7 @@ function renderLearn(c) {
   const host = $('#p-learn'), card = S.cards[c.id], prompt = cardPrompt(c); host.textContent = '';
   const make = async () => { if (!S.sample) { host.textContent = ''; host.append(noSample(prompt)); return; }
     const text = await generate(prompt, host); if (S.open !== c) return;
-    if (text) { await saveCard(c.id, { caseId: c.id, text, at: Date.now(), checked: false }); toast('학습 카드를 저장했습니다'); } renderLearn(c); openTabsLabel(c); };
+    if (text) { await saveCard(c.id, { caseId: c.id, text, at: Date.now(), checked: false, auto: false }); toast('학습 카드를 저장했습니다'); } renderLearn(c); openTabsLabel(c); };
   if (!card) {
     host.append(el('div', { class: 'hero' }, el('h2', {}, '이 사례의 학습 카드가 아직 없습니다'),
       el('div', { class: 'what' }, ...['쉬운 설명', '용어 풀이', '수식 한 줄씩', '문답 4개', '확인 문제 3개', '다음 공부'].map((t) => el('span', { class: 'tag' }, t))),
@@ -748,10 +748,10 @@ function renderLearn(c) {
     return;
   }
   host.append(el('div', { class: 'row' },
-    el('span', { class: 'stamp ' + (card.checked ? 'ok' : '') }, card.checked ? '내가 확인함' : '자동 생성 · 검증 전'),
+    el('span', { class: 'stamp ' + (card.checked ? 'ok' : '') }, card.checked ? '내가 확인함' : card.auto ? '수요일 자동 생성 · 검증 전' : '자동 생성 · 검증 전'),
     el('button', { class: 'btn small', type: 'button', onclick: () => { saveCard(c.id, { ...card, checked: !card.checked }); renderLearn(c); } }, card.checked ? '확인 취소' : '확인함으로 표시'),
     el('button', { class: 'btn small', type: 'button', onclick: () => copy(card.text, '학습 카드를 복사했습니다') }, '복사'),
-    el('button', { class: 'btn small', type: 'button', onclick: () => openMat({ id: 'card:' + c.id, caseId: c.id, kind: 'card', title: '학습 카드 · ' + c.tech, text: card.text, checked: card.checked }) }, '크게 보기 · PDF'),
+    el('button', { class: 'btn small', type: 'button', onclick: () => openMat({ id: 'card:' + c.id, caseId: c.id, kind: 'card', title: '학습 카드 · ' + c.tech, text: card.text, checked: card.checked, auto: card.auto }) }, '크게 보기 · PDF'),
     el('button', { class: 'btn small', type: 'button', onclick: make }, '다시 만들기')), tilesFrom(card.text));
 }
 function openTabsLabel(c) { [...$('#d-tabs').children].forEach((b) => { const k = b.dataset.t, n = matsOf(c.id).length; b.textContent = TABS[k] + (k === 'learn' && S.cards[c.id] ? ' ✓' : k === 'make' && n ? ' ' + n : ''); }); }
@@ -778,7 +778,7 @@ function renderMake(c) {
 function matRow(m) {
   const c = S.byId.get(m.caseId);
   return el('button', { class: 'listcard', type: 'button', onclick: () => openMat(m) },
-    el('div', { class: 'meta' }, el('span', { class: 'tag ' + (m.checked || m.state === 'final' ? 'has' : m.state === 'queued' ? 'star' : 'draft') }, m.checked ? '확인함' : m.state === 'final' ? '검산 완료' : m.state === 'queued' ? '요청됨' : '검증 전'), el('span', {}, m.kind === 'card' ? '학습 카드' : KINDS[m.kind] ? KINDS[m.kind][0] : m.kind), m.target ? el('span', {}, m.target) : null, el('span', { class: 'mono' }, new Date(m.at || Date.now()).toISOString().slice(0, 10))),
+    el('div', { class: 'meta' }, el('span', { class: 'tag ' + (m.checked || m.state === 'final' ? 'has' : m.state === 'queued' ? 'star' : 'draft') }, m.checked ? '확인함' : m.state === 'final' ? '검산 완료' : m.state === 'queued' ? '요청됨' : '검증 전'), el('span', {}, m.kind === 'card' ? '학습 카드' : KINDS[m.kind] ? KINDS[m.kind][0] : m.kind), m.target ? el('span', {}, m.target) : null, m.auto ? el('span', {}, '수요일 자동') : null, el('span', { class: 'mono' }, new Date(m.at || Date.now()).toISOString().slice(0, 10))),
     el('div', { class: 't' }, c ? c.tech : m.title));
 }
 function showLink(url) { const host = $('#d-linkopen'); host.textContent = ''; if (url && /^https:\/\//.test(url)) host.append(el('a', { href: url, target: '_blank', rel: 'noopener' }, '저장한 결과 문서 ↗')); }
@@ -786,7 +786,7 @@ function closeCase() { const dlg = $('#detail'); if (dlg.open) dlg.close(); }
 $('#detail').addEventListener('close', () => { if (S.busy) S.busy.abort(); S.open = null; if (S.byId.has(location.hash.slice(1))) history.replaceState(null, '', '#' + (S.view || 'find')); render(); if (lastFocus && lastFocus.isConnected) lastFocus.focus(); });
 $('#detail').addEventListener('click', (e) => { if (e.target === $('#detail')) closeCase(); });
 $('#d-close').onclick = closeCase;
-$('#d-star').onclick = () => { const c = S.open, on = starred(c.id); saveMark(c.id, { status: on ? 'new' : 'keep' }); paintStar(); toast(on ? '관심을 풀었습니다' : '관심으로 표시했습니다. 수요일 저녁에 자동 조사합니다'); };
+$('#d-star').onclick = () => { const c = S.open, on = starred(c.id); saveMark(c.id, { status: on ? 'new' : 'keep' }); paintStar(); toast(on ? '관심을 풀었습니다' : '관심으로 표시했습니다. 수요일 저녁에 조사하고 수업 자료를 만듭니다'); };
 $('#copy-prompt').onclick = () => copy($('#d-prompt').value, '프롬프트를 복사했습니다');
 $('#copy-nlm').onclick = () => copy(buildNlm(S.open), '질문 목록을 복사했습니다');
 $('#copy-name').onclick = () => copy(resultName(S.open), '문서 제목을 복사했습니다');
@@ -798,7 +798,7 @@ function openMat(m) {
   S.mat = m; const c = S.byId.get(m.caseId), isCard = m.kind === 'card';
   const meta = $('#m-meta'); meta.textContent = '';
   const fin = m.state === 'final';
-  meta.append(el('span', { class: 'stamp ' + (m.checked || fin ? 'ok' : '') }, m.checked ? '내가 확인함' : fin ? '수요일 검산 완료' : m.state === 'queued' ? '확정본 요청됨 · 수요일 처리' : '자동 생성 · 검증 전'), el('span', {}, isCard ? '학습 카드' : KINDS[m.kind][0]), m.target ? el('span', {}, m.target) : null);
+  meta.append(el('span', { class: 'stamp ' + (m.checked || fin ? 'ok' : '') }, m.checked ? '내가 확인함' : fin ? '수요일 검산 완료' : m.state === 'queued' ? '확정본 요청됨 · 수요일 처리' : m.auto ? '수요일 자동 생성 · 검증 전' : '자동 생성 · 검증 전'), el('span', {}, isCard ? '학습 카드' : KINDS[m.kind][0]), m.target ? el('span', {}, m.target) : null);
   const q = $('#m-queue'); q.hidden = isCard || fin; q.textContent = m.state === 'queued' ? '확정본 요청 취소' : '수요일 확정본 요청';
   const fbox = $('#m-final'); fbox.textContent = ''; fbox.hidden = !fin;
   if (fin) { fbox.append(el('div', { class: 'hd' }, el('b', {}, '수요일 검산 결과'), el('span', { class: 'note mono' }, m.finalAt || '')), el('div', { class: 'note' }, m.verifyNote || ''));
@@ -809,7 +809,7 @@ function openMat(m) {
   $('#m-layout').value = isCard ? 'note' : 'keep'; $('#m-case').hidden = !c;
   if (!$('#mat').open) $('#mat').showModal(); $('#mat').scrollTop = 0;
 }
-function persistMat() { const m = S.mat; if (m.kind === 'card') return saveCard(m.caseId, { caseId: m.caseId, text: m.text, at: Date.now(), checked: !!m.checked }); return saveMat(m); }
+function persistMat() { const m = S.mat; if (m.kind === 'card') return saveCard(m.caseId, { caseId: m.caseId, text: m.text, at: Date.now(), checked: !!m.checked, auto: !!m.auto }); return saveMat(m); }
 $('#m-close').onclick = () => $('#mat').close();
 $('#mat').addEventListener('click', (e) => { if (e.target === $('#mat')) $('#mat').close(); });
 $('#mat').addEventListener('close', () => { S.mat = null; if (S.open) { if (S.tab === 'learn') renderLearn(S.open); if (S.tab === 'make') renderMake(S.open); } else render(); });
@@ -867,7 +867,7 @@ $('#m-pdf').onclick = async () => {
 /* ---------- 내 자료함 ---------- */
 function renderShelf() {
   const kinds = $('#shelf-kinds'), host = $('#shelf-list'); kinds.textContent = ''; host.textContent = '';
-  const all = [...Object.entries(S.cards).map(([id, cd]) => ({ id: 'card:' + id, caseId: id, kind: 'card', text: cd.text, at: cd.at, checked: cd.checked, title: '학습 카드' })), ...Object.values(S.mats)].sort((a, b) => (b.at || 0) - (a.at || 0));
+  const all = [...Object.entries(S.cards).map(([id, cd]) => ({ id: 'card:' + id, caseId: id, kind: 'card', text: cd.text, at: cd.at, checked: cd.checked, auto: cd.auto, title: '학습 카드' })), ...Object.values(S.mats)].sort((a, b) => (b.at || 0) - (a.at || 0));
   const opts = [['', '전체'], ['card', '학습 카드'], ...Object.entries(KINDS).map(([k, v]) => [k, v[0]])];
   for (const [k, label] of opts) { const n = k ? all.filter((m) => m.kind === k).length : all.length;
     kinds.append(el('button', { class: 'chip', type: 'button', 'aria-pressed': S.shelfKind === k ? 'true' : 'false', onclick: () => { S.shelfKind = k; renderShelf(); } }, label, el('span', { class: 'n' }, String(n)))); }
