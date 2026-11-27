@@ -1535,7 +1535,7 @@ dialog::backdrop {
       title: '5차 다항 궤적과 저크',
       fullTitle: '1강 · 5차 다항 궤적과 저크(Jerk) 최소화',
       subj: '수학Ⅱ · 미적분',
-      meta: 'Google Drive 주간 리서치 핵심 구조 #01 · 모빌리티·로봇 제어 (24개 사례 연결)',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #01 · 모빌리티·로봇 제어',
       desc: '자율주행 긴급 회피, eVTOL 수직 이착륙, 협동 로봇 관절 제어에서 반복 등장하는 5차 다항식 y(τ)=W(10τ³−15τ⁴+6τ⁵)의 계수 유도부터 타이어 마찰원 한계, 변분법 최적성 증명까지 다룹니다.',
       formulaBadge: 's(τ) = 10τ³ − 15τ⁴ + 6τ⁵',
       visuals: [
@@ -1631,10 +1631,11 @@ dialog::backdrop {
         { q: '학생들에게 저크(Jerk)를 소개해도 교육과정에 맞나요?', a: '수학Ⅱ는 위치→속도→가속도를 다룹니다. 저크는 "다항함수를 한 번 더 미분해 가속도의 극값과 변화율을 분석한다"는 계산이므로 수학Ⅱ 세특 심화 주제로 매우 적합합니다.' },
       ],
       cases: [
-        { id: 'c20261111-math2-2', week: '2026-11-11', subj: '수학Ⅱ', unit: '다항함수의 미분법', tech: '자율주행 긴급 회피 조향과 타이어 마찰원', formula: 'y(t)=W(10\\tau^3-15\\tau^4+6\\tau^5),\\quad a_{\\max}=\\frac{10}{\\sqrt3}\\frac{W}{T^2}', points: ['전방 장애물 출현 시 시작·종료 시점의 횡위치·횡속도·횡가속도 6개 경계조건을 만족하는 5차 다항식 경로 생성.', '이계도함수(가속도)의 극값을 삼계도함수(저크) y‴(t)=0에서 도출하고 타이어 마찰원 반지름 μg와 비교해 최소 회피 시간 산출.'] },
-        { id: 'c20261014-math2-2', week: '2026-10-14', subj: '수학Ⅱ', unit: '도함수의 활용', tech: '자율주행 차선 변경 최소 저크 궤적', formula: 'J[y]=\\int_0^T (y\'\'\'(t))^2 dt = \\frac{720 W^2}{T^5}', points: ['승차감 저하의 주원인인 저크(Jerk) 제곱 적분값을 최소화하는 변분법 최적 궤적.', '이동 시간 T가 절반으로 줄면 최대 가속도는 4배, 최대 저크는 8배로 증가함을 도함수로 증명.'] },
-        { id: 'c20261007-math2-2', week: '2026-10-07', subj: '수학Ⅱ', unit: '다항함수의 미분법', tech: 'eVTOL 수직 이착륙 5차 다항 고도 궤적', formula: 'h(t)=H\\left(10\\left(\\frac{t}{T}\\right)^3-15\\left(\\frac{t}{T}\\right)^4+6\\left(\\frac{t}{T}\\right)^5\\right)', points: ['도심항공교통(eVTOL) 기체가 버티포트에서 이륙해 순항 고도 H로 진입할 때 추력 급변을 막는 고도 프로파일.'] },
-        { id: 'c20260923-math2-2', week: '2026-09-23', subj: '수학Ⅱ', unit: '도함수의 활용', tech: '협동 로봇과 초고속 엘리베이터 S-Curve 제어', formula: 's(\\tau)=35\\tau^4-84\\tau^5+70\\tau^6-20\\tau^7', points: ['정밀 반도체 웨이퍼 이송 로봇에서 양 끝 저크까지 0으로 만드는 7차 다항식과 5차 다항식의 최대 가속도 상충 관계 비교.'] },
+        { id: "c20261111-math2-2", week: "2026-11-11", subj: "수학Ⅱ", unit: "미분계수와 도함수의 활용", tech: "자율주행 차량 긴급 회피 조향(Evasive Steering) 5차 다항함수 궤적과 타이어 마찰원(Friction Circle) 극값 판정", formula: "y(t) = c_5 t^5 + c_4 t^4 + c_3 t^3", points: [] },
+        { id: "c20261014-math2-2", week: "2026-10-14", subj: "수학Ⅱ", unit: "미분계수와 도함수의 활용", tech: "자율주행 전기차 차선 변경(Lane Change) 최소 저크(Jerk) 5차 에르미트 다항함수 궤적 제어", formula: "y(t) = c_5 t^5 + c_4 t^4 + c_3 t^3 + c_2 t^2 + c_1 t + c_0", points: [] },
+        { id: "c20261007-math2-2", week: "2026-10-07", subj: "수학Ⅱ", unit: "미분계수와 도함수의 활용", tech: "도심항공교통(eVTOL / UAM) 수직 이착륙 5차 다항함수(Quintic Polynomial) 궤적과 저크(Jerk) 최소화", formula: "h(t) = c_5 t^5 + c_4 t^4 + c_3 t^3 + c_2 t^2 + c_1 t + c_0", points: [] },
+        { id: "c20260923-math2-2", week: "2026-09-23", subj: "수학Ⅱ", unit: "미분계수와 도함수의 활용", tech: "스마트 팩토리 협동 로봇 및 고속 엘리베이터의 S-curve 속도 제어(저크 최소화)", formula: "v(t) = s'(t)", points: [] },
+        { id: "c20260819-math2-2", week: "2026-08-19", subj: "수학Ⅱ", unit: "미분계수와 순간변화율", tech: "로보틱스 관절 제어 및 저크(Jerk) 최소화", formula: "J(t) = \\theta'''(t)", points: [] },
       ],
       materials: {
         intro: '엘리베이터나 버스가 출발하고 멈출 때 우리 몸이 "덜컥" 하고 쏠리는 순간은 정확히 언제일까요? 속도가 가장 빠를 때일까요, 가속도가 가장 클 때일까요, 아니면 가속도가 변하는 순간일까요?',
@@ -1670,7 +1671,7 @@ dialog::backdrop {
       title: '지수 모델과 로그 선형화',
       fullTitle: '2강 · 지수 감쇠·성장과 로그 선형화(Log-Linearization)',
       subj: '수학Ⅰ · 미적분',
-      meta: 'Google Drive 주간 리서치 핵심 구조 #02 · 배터리·바이오·반도체 (38개 사례 연결)',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #02 · 배터리·바이오·반도체',
       desc: '전고체 배터리 수명 열화, 약물 혈중 농도 반감기, EUV 노광 광량 감쇠에서 비선형 지수 함수 y = A₀ e^(−kt)에 자연로그를 취해 일차함수 직선 Y = Y₀ − kt로 변환하고 임계 시점을 역산합니다.',
       formulaBadge: 'ln y(t) = ln A₀ − kt',
       visuals: [
@@ -1755,9 +1756,12 @@ dialog::backdrop {
         { q: '세특 보고서에서 학생들이 가장 자주 틀리는 부분은 무엇인가요?', a: '로그 변환 후 구한 기울기 −k의 단위(시간의 역수, 예: h⁻¹ 또는 cycle⁻¹)를 빠뜨리거나, ln y 절편을 다시 지수(exp)로 복원하지 않고 초기값으로 적는 실수를 자주 합니다.' },
       ],
       cases: [
-        { id: 'c20261104-math1-1', week: '2026-11-04', subj: '수학Ⅰ', unit: '지수함수와 로그함수', tech: '전고체 배터리 충방전 수명 열화와 로그 선형 회귀', formula: '\\ln C(n) = \\ln C_0 - k\\cdot n,\\quad n_{\\text{EoL}}=\\frac{\\ln(1/0.8)}{k}', points: ['배터리 사이클 n에 따른 용량 감소 곡선에 자연로그를 취해 일차함수로 변환하고 수명 종료(80%) 시점을 예측.'] },
-        { id: 'c20261021-math1-2', week: '2026-10-21', subj: '수학Ⅰ', unit: '로그함수', tech: '항암 표적 약물의 혈중 농도 반감기와 투여 주기 설계', formula: 'C(t)=C_0 e^{-kt},\\quad t_{1/2}=\\frac{\\ln 2}{k}', points: ['약물 농도가 최소 유효 농도 이하로 떨어지기 전에 재투여해야 하는 시간 간격을 로그 부등식으로 도출.'] },
-        { id: 'c20260930-math1-1', week: '2026-09-30', subj: '수학Ⅰ', unit: '지수함수', tech: 'EUV 극자외선 반도체 노광 공정 광량 감쇠(Beer-Lambert 법칙)', formula: 'I(x)=I_0 e^{-\\mu x} \\implies \\ln\\left(\\frac{I_0}{I}\\right)=\\mu x', points: ['매질 두께 x에 따라 지수적으로 줄어드는 빛의 세기를 흡광도(로그 스케일)로 변환해 박막 두께를 정밀 측정.'] },
+        { id: "c20261118-math1-1", week: "2026-11-18", subj: "수학Ⅰ", unit: "지수·로그함수", tech: "차세대 페로브스카이트-실리콘 탠덤 태양전지 광전 변환과 쇼클리-콰이서(Shockley-Queisser) 다이오드 상용로그 개방전압($V_{oc}$) 모델", formula: "I = I_L - I_0 \\left( \\exp\\left(\\frac{q V}{n k_B T}\\right) - 1 \\right)", points: [] },
+        { id: "c20261104-math1-1", week: "2026-11-04", subj: "수학Ⅰ", unit: "지수·로그함수", tech: "차세대 전고체 배터리(All-Solid-State Battery) 리튬 덴드라이트 억제와 바틀러-볼머(Butler-Volmer) 전기화학 상용로그 모델", formula: "J = J_0 \\left( \\exp\\left(\\frac{\\alpha_a F \\eta}{R T}\\right) - \\exp\\left(-\\frac{\\alpha_c F \\eta}{R T}\\right) \\right)", points: [] },
+        { id: "c20261028-math1-1", week: "2026-10-28", subj: "수학Ⅰ", unit: "지수·로그함수", tech: "차세대 초고속 하이퍼루프(Hyperloop) 자기부상열차 와전류 제동(Eddy Current Braking) 지수 감쇠와 로그 감속비", formula: "F(v) = -k v \\implies m \\frac{dv}{dt} = -k v", points: [] },
+        { id: "c20261021-math1-1", week: "2026-10-21", subj: "수학Ⅰ", unit: "지수·로그함수", tech: "인공태양 핵융합(KSTAR / ITER) 토카막 플라즈마 에너지 감쇠와 로슨 조건(Lawson Criterion) 로그 선형화", formula: "n(t) = n_0 e^{-t/\\tau_E}", points: [] },
+        { id: "c20261014-math1-1", week: "2026-10-14", subj: "수학Ⅰ", unit: "지수·로그함수", tech: "저궤도(LEO) 위성 통신(스타링크) 자유공간 경로 손실(FSPL)의 데시벨(dB) 상용로그 모델과 대기 감쇠 지수 모델", formula: "\\text{FSPL} = \\left(\\frac{4\\pi d f}{c}\\right)^2", points: [] },
+        { id: "c20261007-math1-1", week: "2026-10-07", subj: "수학Ⅰ", unit: "지수·로그함수", tech: "차세대 전고체 배터리(Solid-State Battery) 고체 전해질의 아레니우스(Arrhenius) 이온 전도도 모델", formula: "\\sigma(T) = \\frac{\\sigma_0}{T} \\exp\\left( - \\frac{E_a}{k_B T} \\right)", points: [] },
       ],
       materials: {
         intro: '배터리 성능이 매달 2%씩 줄어든다면, 10달 뒤에는 20%가 줄어들까요? 복리로 줄어드는 곡선을 자(Ruler) 하나로 정확히 예측하려면 세로축을 어떻게 바꾸면 될까요?',
@@ -1793,7 +1797,7 @@ dialog::backdrop {
       title: '삼각함수 합성과 상쇄 간섭',
       fullTitle: '3강 · 삼각함수 합성과 능동 파동 상쇄(ANC)',
       subj: '수학Ⅰ · 미적분',
-      meta: 'Google Drive 주간 리서치 핵심 구조 #03 · 음향·통신·양자 (29개 사례 연결)',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #03 · 음향·통신·양자',
       desc: '노이즈 캔슬링(ANC) 이어폰, 전기차 실내 능동 소음 제어, 6G 위상 배열 빔포밍에서 두 정현파 sin(ωt) + sin(ωt + φ) = 2cos(φ/2)sin(ωt + φ/2)의 위상차 φ를 조절해 파동을 상쇄·보강하는 원리입니다.',
       formulaBadge: 'y₁ + y₂ = 2A cos(φ/2) sin(ωt + φ/2)',
       visuals: [
@@ -1877,9 +1881,11 @@ dialog::backdrop {
         { q: '왜 노이즈 캔슬링 이어폰은 비행기 엔진 소리는 잘 막는데 사람 말소리는 덜 막나요?', a: '엔진 소음은 저주파(파장이 김) 주기 신호라 약간의 처리 지연 Δt가 있어도 위상 오차 Δφ = 2πf·Δt가 작습니다. 반면 고주파나 비주기적 소리는 같은 Δt에도 위상 오차가 커져 상쇄가 어렵습니다.' },
       ],
       cases: [
-        { id: 'c20261111-math1-1', week: '2026-11-11', subj: '수학Ⅰ', unit: '삼각함수의 그래프', tech: '전기차 노면 소음 능동 제어(RANC)와 역위상 합성', formula: 'y(t)=A\\sin(\\omega t)+A\\sin(\\omega t+\\phi)=2A\\cos(\\phi/2)\\sin(\\omega t+\\phi/2)', points: ['타이어 공명음을 가속도 센서로 감지해 위상이 π만큼 차이 나는 제어 음파를 스피커로 출력해 실내 소음 제거.'] },
-        { id: 'c20261028-calc-1', week: '2026-10-28', subj: '미적분', unit: '삼각함수의 덧셈정리', tech: '6G 위상 배열 안테나 빔포밍(Beamforming) 보강 간섭', formula: 'E(\\theta)=\\sum_{k=0}^{N-1} E_0 \\sin(\\omega t + k\\Delta\\phi)', points: ['여러 안테나 소자의 위상차를 조절해 원하는 방향(θ)으로는 보강 간섭을, 다른 방향으로는 상쇄 간섭을 일으켜 전파를 집중.'] },
-        { id: 'c20260916-math1-2', week: '2026-09-16', subj: '수학Ⅰ', unit: '삼각함수', tech: '초음파 집속 수술(HIFU)의 다중 파동 위상 정합', formula: '\\Delta\\phi = \\frac{2\\pi}{\\lambda}\\Delta d = 2k\\pi', points: ['체외 여러 지점에서 쏜 초음파가 종양 초점에서만 동위상(φ=0)으로 만나 열에너지를 집중시키는 수리 원리.'] },
+        { id: "c20261118-math1-2", week: "2026-11-18", subj: "수학Ⅰ", unit: "삼각함수", tech: "6G 테라헤르츠(THz) 통신용 지능형 반사 표면(RIS, Reconfigurable Intelligent Surface) 메타물질 위상 배열 빔포밍(Beamforming) 삼각함수 간섭 보강", formula: "y(t) = \\sum_{m=1}^{N} A_m \\sin(\\omega t - \\phi_m + \\theta_m)", points: [] },
+        { id: "c20261111-math1-2", week: "2026-11-11", subj: "수학Ⅰ", unit: "삼각함수", tech: "차세대 우주 망원경(JWST / 로만 우주망원경) 지향 안정성을 위한 반작용 휠(Reaction Wheel) 미세 진동 삼각함수 합성파 상쇄 제어", formula: "\\tau_d(t) = m r \\omega^2 \\sin(\\omega t) + J_{xz} \\omega^2 \\cos(\\omega t + \\phi)", points: [] },
+        { id: "c20261021-math1-2", week: "2026-10-21", subj: "수학Ⅰ", unit: "삼각함수", tech: "초대형 해상 풍력 발전기 블레이드의 공력 탄성학적 플러터(Flutter) 진동과 삼각함수 합성파", formula: "y(t) = A_1 \\sin(\\omega_1 t)", points: [] },
+        { id: "c20260909-math1-2", week: "2026-09-09", subj: "수학Ⅰ", unit: "삼각함수", tech: "합성개구레이더(SAR 위성) 및 간섭계(InSAR) 지표면 변위 위상차 측정", formula: "s(t) = A \\cos(2\\pi f_0 t + \\phi)", points: [] },
+        { id: "c20260819-math1-2", week: "2026-08-19", subj: "수학Ⅰ", unit: "삼각함수", tech: "첨단 신호처리 및 노이즈 캔슬링(ANC)", formula: "\\int_0^{2\\pi} \\sin(mx)\\sin(nx)dx = 0", points: [] },
       ],
       materials: {
         intro: '시끄러운 소리를 없애기 위해 귀마개로 막는 대신, 오히려 스피커로 "또 다른 소리"를 틀어 고요함을 만들 수 있을까요? 어떤 소리를 더해야 할까요?',
@@ -1915,7 +1921,7 @@ dialog::backdrop {
       title: '감쇠 진동과 오버슈트',
       fullTitle: '4강 · 감쇠 진동(e^(−αt)cos ωt)과 오버슈트 제어',
       subj: '미적분 · 기하',
-      meta: 'Google Drive 주간 리서치 핵심 구조 #04 · 고속열차·전력망·제진 설계 (31개 사례 연결)',
+      meta: 'Google Drive 주간 리서치 핵심 구조 #04 · 고속열차·전력망·제진 설계',
       desc: '고속열차 대차 서스펜션, 초고층 빌딩 동조질량감쇠기(TMD), 전력망 주파수 복원에서 지수 감쇠와 삼각함수의 곱 x(t) = A₀ e^(−αt) cos(ωt)의 도함수, 극값 등비수열, 위상 나선을 다룹니다.',
       formulaBadge: 'x(t) = A₀ e^(−αt) cos(ωt)',
       visuals: [
@@ -1999,9 +2005,7 @@ dialog::backdrop {
         { q: '극값들로 만든 무한등비급수 문제는 어떻게 출제되나요?', a: '양의 극대값 수열이나 교대 극값 수열의 공비가 r = e^(−πα/ω)임을 구한 뒤, 첫째항 a₁을 찾아 S = a₁ / (1 − r)로 무한등비급수의 합을 구하는 미적분 단골 유형입니다.' },
       ],
       cases: [
-        { id: 'c20261104-calc-2', week: '2026-11-04', subj: '미적분', unit: '여러 가지 함수의 미분', tech: '고속열차 대차 2차 서스펜션의 감쇠 진동과 승차감 제어', formula: 'x(t)=A_0 e^{-\\alpha t}\\cos(\\omega t),\\quad r=e^{-\\pi\\alpha/\\omega}', points: ['선로 불규칙성으로 인한 차체 진동을 유압 댐퍼로 감쇠시킬 때 극값 수열의 공비를 이용해 수렴 시간을 산출.'] },
-        { id: 'c20261014-calc-1', week: '2026-10-14', subj: '미적분', unit: '도함수의 활용', tech: '초고층 빌딩 동조질량감쇠기(TMD)와 풍하중 진동 억제', formula: 'x\'(t)=-A_0 e^{-\\alpha t}(\\alpha\\cos\\omega t+\\omega\\sin\\omega t)=0', points: ['태풍이나 지진 발생 시 건물 최상층 변위의 첫 번째 오버슈트 극값을 도함수로 계산하여 TMD 감쇠 계수 설계.'] },
-        { id: 'c20260909-calc-2', week: '2026-09-09', subj: '미적분', unit: '등비급수', tech: '전력망 주파수 흔들림(Ringing) 감쇠와 안정도 판별', formula: '\\sum_{n=1}^{\\infty} |x(t_n)| = \\frac{|x(t_1)|}{1 - e^{-\\pi\\alpha/\\omega}}', points: ['발전기 탈락 직후 발생하는 전력망 주파수 감쇠 진동의 극값 총합을 등비급수로 모델링.'] },
+        { id: "c20261111-calc-1", week: "2026-11-11", subj: "미적분", unit: "초월함수 미분", tech: "차세대 전력 반도체(SiC / GaN) 고속 스위칭 시 전압 링잉(Ringing) 감쇠 진동 초월함수 미분과 전력 손실 최소화", formula: "V(t) = V_0 \\left(1 + e^{-\\alpha t} \\cos(\\omega_d t)\\right)", points: [] },
       ],
       materials: {
         intro: '과속방지턱을 넘은 자동차가 계속 통통 튀지 않고 한두 번 출렁인 뒤 멈추는 이유는 바퀴 옆에 달린 어떤 부품 때문일까요? 그 움직임을 그래프로 그리면 어떤 함수 두 개의 곱이 될까요?',
