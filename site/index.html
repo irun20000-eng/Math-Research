@@ -139,6 +139,32 @@ select { background: var(--ink); border: 1px solid var(--line); border-radius: 9
 .tile.wide { grid-column: 1 / -1; }
 .stamp { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--t4); color: var(--s-aimath); }
 .stamp.ok { background: var(--t5); color: var(--ok); }
+[hidden] { display: none !important; }
+.prob > *, .step > div, details.qa > * { min-width: 0; } .prob .md, details.ans .a { overflow-x: auto; }
+.stamp.warn { background: rgba(255,180,84,.12); color: var(--warn); }
+/* 학습 카드: 한눈에는 늘 보이고, 나머지 절은 하나씩 골라 본다 */
+.glance { border: 1px solid var(--line-soft); border-left: 3px solid var(--act); border-radius: 12px; background: var(--panel); padding: 14px 16px; font-size: 15.5px; line-height: 1.7; }
+.glance .md p { margin: 0; }
+details.fixes { border: 1px solid var(--line-soft); border-radius: 12px; background: var(--t4); padding: 10px 14px; }
+details.fixes summary, details.qa summary, details.ans summary { cursor: pointer; font-weight: 600; }
+details.fixes summary { font-size: 13.5px; color: var(--warn); } details.fixes .md { margin-top: 10px; max-width: 78ch; }
+.secnav { display: flex; flex-wrap: wrap; gap: 6px; }
+.pane { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--panel); padding: 16px 18px; display: grid; gap: 12px; min-width: 0; }
+.pane > h3 { margin: 0; font-size: 15px; } .pane .md { max-width: 78ch; }
+.terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+.term { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; align-content: start; font-size: 14px; }
+.term b { color: var(--s-math1); }
+.steps, .qas, .probs { display: grid; gap: 12px; }
+.step { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; }
+.step .n { width: 26px; height: 26px; border-radius: 50%; background: var(--t3); color: var(--s-calc); font-family: var(--mono); font-size: 12.5px; font-weight: 700; display: grid; place-items: center; margin-top: 8px; }
+.step .f { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 4px 10px; margin-bottom: 8px; }
+details.qa, .prob { border: 1px solid var(--line-soft); border-radius: 10px; background: var(--ink); padding: 11px 14px; }
+details.qa .a, details.ans .a { margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--line); }
+.prob { display: grid; gap: 8px; } details.ans summary { color: var(--act); font-size: 13px; }
+.next2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+.next2 > div { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 11px 14px; }
+.next2 h4 { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); letter-spacing: .04em; }
+.pager { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
 .kinds button { text-align: left; border: 1px solid var(--line); background: var(--ink); border-radius: 12px; padding: 10px 13px; display: grid; gap: 2px; }
 .kinds button b { font-size: 14px; } .kinds button span { font-size: 12.5px; color: var(--muted); }
@@ -747,12 +773,76 @@ function renderLearn(c) {
       el('div', { class: 'note' }, '원본 3줄 요약을 바탕으로 바로 만듭니다. 자동 생성물이라 검증 전 상태로 저장됩니다.')));
     return;
   }
+  const rv = card.review && REVIEW[card.review.verdict];
   host.append(el('div', { class: 'row' },
-    el('span', { class: 'stamp ' + (card.checked ? 'ok' : '') }, card.checked ? '내가 확인함' : card.auto ? '수요일 자동 생성 · 검증 전' : '자동 생성 · 검증 전'),
+    card.checked ? el('span', { class: 'stamp ok' }, '내가 확인함') : null,
+    rv ? el('span', { class: 'stamp ' + rv[1] }, rv[0]) : card.checked ? null : el('span', { class: 'stamp' }, card.auto ? '수요일 자동 생성 · 검증 전' : '자동 생성 · 검증 전'),
     el('button', { class: 'btn small', type: 'button', onclick: () => { saveCard(c.id, { ...card, checked: !card.checked }); renderLearn(c); } }, card.checked ? '확인 취소' : '확인함으로 표시'),
     el('button', { class: 'btn small', type: 'button', onclick: () => copy(card.text, '학습 카드를 복사했습니다') }, '복사'),
     el('button', { class: 'btn small', type: 'button', onclick: () => openMat({ id: 'card:' + c.id, caseId: c.id, kind: 'card', title: '학습 카드 · ' + c.tech, text: card.text, checked: card.checked, auto: card.auto }) }, '크게 보기 · PDF'),
-    el('button', { class: 'btn small', type: 'button', onclick: make }, '다시 만들기')), tilesFrom(card.text));
+    el('button', { class: 'btn small', type: 'button', onclick: make }, '다시 만들기')));
+  if (rv && card.review.note) host.append(el('div', { class: 'note' }, '자동 2차 검토' + (card.review.at ? ' ' + card.review.at : '') + ' · ' + card.review.note));
+  host.append(cardView(c, card.text));
+}
+/* ---------- 학습 카드 화면 ---------- */
+const REVIEW = { ok: ['2차 검토 통과', 'ok'], fixed: ['2차 검토에서 고침', 'ok'], unsure: ['불확실한 부분 있음', 'warn'] };
+const CARD_NAV = [['쉬운 설명', '쉬운 설명'], ['용어 풀이', '용어'], ['수식 한 줄씩', '수식'], ['문답', '문답'], ['확인 문제', '확인 문제'], ['다음 공부', '다음 공부']];
+const mdBox = (md) => el('div', { class: 'md', html: block(md) });
+// 절마다 알맞은 모양으로 그린다. 정해진 형식이 아니면 글 그대로 보여 준다.
+function secView(title, md) {
+  const lines = String(md).split('\n').map((l) => l.trim()).filter(Boolean);
+  if (title === '용어 풀이') {
+    const it = lines.map((l) => l.match(/^[-*]\s+\*\*(.+?)\*\*\s*[:：]?\s*(.*)$/));
+    if (it.length && it.every(Boolean)) return el('div', { class: 'terms' }, ...it.map((m) => el('div', { class: 'term' }, el('b', { html: inline(m[1]) }), el('span', { html: inline(m[2]) }))));
+  }
+  if (title === '수식 한 줄씩') {
+    const steps = []; let pre = [];
+    for (const l of lines) { if (/^\$\$.+\$\$$/.test(l)) steps.push({ f: l.slice(2, -2), body: [] }); else if (steps.length) steps[steps.length - 1].body.push(l); else pre.push(l); }
+    if (steps.length) return el('div', { class: 'steps' }, pre.length ? mdBox(pre.join('\n')) : null,
+      ...steps.map((s, i) => el('div', { class: 'step' }, el('div', { class: 'n' }, String(i + 1)), el('div', {}, el('div', { class: 'f mathblock', html: tex(s.f.trim(), true) }), mdBox(s.body.join('\n'))))));
+  }
+  if (title === '문답') {
+    const qs = [];
+    for (const l of lines) { const m = l.match(/^\*\*Q\.?\*\*\s*(.*)$/); if (m) qs.push({ q: m[1], a: [] }); else if (qs.length) qs[qs.length - 1].a.push(l.replace(/^\*\*A\.?\*\*\s*/, '')); }
+    if (qs.length) return el('div', { class: 'qas' }, ...qs.map((x, i) => el('details', { class: 'qa', open: i === 0 ? '' : null }, el('summary', { html: inline(x.q) }), el('div', { class: 'a md', html: block(x.a.join('\n')) }))));
+  }
+  if (title === '확인 문제') {
+    const ps = []; let inAns = false;
+    for (const l of lines) { const m = l.match(/^(\d+)[.)]\s+(.*)$/);
+      if (m && (!ps.length || +m[1] === ps.length + 1)) { ps.push({ q: [m[2]], a: [] }); inAns = false; continue; }
+      if (!ps.length) continue; const cur = ps[ps.length - 1];
+      if (/^\*\*정답과 풀이\*\*/.test(l)) { inAns = true; cur.a.push(l.replace(/^\*\*정답과 풀이\*\*\s*[:：]?\s*/, '')); } else (inAns ? cur.a : cur.q).push(l); }
+    if (ps.length) return el('div', { class: 'probs' }, ...ps.map((p, i) => el('div', { class: 'prob' }, el('div', { class: 'md', html: block('**문제 ' + (i + 1) + '.** ' + p.q.join('\n')) }),
+      p.a.length ? el('details', { class: 'ans' }, el('summary', {}, '정답과 풀이 보기'), el('div', { class: 'a md', html: block(p.a.join('\n')) })) : null)));
+  }
+  if (title === '다음 공부') {
+    const g = { 먼저: [], 이어서: [] }; let okFmt = lines.length > 0;
+    for (const l of lines) { const m = l.match(/^[-*]\s+(먼저|이어서)\s*[:：]\s*(.*)$/); if (m) g[m[1]].push(m[2]); else okFmt = false; }
+    if (okFmt) return el('div', { class: 'next2' }, ...[['먼저', '먼저 알아 둘 것'], ['이어서', '이어서 볼 것']].filter(([k]) => g[k].length).map(([k, label]) =>
+      el('div', {}, el('h4', {}, label), el('div', { class: 'md', html: block(g[k].map((t) => '- ' + t).join('\n')) }))));
+  }
+  return mdBox(md);
+}
+function cardView(c, text) {
+  const secs = sections(text), by = new Map(secs.map((s) => [s.title, s.md]));
+  if (!by.has('한눈에')) return tilesFrom(text); // 정해진 틀이 아닌 카드는 예전처럼 보여 준다
+  const wrap = el('div', { style: 'display:grid;gap:12px;min-width:0' });
+  wrap.append(el('div', { class: 'glance' }, mdBox(by.get('한눈에'))));
+  const fx = (by.get('원본에서 고친 점') || '').trim();
+  if (fx && !/^없음\.?$/.test(fx)) { const n = (fx.match(/^[-*]\s+/gm) || []).length;
+    wrap.append(el('details', { class: 'fixes' }, el('summary', {}, '원본 사례에서 고친 점' + (n ? ' ' + n + '가지' : '') + ' · 원본 내용을 그대로 쓰기 전에 확인하세요'), mdBox(fx))); }
+  const nav = CARD_NAV.filter(([t]) => by.has(t)), known = new Set(['한눈에', '원본에서 고친 점', ...nav.map(([t]) => t)]);
+  const extra = secs.filter((s) => s.title && !known.has(s.title)).map((s) => [s.title, s.title]);
+  const all = [...nav, ...extra], bar = el('div', { class: 'secnav', role: 'tablist' }), pane = el('div', {});
+  const show = (t) => { S.learnSec = t; [...bar.children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.t === t ? 'true' : 'false')); pane.textContent = '';
+    if (t === '*') { all.forEach(([title]) => pane.append(el('div', { class: 'pane', style: 'margin-bottom:12px' }, el('h3', {}, title), secView(title, by.get(title))))); return; }
+    const i = all.findIndex(([x]) => x === t), prev = all[i - 1], next = all[i + 1];
+    pane.append(el('div', { class: 'pane' }, secView(t, by.get(t)), el('div', { class: 'pager' },
+      prev ? el('button', { class: 'btn small', type: 'button', onclick: () => show(prev[0]) }, '← ' + prev[1]) : el('span', {}),
+      next ? el('button', { class: 'btn small', type: 'button', onclick: () => show(next[0]) }, next[1] + ' →') : el('span', {})))); };
+  for (const [t, label] of [...all, ['*', '전체 펼치기']]) bar.append(el('button', { class: 'chip', type: 'button', 'data-t': t, 'aria-pressed': 'false', onclick: () => show(t) }, label));
+  wrap.append(bar, pane); show(S.learnSec === '*' || all.some(([t]) => t === S.learnSec) ? S.learnSec : all[0] ? all[0][0] : '*');
+  return wrap;
 }
 function openTabsLabel(c) { [...$('#d-tabs').children].forEach((b) => { const k = b.dataset.t, n = matsOf(c.id).length; b.textContent = TABS[k] + (k === 'learn' && S.cards[c.id] ? ' ✓' : k === 'make' && n ? ' ' + n : ''); }); }
 function renderMake(c) {
@@ -809,7 +899,8 @@ function openMat(m) {
   $('#m-layout').value = isCard ? 'note' : 'keep'; $('#m-case').hidden = !c;
   if (!$('#mat').open) $('#mat').showModal(); $('#mat').scrollTop = 0;
 }
-function persistMat() { const m = S.mat; if (m.kind === 'card') return saveCard(m.caseId, { caseId: m.caseId, text: m.text, at: Date.now(), checked: !!m.checked, auto: !!m.auto }); return saveMat(m); }
+function persistMat() { const m = S.mat; if (m.kind === 'card') { const old = S.cards[m.caseId] || {}, next = { caseId: m.caseId, text: m.text, at: Date.now(), checked: !!m.checked, auto: !!m.auto };
+    if (old.review && old.text === m.text) next.review = old.review; /* 글을 고치면 자동 검토 표시는 지운다 */ return saveCard(m.caseId, next); } return saveMat(m); }
 $('#m-close').onclick = () => $('#mat').close();
 $('#mat').addEventListener('click', (e) => { if (e.target === $('#mat')) $('#mat').close(); });
 $('#mat').addEventListener('close', () => { S.mat = null; if (S.open) { if (S.tab === 'learn') renderLearn(S.open); if (S.tab === 'make') renderMake(S.open); } else render(); });
