@@ -1,18 +1,19 @@
 <title>aftermath 수학 리서치</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Serif:wght@700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 /* 배치: 위에 고정된 머리줄(찾기 · 내 자료함 · 주차 문서). 찾기는 검색과 기준 탭 아래 카드 격자. 사례를 열면 넓은 패널에 내용 · 배우기 · 수업 자료 · 더 조사하기 탭. */
 :root {
-  color-scheme: dark;
-  --bg: #0A0B0A; --panel: #121413; --raised: #181B19; --line: #2A2E2B; --line-soft: #1F2321; --ink: #070807;
-  --fg: #F2F3EF; --muted: #A3A9A1; --faint: #737A72;
-  --act: #D6FF3F; --act-ink: #0A0B0A;
-  --s-math1: #46E8FF; --s-math2: #FFD93D; --s-calc: #B98BFF; --s-aimath: #FF8A5C;
-  --ok: #39FF7A; --warn: #FFB454; --bad: #FF6B6B;
-  --t1: rgba(70,232,255,.09); --t2: rgba(255,217,61,.09); --t3: rgba(185,139,255,.10); --t4: rgba(255,138,92,.10); --t5: rgba(57,255,122,.08);
+  color-scheme: light;
+  --bg: #FFFFFF; --panel: #F6F7FB; --raised: #ECEFF5; --line: #D3D9E4; --line-soft: #E3E7EF; --ink: #FFFFFF;
+  --fg: #111827; --muted: #556074; --faint: #8A93A6;
+  --act: #2447B8; --act-ink: #FFFFFF;
+  --s-math1: #0E7490; --s-math2: #A16207; --s-calc: #6D28D9; --s-aimath: #C2410C;
+  --ok: #15803D; --warn: #B45309; --bad: #DC2626;
+  --t1: rgba(14,116,144,.10); --t2: rgba(202,138,4,.14); --t3: rgba(109,40,217,.09); --t4: rgba(234,88,12,.10); --t5: rgba(21,128,61,.10);
+  --grid: #DCE3EE; --hl: #FFF3B8; --c1: #C2410C; --c2: #0F766E;
   --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-  --serif: "IBM Plex Serif", Georgia, serif;
+  --serif: "Gowun Batang", "IBM Plex Serif", Georgia, serif;
   --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 }
 * { box-sizing: border-box; }
@@ -73,12 +74,13 @@ h2 { font-size: 17px; margin: 0; text-wrap: balance; }
 .grouphead h2 { display: flex; gap: 8px; align-items: baseline; } .grouphead h2 .n { font-family: var(--mono); font-size: 12px; color: var(--faint); font-weight: 400; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
-.card { display: flex; flex-direction: column; text-align: left; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; overflow: hidden; padding: 0; min-width: 0; transition: border-color .15s, transform .15s; }
-.card:hover { border-color: var(--faint); transform: translateY(-2px); }
-.card canvas { display: block; width: 100%; height: 78px; background: var(--ink); border-bottom: 1px solid var(--line-soft); }
+.card { display: flex; flex-direction: column; text-align: left; background: var(--panel); border: 0; border-top: 5px solid var(--sc, var(--line)); border-radius: 12px; overflow: hidden; padding: 0; min-width: 0; transition: border-color .15s, transform .15s; }
+.card:hover { background: var(--raised); transform: translateY(-2px); }
+.card.math1 { --sc: var(--s-math1); } .card.math2 { --sc: var(--s-math2); } .card.calc { --sc: var(--s-calc); } .card.aimath { --sc: var(--s-aimath); }
+.card canvas { display: block; width: 100%; height: 84px; }
 .card .body { padding: 12px 14px 14px; display: grid; gap: 8px; min-width: 0; }
 .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
-.subj { font-weight: 700; font-size: 11px; padding: 1px 7px; border-radius: 4px; border: 1px solid currentColor; }
+.subj { font-weight: 700; font-size: 12px; }
 .subj.math1 { color: var(--s-math1); } .subj.math2 { color: var(--s-math2); } .subj.calc { color: var(--s-calc); } .subj.aimath { color: var(--s-aimath); }
 .card .tech { font-weight: 600; font-size: 14.5px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .card .fx { font-size: 13px; color: var(--muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-height: 1.6em; }
@@ -102,7 +104,7 @@ button.listcard:hover { border-color: var(--faint); }
 .mathblock { overflow-x: auto; padding: 6px 0; text-align: center; } math { font-size: 1.05em; }
 
 dialog.sheet { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 16px; padding: 0; width: min(1060px, calc(100vw - 20px)); max-height: calc(100vh - 28px); max-height: calc(100dvh - 28px); }
-dialog::backdrop { background: rgba(4,5,4,.8); }
+dialog::backdrop { background: rgba(17,24,39,.45); }
 .d-head { position: sticky; top: 0; background: var(--panel); border-bottom: 1px solid var(--line); padding: 14px 18px 0; z-index: 2; display: grid; gap: 10px; }
 .d-head .line { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
 .d-head h2 { font-size: 18px; line-height: 1.4; }
@@ -142,34 +144,53 @@ select { background: var(--ink); border: 1px solid var(--line); border-radius: 9
 [hidden] { display: none !important; }
 .prob > *, .step > div, details.qa > * { min-width: 0; } .prob .md, details.ans .a { overflow-x: auto; }
 .stamp.warn { background: rgba(255,180,84,.12); color: var(--warn); }
-/* 학습 카드: 한눈에는 늘 보이고, 나머지 절은 하나씩 골라 본다 */
-.glance { border: 1px solid var(--line-soft); border-left: 3px solid var(--act); border-radius: 12px; background: var(--panel); padding: 14px 16px; font-size: 15.5px; line-height: 1.7; }
-.glance .md p { margin: 0; }
-details.fixes { border: 1px solid var(--line-soft); border-radius: 12px; background: var(--t4); padding: 10px 14px; }
+/* 학습 카드: 공책처럼 한 줄로 읽어 내려간다. 왼쪽에 절 이름, 오른쪽에 내용. */
+.lc { max-width: 800px; width: 100%; margin: 0 auto; display: grid; gap: 20px; min-width: 0; }
+.lc .glance { font-size: 16.5px; line-height: 1.75; max-width: 64ch; } .lc .glance .md p { margin: 0; }
+.keyf { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 18px 12px; border: 1px solid var(--line); border-radius: 6px; min-width: 0;
+  background-color: var(--ink); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 16px 16px; }
+.keyf .big { font-size: 21px; max-width: 100%; overflow-x: auto; } .keyf .big .mathblock { padding: 0; }
+.keyf .say { font-size: 14px; background: var(--hl); padding: 1px 8px; border-radius: 3px; }
+.plot { display: grid; gap: 10px; min-width: 0; }
+.plot svg { width: 100%; height: auto; display: block; background: var(--ink); border: 1px solid var(--line); border-radius: 6px; }
+.plot .ctl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.plot input[type=range] { width: 100%; accent-color: var(--act); }
+.plot .read { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; font-variant-numeric: tabular-nums; }
+.plot .read div { border-left: 3px solid var(--k); padding: 2px 10px; font-size: 12.5px; color: var(--muted); }
+.plot .read b { display: block; font-size: 18px; color: var(--fg); font-family: var(--mono); font-weight: 600; }
+details.fixes { border-radius: 6px; background: var(--hl); padding: 10px 14px; }
 details.fixes summary, details.qa summary, details.ans summary { cursor: pointer; font-weight: 600; }
-details.fixes summary { font-size: 13.5px; color: var(--warn); } details.fixes .md { margin-top: 10px; max-width: 78ch; }
-.secnav { display: flex; flex-wrap: wrap; gap: 6px; }
-.pane { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--panel); padding: 16px 18px; display: grid; gap: 12px; min-width: 0; }
-.pane > h3 { margin: 0; font-size: 15px; } .pane .md { max-width: 78ch; }
-.terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
-.term { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; align-content: start; font-size: 14px; }
-.term b { color: var(--s-math1); }
-.steps, .qas, .probs { display: grid; gap: 12px; }
-.step { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; }
-.step .n { width: 26px; height: 26px; border-radius: 50%; background: var(--t3); color: var(--s-calc); font-family: var(--mono); font-size: 12.5px; font-weight: 700; display: grid; place-items: center; margin-top: 8px; }
-.step .f { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 4px 10px; margin-bottom: 8px; }
-details.qa, .prob { border: 1px solid var(--line-soft); border-radius: 10px; background: var(--ink); padding: 11px 14px; }
+details.fixes summary { font-size: 13.5px; } details.fixes .md { margin-top: 10px; max-width: 70ch; }
+.blk { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 8px 16px; border-top: 1px solid var(--line); padding-top: 16px; min-width: 0; }
+.blk > h3 { margin: 0; font-size: 14px; color: var(--act); font-family: var(--serif); } .blk > div { min-width: 0; } .blk .md { max-width: 66ch; }
+@media (max-width: 700px) { .blk { grid-template-columns: minmax(0, 1fr); } }
+.terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; }
+.term { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; display: grid; gap: 4px; align-content: start; font-size: 14px; }
+.term b { color: var(--act); }
+.steps, .qas, .probs { display: grid; gap: 14px; }
+.step { border-left: 3px solid var(--line); padding-left: 14px; min-width: 0; } .step .f { text-align: left; font-size: 16.5px; }
+details.qa, .prob { border: 1px solid var(--line); border-radius: 6px; padding: 11px 14px; }
 details.qa .a, details.ans .a { margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--line); }
 .prob { display: grid; gap: 8px; } details.ans summary { color: var(--act); font-size: 13px; }
-.next2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
-.next2 > div { background: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 11px 14px; }
+.next2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.next2 > div { border: 1px solid var(--line); border-radius: 6px; padding: 11px 14px; }
 .next2 h4 { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); letter-spacing: .04em; }
-.pager { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+/* 학습지: 학생이 쓰는 칸과 빈칸 */
+.wspace { border: 1px solid #9AA3B5; border-radius: 3px; height: 84px; margin: 6px 0 12px; background: #fff; }
+.blank { display: inline-block; min-width: 56px; border-bottom: 1px solid currentColor; }
+.sheetpaper { background: #fff; color: #111827; width: 100%; max-width: 780px; margin: 0 auto; padding: 30px 34px; box-shadow: 0 1px 0 var(--line), 0 8px 24px rgba(17,24,39,.10); min-width: 0; }
+.sheetpaper .top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: end; border-bottom: 2px solid #111827; padding-bottom: 10px; margin-bottom: 6px; }
+.sheetpaper .top h2 { font-family: var(--serif); font-size: 19px; line-height: 1.4; } .sheetpaper .top small { color: #4B5568; }
+.sheetpaper .name { display: flex; gap: 10px; font-size: 13px; white-space: nowrap; } .sheetpaper .name span { border-bottom: 1px solid #111827; min-width: 52px; display: inline-block; } .sheetpaper .name .w { min-width: 84px; }
+.sheetpaper h3 { font-size: 15px; margin: 20px 0 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.sheetpaper h3 i { font-style: normal; background: #111827; color: #fff; padding: 0 8px; border-radius: 3px; font-size: 12.5px; }
+.sheetpaper.teacher { background: #FBFBF6; } .sheetpaper.teacher .top { border-bottom-style: dashed; }
+@media (max-width: 620px) { .sheetpaper { padding: 20px 16px; } .sheetpaper .top { grid-template-columns: minmax(0, 1fr); } }
 .kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
 .kinds button { text-align: left; border: 1px solid var(--line); background: var(--ink); border-radius: 12px; padding: 10px 13px; display: grid; gap: 2px; }
 .kinds button b { font-size: 14px; } .kinds button span { font-size: 12.5px; color: var(--muted); }
 .kinds button[aria-pressed="true"] { border-color: var(--fg); background: var(--raised); }
-.paper { border: 1px solid var(--line-soft); border-radius: 12px; background: var(--ink); padding: 18px 20px; max-width: 80ch; }
+.paper { background: var(--raised); border-radius: 12px; padding: 18px 12px; display: grid; gap: 16px; min-width: 0; }
 #toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 999px; z-index: 60; pointer-events: none; opacity: 0; transition: opacity .2s; max-width: calc(100vw - 32px); }
 #toast.on { opacity: 1; }
 dialog#settings { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 14px; padding: 18px; width: min(620px, calc(100vw - 24px)); }
@@ -332,7 +353,7 @@ const el = (tag, attrs = {}, ...kids) => {
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const SUBJ = { math1: '수학Ⅰ', math2: '수학Ⅱ', calc: '미적분', aimath: '인공지능 수학' };
-const SUBJ_COLOR = { math1: '#46E8FF', math2: '#FFD93D', calc: '#B98BFF', aimath: '#FF8A5C' };
+const SUBJ_COLOR = { math1: '#0E7490', math2: '#B7791F', calc: '#6D28D9', aimath: '#C2410C' };
 const THEME = { ai: 'AI·반도체', mobility: '모빌리티·로봇', aerospace: '우주항공', energy: '에너지', quantum: '양자', bio: '의료·바이오', fin: '금융·보안', etc: '그 밖' };
 const DEFAULT_CONTEXT = '나는 고등학교 수학 교사다. 아래 사례를 내가 먼저 이해하고 수업과 세특 지도에 쓰려 한다.\n답은 한국어로 하고, 고교 교육과정 범위를 기준으로 설명해 줘. 범위를 넘는 부분은 따로 표시해 줘.\n확실하지 않은 내용은 "불확실"이라고 밝히고 추측하지 마.';
 
@@ -344,7 +365,7 @@ function tex(src, display) {
 }
 function inline(s) {
   const out = []; let last = 0; const re = /\$\$([^$]+)\$\$|\$([^$\n]+)\$/g; let m;
-  const plain = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>')
+  const plain = (t) => esc(t).replace(/_{4,}/g, '<span class="blank"></span>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
   while ((m = re.exec(s))) { out.push(plain(s.slice(last, m.index))); out.push(m[1] ? '<div class="mathblock">' + tex(m[1].trim(), true) + '</div>' : tex(m[2], false)); last = re.lastIndex; }
   out.push(plain(s.slice(last))); return out.join('');
@@ -361,6 +382,7 @@ function block(md) {
     if ((m = line.match(/^#{3,5}\s+(.*)/))) return '<h4>' + inline(m[1]) + '</h4>';
     if ((m = line.match(/^(\s*)(\d+)[.)]\s+(.*)/))) return '<div class="li num" style="margin-left:' + (Math.floor(m[1].length / 2) * 1.1) + 'em"><b>' + m[2] + '.</b> ' + inline(m[3]) + '</div>';
     if ((m = line.match(/^(\s*)[-*]\s+(.*)/))) return '<div class="li" style="margin-left:' + (1 + Math.floor(m[1].length / 2) * 1.1) + 'em">' + inline(m[2]) + '</div>';
+    if (line.trim() === '(풀이 공간)') return '<div class="wspace"></div>';
     return '<p>' + inline(line.trim()) + '</p>';
   }).join('');
 }
@@ -398,7 +420,7 @@ function drawVis(cv, type, color, p, mini) {
   const pad = mini ? 10 : 22, pw = w - pad * 2, ph = h - pad * 2;
   const X = (u) => pad + u * pw, Y = (v) => pad + (1 - v) * ph;
   c.save(); c.beginPath(); c.rect(0, 2, w, h - 4); c.clip();
-  c.strokeStyle = 'rgba(255,255,255,.06)'; c.lineWidth = 1;
+  c.strokeStyle = 'rgba(17,24,39,.07)'; c.lineWidth = 1;
   for (let i = 0; i <= 4; i++) { c.beginPath(); c.moveTo(X(i / 4), pad); c.lineTo(X(i / 4), h - pad); c.stroke(); c.beginPath(); c.moveTo(pad, Y(i / 4)); c.lineTo(w - pad, Y(i / 4)); c.stroke(); }
   const curve = (f, col, lw, dash) => {
     c.beginPath(); c.strokeStyle = col; c.lineWidth = lw; c.setLineDash(dash || []);
@@ -407,16 +429,16 @@ function drawVis(cv, type, color, p, mini) {
   };
   const dot = (u, v, col) => { c.beginPath(); c.fillStyle = col; c.arc(X(u), Y(v), mini ? 3 : 4.5, 0, 6.3); c.fill(); };
   const hline = (v, col) => { c.beginPath(); c.strokeStyle = col; c.lineWidth = 1.2; c.setLineDash([5, 4]); c.moveTo(pad, Y(v)); c.lineTo(w - pad, Y(v)); c.stroke(); c.setLineDash([]); };
-  const dim = 'rgba(255,255,255,.38)', lw = mini ? 1.8 : 2.4;
+  const dim = 'rgba(17,24,39,.42)', lw = mini ? 1.8 : 2.4;
   let read = '';
   if (type === 'loglin' || type === 'expgrow') {
     const k = 1.5 + p * 5, th = 0.72, f = (u) => 0.06 * Math.exp(k * u);
     hline(th, dim); curve(f, color, lw);
-    const t = Math.log(th / 0.06) / k; if (t <= 1) dot(t, th, '#fff');
+    const t = Math.log(th / 0.06) / k; if (t <= 1) dot(t, th, '#111827');
     read = 't* = ' + (t * 5).toFixed(2);
   } else if (type === 'expdecay') {
     const k = 1 + p * 7; curve((u) => 0.92 * Math.exp(-k * u), color, lw);
-    const t = Math.log(2) / k; hline(0.46, dim); if (t <= 1) dot(t, 0.46, '#fff');
+    const t = Math.log(2) / k; hline(0.46, dim); if (t <= 1) dot(t, 0.46, '#111827');
     read = '반감기 = ' + (t * 5).toFixed(2);
   } else if (type === 'sine') {
     const ph2 = p * Math.PI, a = (u) => Math.sin(u * 4 * Math.PI), b = (u) => Math.sin(u * 4 * Math.PI + ph2);
@@ -426,7 +448,7 @@ function drawVis(cv, type, color, p, mini) {
   } else if (type === 'damped') {
     const al = 0.6 + p * 7, f = (u) => 0.5 + 0.45 * Math.exp(-al * u) * Math.cos(u * 9 * Math.PI) * 0.9;
     curve((u) => 0.5 + 0.4 * Math.exp(-al * u), dim, 1, [4, 3]); curve((u) => 0.5 - 0.4 * Math.exp(-al * u), dim, 1, [4, 3]);
-    hline(0.5, 'rgba(255,255,255,.15)'); curve(f, color, lw);
+    hline(0.5, 'rgba(17,24,39,.2)'); curve(f, color, lw);
     read = '한 주기 뒤 진폭 ×' + Math.exp(-al * 2 / 9).toFixed(2);
   } else if (type === 'sequence') {
     const r = 0.6 + p * 0.8, n = mini ? 10 : 14; let vals = [], mx = 0;
@@ -438,7 +460,7 @@ function drawVis(cv, type, color, p, mini) {
     const left = (u) => 0.15 + 0.6 * (3 * (u / 0.5) ** 2 - 2 * (u / 0.5) ** 3), s = (p - 0.5) * 2.4;
     curve((u) => (u <= 0.5 ? left(u) : NaN), color, lw);
     c.beginPath(); c.strokeStyle = color; c.lineWidth = lw; c.moveTo(X(0.5), Y(0.75)); c.lineTo(X(1), Y(Math.max(0, Math.min(1, 0.75 + s * 0.5)))); c.stroke();
-    dot(0.5, 0.75, '#fff'); read = Math.abs(s) < 0.05 ? '미분가능 (매끄러움)' : '연속이지만 꺾임';
+    dot(0.5, 0.75, '#111827'); read = Math.abs(s) < 0.05 ? '미분가능 (매끄러움)' : '연속이지만 꺾임';
   } else if (type === 'area') {
     const f = (u) => 0.12 + 0.75 * (1 - (2 * u - 1) ** 2) ** 2, b = 0.08 + p * 0.92;
     c.beginPath(); c.fillStyle = color; c.globalAlpha = 0.22; c.moveTo(X(0), Y(0));
@@ -463,8 +485,8 @@ function drawVis(cv, type, color, p, mini) {
   } else {
     const f = (u) => 0.12 + 0.78 * (27 / 4) * u * (1 - u) ** 2, df = (u) => 0.78 * (27 / 4) * ((1 - u) ** 2 - 2 * u * (1 - u));
     curve(f, color, lw); const a = 0.04 + p * 0.9, m = df(a);
-    c.beginPath(); c.strokeStyle = '#fff'; c.lineWidth = 1.2; c.moveTo(X(a - 0.16), Y(f(a) - m * 0.16)); c.lineTo(X(a + 0.16), Y(f(a) + m * 0.16)); c.stroke();
-    dot(a, f(a), '#fff'); dot(1 / 3, f(1 / 3), color);
+    c.beginPath(); c.strokeStyle = '#111827'; c.lineWidth = 1.2; c.moveTo(X(a - 0.16), Y(f(a) - m * 0.16)); c.lineTo(X(a + 0.16), Y(f(a) + m * 0.16)); c.stroke();
+    dot(a, f(a), '#111827'); dot(1 / 3, f(1 / 3), color);
     read = "f'(a) " + (Math.abs(m) < 0.12 ? '≈ 0 (극값)' : m > 0 ? '> 0 (증가)' : '< 0 (감소)');
   }
   c.restore();
@@ -603,17 +625,19 @@ function filtered(ignoreGroup) {
     return q.every((w) => c.hay.includes(w));
   });
 }
-const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { const cv = e.target; drawVis(cv, cv.dataset.v, cv.dataset.c, VIS[cv.dataset.v].p[1], true); io.unobserve(cv); } }), { rootMargin: '200px' }) : null;
+// 학습 카드에 그래프 정보가 있으면 그 사례의 실제 곡선을, 없으면 유형별 그림을 그린다.
+function paintThumb(cv) { const card = S.cards[cv.dataset.id], plot = card && card.fig && card.fig.plot; if (!(plot && drawMiniPlot(cv, plot, cv.dataset.c))) drawVis(cv, cv.dataset.v, cv.dataset.c, VIS[cv.dataset.v].p[1], true); }
+const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { paintThumb(e.target); io.unobserve(e.target); } }), { rootMargin: '200px' }) : null;
 function caseCard(c) {
-  const cv = el('canvas', { 'data-v': c.visual, 'data-c': SUBJ_COLOR[c.subject], 'aria-hidden': 'true' }), nm = matsOf(c.id).length;
-  const b = el('button', { class: 'card', type: 'button', onclick: () => { location.hash = c.id; } }, cv,
+  const cv = el('canvas', { 'data-v': c.visual, 'data-c': SUBJ_COLOR[c.subject], 'data-id': c.id, 'aria-hidden': 'true' }), nm = matsOf(c.id).length;
+  const b = el('button', { class: 'card ' + c.subject, type: 'button', onclick: () => { location.hash = c.id; } }, cv,
     el('div', { class: 'body' },
       el('div', { class: 'meta' }, el('span', { class: 'subj ' + c.subject }, SUBJ[c.subject]), el('span', {}, c.unit || VIS[c.visual].label)),
       el('div', { class: 'tech' }, c.tech),
       el('div', { class: 'fx', html: c.formula ? tex(c.formula, false) : '' }),
       el('div', { class: 'meta' }, el('span', { class: 'mono' }, c.week), starred(c.id) ? el('span', { class: 'tag star' }, '★ 관심') : null, S.cards[c.id] ? el('span', { class: 'tag has' }, '학습 카드') : null,
         nm ? el('span', { class: 'tag has' }, '자료 ' + nm) : null, S.deep[c.id] ? el('span', { class: 'tag has' }, '조사 결과') : null)));
-  if (io) io.observe(cv); else requestAnimationFrame(() => drawVis(cv, c.visual, SUBJ_COLOR[c.subject], VIS[c.visual].p[1], true));
+  if (io) io.observe(cv); else requestAnimationFrame(() => paintThumb(cv));
   return b;
 }
 function renderFind() {
@@ -782,7 +806,7 @@ function renderLearn(c) {
     el('button', { class: 'btn small', type: 'button', onclick: () => openMat({ id: 'card:' + c.id, caseId: c.id, kind: 'card', title: '학습 카드 · ' + c.tech, text: card.text, checked: card.checked, auto: card.auto }) }, '크게 보기 · PDF'),
     el('button', { class: 'btn small', type: 'button', onclick: make }, '다시 만들기')));
   if (rv && card.review.note) host.append(el('div', { class: 'note' }, '자동 2차 검토' + (card.review.at ? ' ' + card.review.at : '') + ' · ' + card.review.note));
-  host.append(cardView(c, card.text));
+  host.append(cardView(c, card));
 }
 /* ---------- 학습 카드 화면 ---------- */
 const REVIEW = { ok: ['2차 검토 통과', 'ok'], fixed: ['2차 검토에서 고침', 'ok'], unsure: ['불확실한 부분 있음', 'warn'] };
@@ -799,7 +823,7 @@ function secView(title, md) {
     const steps = []; let pre = [];
     for (const l of lines) { if (/^\$\$.+\$\$$/.test(l)) steps.push({ f: l.slice(2, -2), body: [] }); else if (steps.length) steps[steps.length - 1].body.push(l); else pre.push(l); }
     if (steps.length) return el('div', { class: 'steps' }, pre.length ? mdBox(pre.join('\n')) : null,
-      ...steps.map((s, i) => el('div', { class: 'step' }, el('div', { class: 'n' }, String(i + 1)), el('div', {}, el('div', { class: 'f mathblock', html: tex(s.f.trim(), true) }), mdBox(s.body.join('\n'))))));
+      ...steps.map((s) => el('div', { class: 'step' }, el('div', { class: 'f mathblock', html: tex(s.f.trim(), true) }), mdBox(s.body.join('\n')))));
   }
   if (title === '문답') {
     const qs = [];
@@ -823,26 +847,100 @@ function secView(title, md) {
   }
   return mdBox(md);
 }
-function cardView(c, text) {
-  const secs = sections(text), by = new Map(secs.map((s) => [s.title, s.md]));
+function cardView(c, card) {
+  const text = card.text, secs = sections(text), by = new Map(secs.map((s) => [s.title, s.md]));
   if (!by.has('한눈에')) return tilesFrom(text); // 정해진 틀이 아닌 카드는 예전처럼 보여 준다
-  const wrap = el('div', { style: 'display:grid;gap:12px;min-width:0' });
+  const wrap = el('div', { class: 'lc' }), fig = card.fig;
   wrap.append(el('div', { class: 'glance' }, mdBox(by.get('한눈에'))));
+  if (fig && fig.key) wrap.append(el('div', { class: 'keyf' }, el('div', { class: 'big', html: tex(String(fig.key), true) }), fig.say ? el('div', { class: 'say' }, String(fig.say)) : null));
+  if (fig && fig.plot) { const pv = plotView(fig.plot); if (pv) wrap.append(pv); }
   const fx = (by.get('원본에서 고친 점') || '').trim();
   if (fx && !/^없음\.?$/.test(fx)) { const n = (fx.match(/^[-*]\s+/gm) || []).length;
     wrap.append(el('details', { class: 'fixes' }, el('summary', {}, '원본 사례에서 고친 점' + (n ? ' ' + n + '가지' : '') + ' · 원본 내용을 그대로 쓰기 전에 확인하세요'), mdBox(fx))); }
   const nav = CARD_NAV.filter(([t]) => by.has(t)), known = new Set(['한눈에', '원본에서 고친 점', ...nav.map(([t]) => t)]);
   const extra = secs.filter((s) => s.title && !known.has(s.title)).map((s) => [s.title, s.title]);
-  const all = [...nav, ...extra], bar = el('div', { class: 'secnav', role: 'tablist' }), pane = el('div', {});
-  const show = (t) => { S.learnSec = t; [...bar.children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.t === t ? 'true' : 'false')); pane.textContent = '';
-    if (t === '*') { all.forEach(([title]) => pane.append(el('div', { class: 'pane', style: 'margin-bottom:12px' }, el('h3', {}, title), secView(title, by.get(title))))); return; }
-    const i = all.findIndex(([x]) => x === t), prev = all[i - 1], next = all[i + 1];
-    pane.append(el('div', { class: 'pane' }, secView(t, by.get(t)), el('div', { class: 'pager' },
-      prev ? el('button', { class: 'btn small', type: 'button', onclick: () => show(prev[0]) }, '← ' + prev[1]) : el('span', {}),
-      next ? el('button', { class: 'btn small', type: 'button', onclick: () => show(next[0]) }, next[1] + ' →') : el('span', {})))); };
-  for (const [t, label] of [...all, ['*', '전체 펼치기']]) bar.append(el('button', { class: 'chip', type: 'button', 'data-t': t, 'aria-pressed': 'false', onclick: () => show(t) }, label));
-  wrap.append(bar, pane); show(S.learnSec === '*' || all.some(([t]) => t === S.learnSec) ? S.learnSec : all[0] ? all[0][0] : '*');
+  for (const [t, label] of [...nav, ...extra]) wrap.append(el('div', { class: 'blk' }, el('h3', {}, label), el('div', {}, secView(t, by.get(t)))));
   return wrap;
+}
+/* ---------- 그래프 ---------- */
+// 그래프용 수식 계산기. eval 을 쓰지 않는다. scripts/expr.cjs 와 같은 내용이다.
+function compileExpr(src) {
+  const FN = { sin: Math.sin, cos: Math.cos, tan: Math.tan, exp: Math.exp, ln: Math.log, log10: Math.log10, sqrt: Math.sqrt, abs: Math.abs, floor: Math.floor, round: Math.round, min: Math.min, max: Math.max };
+  const s = String(src).trim(), toks = [], re = /\s*(\d+(?:\.\d+)?(?:e[+-]?\d+)?|[a-z][a-z0-9]*|[-+*/^(),])/y;
+  while (re.lastIndex < s.length) { const at = re.lastIndex, m = re.exec(s); if (!m) throw new Error('읽을 수 없는 글자: ' + s.slice(at, at + 8)); toks.push(m[1]); }
+  let i = 0; const peek = () => toks[i], eat = (t) => { if (toks[i] !== t) throw new Error('"' + t + '" 가 와야 하는 자리'); i++; };
+  const expr = () => { let a = term(); while (peek() === '+' || peek() === '-') { const op = toks[i++], b = term(), l = a; a = op === '+' ? (x) => l(x) + b(x) : (x) => l(x) - b(x); } return a; };
+  const term = () => { let a = unary(); while (peek() === '*' || peek() === '/') { const op = toks[i++], b = unary(), l = a; a = op === '*' ? (x) => l(x) * b(x) : (x) => l(x) / b(x); } return a; };
+  const unary = () => { if (peek() === '-') { i++; const a = unary(); return (x) => -a(x); } if (peek() === '+') { i++; return unary(); } return power(); };
+  const power = () => { const a = atom(); if (peek() === '^') { i++; const b = unary(); return (x) => Math.pow(a(x), b(x)); } return a; };
+  const atom = () => {
+    const t = toks[i++]; if (t === undefined) throw new Error('식이 중간에 끝남');
+    if (/^\d/.test(t)) { const v = Number(t); return () => v; }
+    if (t === '(') { const a = expr(); eat(')'); return a; }
+    if (t === 'x') return (x) => x; if (t === 'pi') return () => Math.PI; if (t === 'e') return () => Math.E;
+    if (FN[t]) { eat('('); const args = [expr()]; while (peek() === ',') { i++; args.push(expr()); } eat(')'); const f = FN[t]; return (x) => f(...args.map((a) => a(x))); }
+    throw new Error('모르는 이름: ' + t);
+  };
+  const f = expr(); if (i < toks.length) throw new Error('남는 글자: ' + toks[i]); return f;
+}
+function plotFns(p) {
+  try { if (!p || !Array.isArray(p.curves) || !p.curves.length || !(p.x[0] < p.x[1]) || !(p.y[0] < p.y[1])) return null; return p.curves.slice(0, 3).map((c) => compileExpr(c.expr)); } catch (e) { return null; }
+}
+function niceTicks(a, b) {
+  const raw = (b - a) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), r = raw / mag, step = (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * mag, out = [];
+  for (let v = Math.ceil(a / step - 1e-9) * step; v <= b + step * 1e-9; v += step) out.push(+v.toPrecision(12));
+  return out;
+}
+const fmtNum = (v) => !Number.isFinite(v) ? '정의 안 됨' : Math.abs(v) >= 10000 ? Math.round(v).toLocaleString('ko-KR') : Math.abs(v) >= 100 ? String(+v.toFixed(1)) : String(+v.toPrecision(3));
+let plotSeq = 0;
+function plotView(p) {
+  const fns = plotFns(p); if (!fns) return null;
+  const [x0, x1] = p.x, [y0, y1] = p.y, L = 58, R = 506, T = 24, B = 276, id = 'pc' + (++plotSeq);
+  const X = (x) => L + (x - x0) / (x1 - x0) * (R - L), Y = (y) => B - (y - y0) / (y1 - y0) * (B - T), span = y1 - y0;
+  const cols = fns.length === 1 ? ['var(--act)'] : fns.length === 2 ? ['var(--c1)', 'var(--fg)'] : ['var(--c1)', 'var(--c2)', 'var(--fg)'];
+  let g = `<defs><clipPath id="${id}"><rect x="${L}" y="${T - 2}" width="${R - L}" height="${B - T + 4}"/></clipPath></defs>`;
+  for (const v of niceTicks(y0, y1)) g += `<line x1="${L}" x2="${R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${esc(fmtNum(v))}</text>`;
+  for (const v of niceTicks(x0, x1)) g += `<line y1="${T}" y2="${B}" x1="${X(v)}" x2="${X(v)}" stroke="var(--grid)"/><text y="${B + 16}" x="${X(v)}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(fmtNum(v))}</text>`;
+  g += `<text x="${R}" y="${B + 34}" text-anchor="end" font-size="11.5" fill="var(--muted)">${esc(p.xLabel || 'x')}</text><text x="8" y="14" font-size="11.5" fill="var(--muted)">${esc(p.yLabel || 'y')}</text>`;
+  fns.forEach((f, k) => { let d = '', pen = false;
+    for (let i = 0; i <= 260; i++) { const x = x0 + (x1 - x0) * i / 260, y = f(x);
+      if (!Number.isFinite(y)) { pen = false; continue; } const yy = Math.max(y0 - span, Math.min(y1 + span, y));
+      d += (pen ? 'L' : 'M') + X(x).toFixed(1) + ' ' + Y(yy).toFixed(1); pen = true; }
+    g += `<path d="${d}" fill="none" stroke="${cols[k]}" stroke-width="${k === fns.length - 1 ? 3 : 2}" clip-path="url(#${id})"/>`; });
+  for (const m of (p.marks || [])) g += `<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${T}" y2="${B}" stroke="var(--act)" stroke-dasharray="4 4"/><text x="${X(m.x) + 5}" y="${T + 12}" font-size="11.5" fill="var(--act)">${esc(m.label)}</text>`;
+  g += `<line class="cur" y1="${T}" y2="${B}" stroke="var(--muted)"/>` + fns.map((_, k) => `<circle class="dot" r="${k === fns.length - 1 ? 6 : 4.5}" fill="${cols[k]}" stroke="var(--ink)" stroke-width="2"/>`).join('');
+  const svg = el('div', { html: `<svg viewBox="0 0 520 316" role="img" aria-label="${esc((p.yLabel || '') + ' 그래프')}">${g}</svg>` }).firstChild;
+  const range = el('input', { type: 'range', min: x0, max: x1, step: (x1 - x0) / 200, value: Number.isFinite(p.start) ? p.start : (x0 + x1) / 2, 'aria-label': p.xLabel || 'x' });
+  const lab = el('span', {}), read = el('div', { class: 'read' }), outs = p.curves.slice(0, 3).map((c, k) => { const b = el('b', {}); read.append(el('div', { style: '--k:' + cols[k] }, c.label, b)); return b; });
+  const paint = () => { const x = +range.value; lab.textContent = (p.xLabel || 'x') + ' = ' + fmtNum(x);
+    const cur = svg.querySelector('.cur'); cur.setAttribute('x1', X(x)); cur.setAttribute('x2', X(x));
+    svg.querySelectorAll('.dot').forEach((d, k) => { const y = fns[k](x), on = Number.isFinite(y) && y >= y0 && y <= y1; d.setAttribute('visibility', on ? 'visible' : 'hidden'); if (on) { d.setAttribute('cx', X(x)); d.setAttribute('cy', Y(y)); } outs[k].textContent = fmtNum(y); }); };
+  range.addEventListener('input', paint); paint();
+  return el('div', { class: 'plot' }, svg, el('div', { class: 'ctl' }, lab, range), read, p.note ? el('div', { class: 'note' }, String(p.note)) : null);
+}
+function drawMiniPlot(cv, p, color) {
+  const fns = plotFns(p); if (!fns) return false;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), w = cv.clientWidth || 300, h = cv.clientHeight || 84;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const [x0, x1] = p.x, [y0, y1] = p.y, X = (x) => 10 + (x - x0) / (x1 - x0) * (w - 20), Y = (y) => h - 10 - (y - y0) / (y1 - y0) * (h - 20);
+  c.save(); c.beginPath(); c.rect(0, 4, w, h - 8); c.clip();
+  fns.forEach((f, k) => { const main = k === fns.length - 1; c.beginPath(); c.strokeStyle = main ? color : 'rgba(17,24,39,.28)'; c.lineWidth = main ? 2.4 : 1.3; let pen = false;
+    for (let i = 0; i <= 120; i++) { const x = x0 + (x1 - x0) * i / 120, y = f(x); if (!Number.isFinite(y)) { pen = false; continue; }
+      const yy = Y(Math.max(y0 - (y1 - y0), Math.min(y1 + (y1 - y0), y))); pen ? c.lineTo(X(x), yy) : c.moveTo(X(x), yy); pen = true; }
+    c.stroke(); });
+  c.restore(); return true;
+}
+/* ---------- 수업 자료를 종이 모습으로 ---------- */
+function matHtml(m, c) {
+  if (m.kind === 'card') return '<div class="sheetpaper">' + block(m.text) + '</div>';
+  const secs = sections(m.text), TEACH = /^(교사용|원본에서 고친 점|검산 기록)/;
+  const i = secs.findIndex((x) => TEACH.test(x.title)), stu = i < 0 ? secs : secs.slice(0, i), tch = i < 0 ? [] : secs.slice(i);
+  const sec = (x) => (x.title ? '<h3>' + inline(x.title).replace(/^(활동 \d+)\.\s*/, '<i>$1</i> ') + '</h3>' : '') + block(x.md);
+  const sub = [m.target, KINDS[m.kind] ? KINDS[m.kind][0] : ''].filter(Boolean).join(' · ');
+  const head = '<div class="top"><div><small>' + esc(sub) + '</small><h2>' + esc(c ? c.tech : m.title) + '</h2></div>' + (m.kind === 'sheet' ? '<div class="name">학번 <span></span> 이름 <span class="w"></span></div>' : '') + '</div>';
+  return '<div class="sheetpaper">' + head + stu.map(sec).join('') + '</div>'
+    + (tch.length ? '<div class="sheetpaper teacher"><div class="top"><div><small>교사용</small><h2>정답과 메모</h2></div></div>' + tch.map(sec).join('') + '</div>' : '');
 }
 function openTabsLabel(c) { [...$('#d-tabs').children].forEach((b) => { const k = b.dataset.t, n = matsOf(c.id).length; b.textContent = TABS[k] + (k === 'learn' && S.cards[c.id] ? ' ✓' : k === 'make' && n ? ' ' + n : ''); }); }
 function renderMake(c) {
@@ -894,13 +992,13 @@ function openMat(m) {
   if (fin) { fbox.append(el('div', { class: 'hd' }, el('b', {}, '수요일 검산 결과'), el('span', { class: 'note mono' }, m.finalAt || '')), el('div', { class: 'note' }, m.verifyNote || ''));
     const links = el('div', { class: 'row' }); if (/^https:\/\//.test(m.pdfUrl || '')) links.append(el('a', { href: m.pdfUrl, target: '_blank', rel: 'noopener' }, 'PDF 열기 ↗')); if (/^https:\/\//.test(m.docUrl || '')) links.append(el('a', { href: m.docUrl, target: '_blank', rel: 'noopener' }, '구글 문서 열기 ↗')); fbox.append(links); }
   $('#m-title').textContent = c ? c.tech : m.title;
-  $('#m-view').innerHTML = block(m.text); $('#m-view').hidden = false; $('#m-text').hidden = true; $('#m-text').value = m.text; $('#m-edit').textContent = '고치기';
+  $('#m-view').innerHTML = matHtml(m, c); $('#m-view').hidden = false; $('#m-text').hidden = true; $('#m-text').value = m.text; $('#m-edit').textContent = '고치기';
   $('#m-check').textContent = m.checked ? '확인 취소' : '확인함으로 표시'; $('#m-del').textContent = '삭제'; $('#m-del').dataset.arm = '';
   $('#m-layout').value = isCard ? 'note' : 'keep'; $('#m-case').hidden = !c;
   if (!$('#mat').open) $('#mat').showModal(); $('#mat').scrollTop = 0;
 }
 function persistMat() { const m = S.mat; if (m.kind === 'card') { const old = S.cards[m.caseId] || {}, next = { caseId: m.caseId, text: m.text, at: Date.now(), checked: !!m.checked, auto: !!m.auto };
-    if (old.review && old.text === m.text) next.review = old.review; /* 글을 고치면 자동 검토 표시는 지운다 */ return saveCard(m.caseId, next); } return saveMat(m); }
+    if (old.fig) next.fig = old.fig; if (old.review && old.text === m.text) next.review = old.review; /* 글을 고치면 자동 검토 표시는 지운다 */ return saveCard(m.caseId, next); } return saveMat(m); }
 $('#m-close').onclick = () => $('#mat').close();
 $('#mat').addEventListener('click', (e) => { if (e.target === $('#mat')) $('#mat').close(); });
 $('#mat').addEventListener('close', () => { S.mat = null; if (S.open) { if (S.tab === 'learn') renderLearn(S.open); if (S.tab === 'make') renderMake(S.open); } else render(); });
@@ -908,7 +1006,7 @@ $('#m-copy').onclick = () => copy($('#m-text').hidden ? S.mat.text : $('#m-text'
 $('#m-edit').onclick = async () => {
   const ta = $('#m-text'), view = $('#m-view');
   if (ta.hidden) { ta.hidden = false; view.hidden = true; $('#m-edit').textContent = '고친 내용 저장'; ta.focus(); return; }
-  S.mat.text = ta.value; await persistMat(); view.innerHTML = block(S.mat.text); ta.hidden = true; view.hidden = false; $('#m-edit').textContent = '고치기'; toast('저장했습니다');
+  S.mat.text = ta.value; await persistMat(); view.innerHTML = matHtml(S.mat, S.byId.get(S.mat.caseId)); ta.hidden = true; view.hidden = false; $('#m-edit').textContent = '고치기'; toast('저장했습니다');
 };
 $('#m-check').onclick = async () => { S.mat.checked = !S.mat.checked; await persistMat(); openMat(S.mat); };
 $('#m-queue').onclick = async () => { const m = S.mat; m.state = m.state === 'queued' ? 'draft' : 'queued'; await saveMat(m); toast(m.state === 'queued' ? '요청했습니다. 수요일 저녁에 검산해서 PDF와 문서로 드라이브에 넣습니다' : '요청을 취소했습니다'); openMat(m); };
@@ -918,7 +1016,7 @@ $('#m-del').onclick = async (e) => {
   const m = S.mat; try { if (S.db) await S.db.doc(m.kind === 'card' ? 'cards/' + m.caseId : 'mats/' + m.id).delete(); } catch (err) { toast('삭제하지 못했습니다'); return; }
   if (m.kind === 'card') delete S.cards[m.caseId]; else delete S.mats[m.id]; refreshCounts(); $('#mat').close(); toast('삭제했습니다');
 };
-const PAPER_CSS = (note) => `*{box-sizing:border-box}body,div{margin:0}.pg{width:794px;padding:${note ? '56px 250px 56px 56px' : '48px 56px'};background:#fff;color:#111;font:${note ? '15px/2.05' : '13.5px/1.7'} "Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK KR","Noto Sans KR",sans-serif}
+const PAPER_CSS = (note) => `.wspace{border:1px solid #9AA3B5;border-radius:3px;height:${note ? 130 : 78}px;margin:6px 0 12px}.blank{display:inline-block;min-width:56px;border-bottom:1px solid #111}*{box-sizing:border-box}body,div{margin:0}.pg{width:794px;padding:${note ? '56px 250px 56px 56px' : '48px 56px'};background:#fff;color:#111;font:${note ? '15px/2.05' : '13.5px/1.7'} "Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK KR","Noto Sans KR",sans-serif}
 h1{font-size:19px;margin:0 0 4px}.sub{color:#555;font-size:12px;margin:0 0 14px;padding-bottom:8px;border-bottom:1.5px solid #111}h3{font-size:15.5px;margin:${note ? '26px' : '16px'} 0 4px;padding-top:6px;border-top:1px solid #bbb}h4{font-size:14px;margin:10px 0 2px}p{margin:0 0 ${note ? '10px' : '6px'}}
 .li{margin:2px 0;position:relative}.li::before{content:"·";position:absolute;left:-0.9em;color:#777}.li.num::before{content:none}.mathblock{text-align:center;padding:6px 0}hr{border:0;border-top:1px dashed #999;margin:10px 0}code{font-family:monospace;background:#eee;padding:0 3px}a{color:#111}`;
 async function makePdf(m, layout) {
