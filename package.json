@@ -1,0 +1,6 @@
+{
+  "name": "aftermath-math-research",
+  "private": true,
+  "description": "주차 문서 변환기와 수업 자료 PDF 생성 스크립트",
+  "dependencies": { "katex": "0.16.9" }
+}

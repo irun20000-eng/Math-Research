@@ -263,12 +263,14 @@ dialog#settings textarea { width: 100%; min-height: 160px; background: var(--ink
       <button class="btn" id="m-pdf" type="button">PDF 저장</button>
       <button class="btn" id="m-edit" type="button">고치기</button>
       <button class="btn" id="m-check" type="button"></button>
+      <button class="btn" id="m-queue" type="button"></button>
       <button class="btn" id="m-case" type="button">사례 열기</button>
       <span class="spacer" style="flex:1"></span>
       <button class="btn" id="m-del" type="button">삭제</button>
     </div>
   </div>
   <div class="d-body">
+    <div class="box" id="m-final" hidden></div>
     <textarea id="m-text" hidden style="width:100%;min-height:55vh;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:13px;line-height:1.6" aria-label="자료 원문"></textarea>
     <div class="paper md" id="m-view"></div>
   </div>
@@ -776,7 +778,7 @@ function renderMake(c) {
 function matRow(m) {
   const c = S.byId.get(m.caseId);
   return el('button', { class: 'listcard', type: 'button', onclick: () => openMat(m) },
-    el('div', { class: 'meta' }, el('span', { class: 'tag ' + (m.checked ? 'has' : 'draft') }, m.checked ? '확인함' : '검증 전'), el('span', {}, m.kind === 'card' ? '학습 카드' : KINDS[m.kind] ? KINDS[m.kind][0] : m.kind), m.target ? el('span', {}, m.target) : null, el('span', { class: 'mono' }, new Date(m.at || Date.now()).toISOString().slice(0, 10))),
+    el('div', { class: 'meta' }, el('span', { class: 'tag ' + (m.checked || m.state === 'final' ? 'has' : m.state === 'queued' ? 'star' : 'draft') }, m.checked ? '확인함' : m.state === 'final' ? '검산 완료' : m.state === 'queued' ? '요청됨' : '검증 전'), el('span', {}, m.kind === 'card' ? '학습 카드' : KINDS[m.kind] ? KINDS[m.kind][0] : m.kind), m.target ? el('span', {}, m.target) : null, el('span', { class: 'mono' }, new Date(m.at || Date.now()).toISOString().slice(0, 10))),
     el('div', { class: 't' }, c ? c.tech : m.title));
 }
 function showLink(url) { const host = $('#d-linkopen'); host.textContent = ''; if (url && /^https:\/\//.test(url)) host.append(el('a', { href: url, target: '_blank', rel: 'noopener' }, '저장한 결과 문서 ↗')); }
@@ -795,7 +797,12 @@ $('#d-link').addEventListener('change', (e) => { const url = e.target.value.trim
 function openMat(m) {
   S.mat = m; const c = S.byId.get(m.caseId), isCard = m.kind === 'card';
   const meta = $('#m-meta'); meta.textContent = '';
-  meta.append(el('span', { class: 'stamp ' + (m.checked ? 'ok' : '') }, m.checked ? '내가 확인함' : '자동 생성 · 검증 전'), el('span', {}, isCard ? '학습 카드' : KINDS[m.kind][0]), m.target ? el('span', {}, m.target) : null);
+  const fin = m.state === 'final';
+  meta.append(el('span', { class: 'stamp ' + (m.checked || fin ? 'ok' : '') }, m.checked ? '내가 확인함' : fin ? '수요일 검산 완료' : m.state === 'queued' ? '확정본 요청됨 · 수요일 처리' : '자동 생성 · 검증 전'), el('span', {}, isCard ? '학습 카드' : KINDS[m.kind][0]), m.target ? el('span', {}, m.target) : null);
+  const q = $('#m-queue'); q.hidden = isCard || fin; q.textContent = m.state === 'queued' ? '확정본 요청 취소' : '수요일 확정본 요청';
+  const fbox = $('#m-final'); fbox.textContent = ''; fbox.hidden = !fin;
+  if (fin) { fbox.append(el('div', { class: 'hd' }, el('b', {}, '수요일 검산 결과'), el('span', { class: 'note mono' }, m.finalAt || '')), el('div', { class: 'note' }, m.verifyNote || ''));
+    const links = el('div', { class: 'row' }); if (/^https:\/\//.test(m.pdfUrl || '')) links.append(el('a', { href: m.pdfUrl, target: '_blank', rel: 'noopener' }, 'PDF 열기 ↗')); if (/^https:\/\//.test(m.docUrl || '')) links.append(el('a', { href: m.docUrl, target: '_blank', rel: 'noopener' }, '구글 문서 열기 ↗')); fbox.append(links); }
   $('#m-title').textContent = c ? c.tech : m.title;
   $('#m-view').innerHTML = block(m.text); $('#m-view').hidden = false; $('#m-text').hidden = true; $('#m-text').value = m.text; $('#m-edit').textContent = '고치기';
   $('#m-check').textContent = m.checked ? '확인 취소' : '확인함으로 표시'; $('#m-del').textContent = '삭제'; $('#m-del').dataset.arm = '';
@@ -813,6 +820,7 @@ $('#m-edit').onclick = async () => {
   S.mat.text = ta.value; await persistMat(); view.innerHTML = block(S.mat.text); ta.hidden = true; view.hidden = false; $('#m-edit').textContent = '고치기'; toast('저장했습니다');
 };
 $('#m-check').onclick = async () => { S.mat.checked = !S.mat.checked; await persistMat(); openMat(S.mat); };
+$('#m-queue').onclick = async () => { const m = S.mat; m.state = m.state === 'queued' ? 'draft' : 'queued'; await saveMat(m); toast(m.state === 'queued' ? '요청했습니다. 수요일 저녁에 검산해서 PDF와 문서로 드라이브에 넣습니다' : '요청을 취소했습니다'); openMat(m); };
 $('#m-case').onclick = () => { const id = S.mat.caseId; $('#mat').close(); location.hash = id; };
 $('#m-del').onclick = async (e) => {
   const b = e.currentTarget; if (!b.dataset.arm) { b.dataset.arm = '1'; b.textContent = '정말 삭제 (한 번 더)'; return; }
