@@ -17,7 +17,29 @@ if (reviewDir) for (const f of fs.readdirSync(reviewDir).filter((n) => n.endsWit
   }
 }
 
-const SECTIONS = ['한눈에', '쉬운 설명', '용어 풀이', '수식 한 줄씩', '문답', '확인 문제', '다음 공부', '원본에서 고친 점'];
+const { compileExpr } = require('./expr.cjs');
+const str = (v, max, name) => { if (typeof v !== 'string' || !v.trim() || v.length > max) throw new Error(name + ' 없음 또는 ' + max + '자 초과'); return v.trim(); };
+const pair = (v, name) => { if (!Array.isArray(v) || v.length !== 2 || !v.every(Number.isFinite) || !(v[0] < v[1])) throw new Error(name + ' 범위 오류'); return [v[0], v[1]]; };
+function checkFig(f) {
+  const out = { key: str(f.key, 300, 'key'), say: str(f.say, 90, 'say') };
+  katex.renderToString(out.key, { throwOnError: true, displayMode: true, output: 'mathml' });
+  if (f.plot == null) return out;
+  const p = f.plot, x = pair(p.x, 'x'), y = pair(p.y, 'y');
+  if (!Array.isArray(p.curves) || p.curves.length < 1 || p.curves.length > 3) throw new Error('curves 는 1~3개');
+  const curves = p.curves.map((c) => {
+    const expr = str(c.expr, 200, 'expr'), fn = compileExpr(expr); let fin = 0, inside = 0;
+    for (let i = 0; i <= 200; i++) { const v = fn(x[0] + (x[1] - x[0]) * i / 200); if (Number.isFinite(v)) { fin++; if (v >= y[0] && v <= y[1]) inside++; } }
+    if (fin < 140) throw new Error('값이 정의되지 않는 구간이 많음: ' + expr);
+    if (inside < 60) throw new Error('세로 범위를 벗어남: ' + expr);
+    return { label: str(c.label, 16, 'label'), expr };
+  });
+  const plot = { xLabel: str(p.xLabel, 30, 'xLabel'), yLabel: str(p.yLabel, 30, 'yLabel'), x, y, curves };
+  if (Number.isFinite(p.start) && p.start >= x[0] && p.start <= x[1]) plot.start = p.start;
+  if (Array.isArray(p.marks)) plot.marks = p.marks.slice(0, 2).filter((m) => m && Number.isFinite(m.x) && m.x >= x[0] && m.x <= x[1]).map((m) => ({ x: m.x, label: str(m.label, 14, 'mark label') }));
+  if (p.note) plot.note = str(p.note, 120, 'note');
+  return { ...out, plot };
+}
+const SECTIONS =['한눈에', '쉬운 설명', '용어 풀이', '수식 한 줄씩', '문답', '확인 문제', '다음 공부', '원본에서 고친 점'];
 let bad = 0, ok = 0;
 const batch = [];
 for (const f of fs.readdirSync(src).filter((n) => n.endsWith('.md')).sort()) {
@@ -40,7 +62,11 @@ for (const f of fs.readdirSync(src).filter((n) => n.endsWith('.md')).sort()) {
   if (problems.length) { bad++; console.log('✗', id, '|', problems.slice(0, 4).join(' ; ')); continue; }
   ok++;
   const file = path.join(out, id + '.json');
+  // 같은 폴더에 <사례ID>.fig.json 이 있으면 핵심 수식과 그래프 정보를 검사해 fig 로 붙인다. 틀린 fig 는 빼고 카드만 넣는다.
+  let fig = null; const figFile = path.join(src, id + '.fig.json');
+  if (fs.existsSync(figFile)) { try { fig = checkFig(JSON.parse(fs.readFileSync(figFile, 'utf8'))); } catch (e) { console.log('  (fig 제외)', id, '|', e.message); } }
   const doc = { caseId: id, text, at: Date.now(), checked: false, auto: true };
+  if (fig) doc.fig = fig;
   if (reviewDir && !reviews[id]) console.log('  (2차 검토 결과 없음)', id);
   if (reviews[id]) doc.review = reviews[id];
   fs.writeFileSync(file, JSON.stringify(doc));
