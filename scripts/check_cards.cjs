@@ -6,9 +6,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const katex = require('katex');
 
-const [src, out] = process.argv.slice(2);
-if (!src || !out) { console.error('usage: check_cards.cjs <md dir> <json dir>'); process.exit(2); }
+// 세 번째 인자로 2차 검토 결과 폴더를 주면(그 안의 *.json 은 [{id, verdict, note}] 배열) 카드에 review 로 붙인다.
+const [src, out, reviewDir] = process.argv.slice(2);
+if (!src || !out) { console.error('usage: check_cards.cjs <md dir> <json dir> [review dir]'); process.exit(2); }
 fs.mkdirSync(out, { recursive: true });
+const reviews = {};
+if (reviewDir) for (const f of fs.readdirSync(reviewDir).filter((n) => n.endsWith('.json'))) {
+  for (const r of JSON.parse(fs.readFileSync(path.join(reviewDir, f), 'utf8'))) {
+    if (r && r.id && ['ok', 'fixed', 'unsure'].includes(r.verdict)) reviews[r.id] = { verdict: r.verdict, note: String(r.note || '').slice(0, 300), at: new Date().toISOString().slice(0, 10) };
+  }
+}
 
 const SECTIONS = ['한눈에', '쉬운 설명', '용어 풀이', '수식 한 줄씩', '문답', '확인 문제', '다음 공부', '원본에서 고친 점'];
 let bad = 0, ok = 0;
@@ -33,7 +40,10 @@ for (const f of fs.readdirSync(src).filter((n) => n.endsWith('.md')).sort()) {
   if (problems.length) { bad++; console.log('✗', id, '|', problems.slice(0, 4).join(' ; ')); continue; }
   ok++;
   const file = path.join(out, id + '.json');
-  fs.writeFileSync(file, JSON.stringify({ caseId: id, text, at: Date.now(), checked: false, auto: true }));
+  const doc = { caseId: id, text, at: Date.now(), checked: false, auto: true };
+  if (reviewDir && !reviews[id]) console.log('  (2차 검토 결과 없음)', id);
+  if (reviews[id]) doc.review = reviews[id];
+  fs.writeFileSync(file, JSON.stringify(doc));
   batch.push({ op: 'set', collection: 'cards', doc_id: id, file_path: path.resolve(file) });
   console.log('✓', id, text.length + '자', '수식 ' + mathN);
 }
